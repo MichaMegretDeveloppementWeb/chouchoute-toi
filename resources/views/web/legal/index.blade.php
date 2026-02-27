@@ -1,7 +1,7 @@
 @extends('layouts.web')
 
 @section('title', 'Mentions légales')
-@section('meta_description', 'Mentions légales et conditions générales de vente du site Chouchoute-toi by Amande — Extensions de cils à domicile.')
+@section('meta_description', 'Mentions légales, conditions générales de vente et politique de confidentialité du site Chouchoute-toi by Amande — Extensions de cils à domicile.')
 
 @section('assets')
     @vite([

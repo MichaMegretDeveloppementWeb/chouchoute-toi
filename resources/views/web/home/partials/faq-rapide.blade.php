@@ -19,7 +19,7 @@
     ];
 @endphp
 
-<section class="pb-[150px] max-md:pb-20" data-animate>
+<section class="py-[150px] max-md:pb-20" data-animate>
     <div class="mx-auto max-w-[1336px] px-5">
         <p class="mb-3 flex items-center gap-2 text-sm font-normal uppercase tracking-[2px] text-wine">
             <x-icon.section-marker />
