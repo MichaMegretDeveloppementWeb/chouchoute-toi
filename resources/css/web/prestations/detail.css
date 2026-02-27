@@ -1,0 +1,9 @@
+/* Section Detail des prestations — zigzag */
+
+.prestation-detail--reverse {
+    direction: rtl;
+}
+
+.prestation-detail--reverse > * {
+    direction: ltr;
+}

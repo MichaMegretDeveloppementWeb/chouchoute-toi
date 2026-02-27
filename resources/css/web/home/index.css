@@ -1,0 +1,8 @@
+/* Page Accueil — point d'entree CSS */
+@import './hero.css';
+@import './prestations-apercu.css';
+@import './avant-apres.css';
+@import './chiffres.css';
+@import './confiance.css';
+@import '../../components/accordion.css';
+@import '../../components/cta-banner.css';

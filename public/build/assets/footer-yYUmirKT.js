@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{const n=document.querySelectorAll("[data-animate]");if(!n.length)return;const s=new IntersectionObserver(e=>{e.forEach(t=>{t.isIntersecting&&(t.target.classList.add("is-visible"),s.unobserve(t.target))})},{threshold:.15});n.forEach(e=>s.observe(e))});

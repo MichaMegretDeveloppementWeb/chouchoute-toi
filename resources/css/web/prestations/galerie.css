@@ -1,0 +1,7 @@
+/* Section Galerie avant/apres — bento */
+
+.galerie-bento__large,
+.galerie-bento__small {
+    overflow: hidden;
+    border-radius: 12px;
+}

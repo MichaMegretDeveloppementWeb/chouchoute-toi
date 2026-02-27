@@ -1,0 +1,32 @@
+/* Header — sticky avec fond qui se materialise au scroll */
+
+.header {
+    background-color: transparent;
+}
+
+.header.header--scrolled {
+    background-color: var(--color-cream);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Animation hamburger -> croix */
+.header__hamburger.is-active [data-line-1] {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.header__hamburger.is-active [data-line-2] {
+    opacity: 0;
+}
+
+.header__hamburger.is-active [data-line-3] {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Menu mobile : caché par défaut, glisse depuis la droite */
+.header__mobile-menu {
+    transform: translateX(100%);
+}
+
+.header__mobile-menu.is-open {
+    transform: translateX(0);
+}

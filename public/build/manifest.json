@@ -1,0 +1,113 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Bs0Qgv1w.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/components/layout/footer.css": {
+    "file": "assets/index-tn0RQdqM.css",
+    "src": "resources/css/web/legal/index.css",
+    "isEntry": true,
+    "name": "footer",
+    "names": [
+      "index.css",
+      "footer.css"
+    ]
+  },
+  "resources/css/components/layout/header.css": {
+    "file": "assets/header-DOpPpH9e.css",
+    "src": "resources/css/components/layout/header.css",
+    "isEntry": true,
+    "name": "header",
+    "names": [
+      "header.css"
+    ]
+  },
+  "resources/css/web/about/index.css": {
+    "file": "assets/index-BvMGxzIs.css",
+    "src": "resources/css/web/about/index.css",
+    "isEntry": true,
+    "name": "index",
+    "names": [
+      "index.css"
+    ]
+  },
+  "resources/css/web/contact/index.css": {
+    "file": "assets/index-CNPeHfaj.css",
+    "src": "resources/css/web/reviews/index.css"
+  },
+  "resources/css/web/home/index.css": {
+    "file": "assets/index-Cosi_kIH.css",
+    "src": "resources/css/web/home/index.css"
+  },
+  "resources/css/web/legal/index.css": {
+    "file": "assets/index-tn0RQdqM.css",
+    "src": "resources/css/web/legal/index.css",
+    "isEntry": true,
+    "name": "footer",
+    "names": [
+      "index.css",
+      "footer.css"
+    ]
+  },
+  "resources/css/web/prestations/index.css": {
+    "file": "assets/index-CWPAnhMp.css",
+    "src": "resources/css/web/prestations/index.css"
+  },
+  "resources/css/web/reviews/index.css": {
+    "file": "assets/index-CNPeHfaj.css",
+    "src": "resources/css/web/reviews/index.css"
+  },
+  "resources/js/components/layout/footer.js": {
+    "file": "assets/footer-yYUmirKT.js",
+    "name": "footer",
+    "src": "resources/js/components/layout/footer.js",
+    "isEntry": true
+  },
+  "resources/js/components/layout/header.js": {
+    "file": "assets/header-D-RkUl_l.js",
+    "name": "header",
+    "src": "resources/js/components/layout/header.js",
+    "isEntry": true
+  },
+  "resources/js/web/about/index.js": {
+    "file": "assets/index-K6Dvbx-E.js",
+    "name": "index",
+    "src": "resources/js/web/about/index.js",
+    "isEntry": true
+  },
+  "resources/js/web/contact/index.js": {
+    "file": "assets/index-DcpjDCUv.js",
+    "name": "index",
+    "src": "resources/js/web/contact/index.js",
+    "isEntry": true
+  },
+  "resources/js/web/home/index.js": {
+    "file": "assets/index-BHEVioDw.js",
+    "name": "index",
+    "src": "resources/js/web/home/index.js",
+    "isEntry": true
+  },
+  "resources/js/web/legal/index.js": {
+    "file": "assets/index-DP2rzg_V.js",
+    "name": "index",
+    "src": "resources/js/web/legal/index.js",
+    "isEntry": true
+  },
+  "resources/js/web/prestations/index.js": {
+    "file": "assets/index-l0sNRNKZ.js",
+    "name": "index",
+    "src": "resources/js/web/prestations/index.js",
+    "isEntry": true
+  },
+  "resources/js/web/reviews/index.js": {
+    "file": "assets/index-DU1WAvV6.js",
+    "name": "index",
+    "src": "resources/js/web/reviews/index.js",
+    "isEntry": true
+  }
+}

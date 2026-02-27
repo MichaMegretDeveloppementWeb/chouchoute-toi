@@ -1,0 +1,171 @@
+/* Section Avant / Après */
+
+.avant-apres {
+    --color-wine: #512731;
+    --color-sand: #ebe4de;
+}
+
+.avant-apres__slide {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    aspect-ratio: 16 / 9;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.avant-apres__slide.hidden {
+    display: none;
+}
+
+.avant-apres__before,
+.avant-apres__after {
+    position: absolute;
+    inset: 0;
+}
+
+.avant-apres__before img,
+.avant-apres__after img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.avant-apres__after {
+    clip-path: inset(0 0 0 var(--split-position, 50%));
+}
+
+/* Handle — vertical divider line */
+
+.avant-apres__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--split-position, 50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2px;
+    background-color: #ffffff;
+    cursor: ew-resize;
+    transform: translateX(-50%);
+    pointer-events: auto;
+}
+
+.avant-apres__handle-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: var(--color-wine);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: ew-resize;
+    flex-shrink: 0;
+}
+
+/* Labels — Avant / Après */
+
+.avant-apres__label {
+    position: absolute;
+    bottom: 16px;
+    z-index: 5;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-wine);
+    pointer-events: none;
+}
+
+.avant-apres__label--avant {
+    left: 16px;
+}
+
+.avant-apres__label--apres {
+    right: 16px;
+}
+
+/* Navigation — arrows + dots + label */
+
+.avant-apres__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.avant-apres__nav-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.avant-apres__slide-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-wine);
+    letter-spacing: 0.5px;
+}
+
+.avant-apres__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid rgb(81 39 49 / 0.2);
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--color-wine);
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.avant-apres__arrow:hover {
+    background-color: rgb(81 39 49 / 0.06);
+    border-color: rgb(81 39 49 / 0.4);
+}
+
+.avant-apres__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.avant-apres__dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgb(81 39 49 / 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.avant-apres__dot:hover {
+    background-color: rgb(81 39 49 / 0.4);
+}
+
+.avant-apres__dot--active {
+    background-color: var(--color-wine);
+}
+
+.avant-apres__dot--active:hover {
+    background-color: var(--color-wine);
+}

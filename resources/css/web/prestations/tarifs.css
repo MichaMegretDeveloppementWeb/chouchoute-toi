@@ -1,0 +1,6 @@
+/* Section Tarifs */
+
+.tarif-card {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-signature: 'Mrs Saint Delafield', cursive;
+
+    --color-cream: #F9F6F2;
+    --color-sand: #EBE4DE;
+    --color-wine: #512731;
+    --color-charcoal: #333333;
+    --color-dark: #222222;
+    --color-blush: #D4A89A;
+}
+
+/* Scroll animations */
+[data-animate] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+[data-animate].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Offset des ancres pour le header fixe (64px mobile / 72px desktop + marge) */
+[id] {
+    scroll-margin-top: 80px;
+}
+
+@media (min-width: 1024px) {
+    [id] {
+        scroll-margin-top: 88px;
+    }
+}
