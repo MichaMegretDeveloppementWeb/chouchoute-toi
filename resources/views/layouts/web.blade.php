@@ -7,6 +7,12 @@
     <title>@yield('title', 'Accueil') — {{ config('app.name') }}</title>
     <meta name="description" content="@yield('meta_description', 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.')">
 
+    {{-- Favicon --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon/favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('favicon/site.webmanifest') }}">
+
     {{-- Canonical --}}
     <link rel="canonical" href="{{ url()->current() }}">
 
