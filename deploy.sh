@@ -133,19 +133,18 @@ step "2/6 — Mise a jour du code"
 
 git fetch origin "$BRANCH"
 
-LOCAL=$(git rev-parse HEAD)
-REMOTE=$(git rev-parse "origin/$BRANCH")
-
-if [ "$LOCAL" = "$REMOTE" ] && [ "$FRESH" = false ]; then
-    warn "Aucune mise a jour disponible (deja a jour)."
-    $PHP_BIN artisan up
-    success "Site remis en ligne."
-    exit 0
-fi
-
+# Le script est volontairement rejouable : l'absence de nouveau commit n'est pas
+# une raison de s'arreter. On veut pouvoir relancer la sequence complete
+# (dependances, migrations, caches, permissions) apres une modification du .env,
+# un correctif applique a la main, ou un deploiement interrompu.
 git reset --hard "origin/$BRANCH"
 COMMIT_AFTER=$(git rev-parse --short HEAD)
-success "Code mis a jour : $COMMIT_BEFORE → $COMMIT_AFTER"
+
+if [ "$COMMIT_BEFORE" = "$COMMIT_AFTER" ]; then
+    info "Aucun nouveau commit ($COMMIT_AFTER) : les etapes suivantes sont rejouees."
+else
+    success "Code mis a jour : $COMMIT_BEFORE → $COMMIT_AFTER"
+fi
 
 # Les assets Vite sont commites (pas de build sur le serveur). Un `git commit -am`
 # apres un `npm run build` embarque le manifeste sans les nouveaux fichiers
