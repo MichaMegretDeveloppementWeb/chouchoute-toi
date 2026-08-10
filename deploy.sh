@@ -14,7 +14,19 @@ set -euo pipefail
 
 BRANCH="main"
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
-PHP_BIN=$(command -v php 2>/dev/null || echo "php")
+
+# PHP 8.5 minimum (contrainte de composer.json). Sur Hostinger le `php` du PATH
+# est une version plus ancienne : on cible le binaire 8.5 explicitement.
+# Surchargeable : PHP_BIN=/chemin/vers/php ./deploy.sh
+if [ -z "${PHP_BIN:-}" ]; then
+    for candidate in /opt/alt/php85/usr/bin/php /usr/local/bin/php85 /usr/bin/php85; do
+        if [ -x "$candidate" ]; then
+            PHP_BIN="$candidate"
+            break
+        fi
+    done
+fi
+PHP_BIN="${PHP_BIN:-$(command -v php 2>/dev/null || echo "php")}"
 
 # -- Couleurs -----------------------------------------------------------------
 
@@ -101,6 +113,14 @@ info "Branche : $BRANCH"
 info "Commit actuel : $COMMIT_BEFORE"
 info "PHP : $($PHP_BIN -v | head -1)"
 
+# Arret immediat si le binaire PHP ne satisfait pas la contrainte du projet :
+# composer install echouerait de toute facon, mais apres la mise en maintenance.
+if ! $PHP_BIN -r 'exit(PHP_VERSION_ID >= 80500 ? 0 : 1);'; then
+    error "PHP 8.5 minimum requis, or $PHP_BIN est en $($PHP_BIN -r 'echo PHP_VERSION;')."
+    error "Relancez avec : PHP_BIN=/opt/alt/php85/usr/bin/php ./deploy.sh"
+    exit 1
+fi
+
 # -- 1. Mode maintenance ------------------------------------------------------
 
 step "1/6 — Mode maintenance"
@@ -126,6 +146,33 @@ fi
 git reset --hard "origin/$BRANCH"
 COMMIT_AFTER=$(git rev-parse --short HEAD)
 success "Code mis a jour : $COMMIT_BEFORE → $COMMIT_AFTER"
+
+# Les assets Vite sont commites (pas de build sur le serveur). Un `git commit -am`
+# apres un `npm run build` embarque le manifeste sans les nouveaux fichiers
+# hashes : on verifie donc que tout ce que le manifeste reference existe, avant
+# de toucher aux dependances.
+info "Verification des assets compiles..."
+
+if [ ! -f "public/build/manifest.json" ]; then
+    error "public/build/manifest.json absent. Sur la machine de dev : npm run build, puis git add -A public/build."
+    exit 1
+fi
+
+MISSING_ASSETS=$(grep -o '"assets/[^"]*"' public/build/manifest.json \
+    | tr -d '"' \
+    | sort -u \
+    | while read -r asset; do
+        [ -f "public/build/$asset" ] || echo "  $asset"
+    done)
+
+if [ -n "$MISSING_ASSETS" ]; then
+    error "Assets references par le manifeste mais absents du depot :"
+    echo "$MISSING_ASSETS"
+    error "Sur la machine de dev : npm run build, puis git add -A public/build."
+    exit 1
+fi
+
+success "Assets compiles coherents"
 
 # -- 3. Composer ---------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 .hero {
     position: relative;
     width: 100%;
-    min-height: 70vh;
+    min-height: max(70vh, 30em);
     overflow: hidden;
 }
 
@@ -130,7 +130,7 @@
 
 @media (max-width: 768px) {
     .hero {
-        min-height: 70vh;
+        min-height: max(70vh, 30em);
     }
 
     .hero__overlay {

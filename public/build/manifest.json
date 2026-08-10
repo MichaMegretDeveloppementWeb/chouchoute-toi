@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Bo_Kk9Jr.css",
+    "file": "assets/app-CEw_Ovvg.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -27,6 +27,15 @@
       "header.css"
     ]
   },
+  "resources/css/ui-kit.css": {
+    "file": "assets/ui-kit-D4PuMGhf.css",
+    "src": "resources/css/ui-kit.css",
+    "isEntry": true,
+    "name": "ui-kit",
+    "names": [
+      "ui-kit.css"
+    ]
+  },
   "resources/css/web/about/index.css": {
     "file": "assets/index-BvMGxzIs.css",
     "src": "resources/css/web/about/index.css",
@@ -41,7 +50,7 @@
     "src": "resources/css/web/reviews/index.css"
   },
   "resources/css/web/home/index.css": {
-    "file": "assets/index-Cosi_kIH.css",
+    "file": "assets/index-Do1TOf3p.css",
     "src": "resources/css/web/home/index.css"
   },
   "resources/css/web/legal/index.css": {
@@ -72,6 +81,12 @@
     "file": "assets/header-D-RkUl_l.js",
     "name": "header",
     "src": "resources/js/components/layout/header.js",
+    "isEntry": true
+  },
+  "resources/js/ui-kit.js": {
+    "file": "assets/ui-kit-CgDnq_rs.js",
+    "name": "ui-kit",
+    "src": "resources/js/ui-kit.js",
     "isEntry": true
   },
   "resources/js/web/about/index.js": {

@@ -14,6 +14,8 @@ export default defineConfig({
                 'resources/css/components/layout/footer.css',
                 'resources/js/components/layout/header.js',
                 'resources/js/components/layout/footer.js',
+                'resources/css/ui-kit.css',
+                'resources/js/ui-kit.js',
             ],
             refresh: true,
         }),

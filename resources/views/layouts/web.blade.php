@@ -118,5 +118,8 @@
     <x-layout.footer />
 
     @stack('body-scripts')
+
+    {{-- First-party audience measurement. Renders nothing while an admin is signed in. --}}
+    @analyticsScripts
 </body>
 </html>

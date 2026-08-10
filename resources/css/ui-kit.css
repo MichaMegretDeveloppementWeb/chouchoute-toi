@@ -1,0 +1,26 @@
+/*
+ * Falcon UI Kit · back-office CSS entrypoint.
+ *
+ * Loads Tailwind, the forms plugin, the DM Sans face and the kit preset
+ * (dark mode, tokens, scrollbars). Pulled in by the back-office layout only:
+ * the public site keeps app.css untouched.
+ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
+@source '../../vendor/falcon/ui-kit/resources/views/**/*.blade.php';
+
+/* Back-office screens: shell, admin views, admin Livewire components. */
+@source '../views/components/layout/admin*.blade.php';
+@source '../views/layouts/admin.blade.php';
+@source '../views/admin/**/*.blade.php';
+@source '../views/livewire/admin/**/*.blade.php';
+
+/* Analytics and Marketing dashboards, compiled by the host build. */
+@source '../../vendor/falcon/analytics/resources/views/**/*.blade.php';
+
+@theme {
+    /* Chouchoute-toi identity carried over to the back-office. */
+    --color-admin-brand: #512731;
+}
