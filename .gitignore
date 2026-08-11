@@ -40,3 +40,9 @@ boost.json
 /project-management
 
 brief-portfolio.md
+
+# Audits locaux non versionnés
+AUDIT-*.md
+
+# Le package falcon/booking est developpe ici mais suit son propre depot git.
+/packages

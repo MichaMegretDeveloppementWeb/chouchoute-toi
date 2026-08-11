@@ -10,6 +10,17 @@
     "license": "MIT",
     "repositories": [
         {
+            "type": "path",
+            "url": "packages/falcon-booking",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/MichaMegretDeveloppementWeb/falcon-booking.git"
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit.git"
         },
@@ -21,6 +32,7 @@
     "require": {
         "php": "^8.5",
         "falcon/analytics": "^1.1",
+        "falcon/booking": "@dev",
         "falcon/ui-kit": "^2.3",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",

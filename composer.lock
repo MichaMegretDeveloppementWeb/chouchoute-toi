@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b03b06fdffebbf18ae7d91ae33a3c16",
+    "content-hash": "e9a7435fd0784c7c2b7d19ef831b68bd",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -793,6 +793,62 @@
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics/issues"
             },
             "time": "2026-08-07T17:02:58+00:00"
+        },
+        {
+            "name": "falcon/booking",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/falcon-booking",
+                "reference": "5da4b802b444b74efc64a4e8f2131e816a82f69d"
+            },
+            "require": {
+                "falcon/ui-kit": "^2.3",
+                "laravel/framework": "^13.0",
+                "livewire/livewire": "^4.2",
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^11.0",
+                "phpunit/phpunit": "^11.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Falcon\\Booking\\BookingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Falcon\\Booking\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Falcon\\Booking\\Tests\\": "tests/",
+                    "Falcon\\Booking\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "@php vendor/bin/phpunit"
+                ]
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Micha Megret"
+                }
+            ],
+            "description": "Online booking and agenda management for Laravel, built for independent practitioners.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "falcon/ui-kit",
@@ -9349,11 +9405,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "falcon/booking": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.4"
+        "php": "^8.5"
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"
