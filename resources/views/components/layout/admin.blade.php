@@ -42,6 +42,13 @@
 
         <x-ui.sidebar.group label="Agenda">
             <x-ui.sidebar.link
+                :href="route($booking.'agenda')"
+                icon="calendar-days"
+                :active="request()->routeIs($booking.'agenda')">
+                Ma semaine
+            </x-ui.sidebar.link>
+
+            <x-ui.sidebar.link
                 :href="route($booking.'catalogue')"
                 icon="sparkles"
                 :active="request()->routeIs($booking.'catalogue')">
