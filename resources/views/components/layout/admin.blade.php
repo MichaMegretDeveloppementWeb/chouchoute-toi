@@ -3,6 +3,10 @@
 @php
     $analytics = config('analytics.dashboard.route_name', 'analytics');
     $marketing = config('analytics.marketing.route_name', 'marketing');
+
+    // Le prefixe vient de la configuration du package, comme pour analytics :
+    // les ecrans peuvent etre montes ailleurs sans toucher a cette barre.
+    $booking = config('booking.admin.route_name', 'booking.admin.');
     $admin = auth()->guard('admin')->user();
 @endphp
 <!DOCTYPE html>
@@ -26,13 +30,29 @@
 </head>
 <body class="min-h-full antialiased">
 
-    <x-ui.sidebar brand="Chouchoute-toi" brand-icon="sparkles" brand-bg="bg-admin-brand">
+    <x-ui.sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
         <x-ui.sidebar.group label="Pilotage">
             <x-ui.sidebar.link
                 :href="route('admin.dashboard')"
                 icon="home"
                 :active="request()->routeIs('admin.dashboard')">
                 Tableau de bord
+            </x-ui.sidebar.link>
+        </x-ui.sidebar.group>
+
+        <x-ui.sidebar.group label="Agenda">
+            <x-ui.sidebar.link
+                :href="route($booking.'catalogue')"
+                icon="sparkles"
+                :active="request()->routeIs($booking.'catalogue')">
+                Prestations
+            </x-ui.sidebar.link>
+
+            <x-ui.sidebar.link
+                :href="route($booking.'settings')"
+                icon="adjustments-horizontal"
+                :active="request()->routeIs($booking.'settings')">
+                Réglages
             </x-ui.sidebar.link>
         </x-ui.sidebar.group>
 
