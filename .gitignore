@@ -46,3 +46,5 @@ AUDIT-*.md
 
 # Le package falcon/booking est developpe ici mais suit son propre depot git.
 /packages
+
+brief-audit.txt

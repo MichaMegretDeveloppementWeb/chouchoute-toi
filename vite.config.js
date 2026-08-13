@@ -16,6 +16,8 @@ export default defineConfig({
                 'resources/js/components/layout/footer.js',
                 'resources/css/ui-kit.css',
                 'resources/js/ui-kit.js',
+                // Écrans de falcon/booking : liste triable et menus d'actions.
+                'packages/falcon-booking/resources/js/booking-admin.js',
             ],
             refresh: true,
         }),

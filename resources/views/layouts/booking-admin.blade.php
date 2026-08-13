@@ -10,6 +10,6 @@
     du menu utilisateur, du thème sombre et des assets du back-office, au lieu
     de vivre dans la coquille autonome du package.
 --}}
-<x-layout.admin :title="__('booking::admin.title')">
+<x-layout.admin title="Agenda">
     @yield('content')
 </x-layout.admin>
