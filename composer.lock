@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9a7435fd0784c7c2b7d19ef831b68bd",
+    "content-hash": "982e0ec6e79fb4d122e2e1285c712ff9",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -800,7 +800,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "5da4b802b444b74efc64a4e8f2131e816a82f69d"
+                "reference": "7a2383e41f5c712287402e672d53387a2326d67c"
             },
             "require": {
                 "falcon/ui-kit": "^2.3",
