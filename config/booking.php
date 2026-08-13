@@ -68,9 +68,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // The schema always carries a practitioner. This flag only decides whether
-    // the interface exposes the notion, never whether the column exists.
-    'multi_practitioner' => false,
+    // `multi_practitioner` used to live here and drove nothing: the agenda
+    // always picks the first active practitioner. Removed with the package.
 
     'campaigns' => [
         'enabled' => true,
