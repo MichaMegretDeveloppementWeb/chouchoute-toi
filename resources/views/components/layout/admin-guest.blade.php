@@ -21,14 +21,15 @@
 </head>
 <body class="flex min-h-full items-center justify-center px-4 py-12 antialiased">
     <div class="w-full max-w-sm">
-        <div class="mb-8 flex flex-col items-center gap-y-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-admin-brand">
-                <x-ui.icon name="sparkles" class="h-6 w-6 text-white" />
-            </div>
-            <div class="text-center">
-                <h1 class="text-[17px] font-semibold tracking-tight text-primary">{{ config('app.name') }}</h1>
-                <p class="mt-0.5 text-[13px] text-secondary">Espace d'administration</p>
-            </div>
+        <div class="mb-8 flex flex-col items-center gap-y-4">
+            {{-- Le logo est un lettrage sombre sur fond clair : il lui faut son
+                 propre fond blanc pour rester lisible en mode sombre. --}}
+            <img
+                src="{{ asset('favicon/favicon.svg') }}"
+                alt="{{ config('app.name') }}"
+                class="h-28 w-28 rounded-full bg-white object-contain p-1 ring-1 ring-black/5 dark:ring-white/10"
+            />
+            <p class="text-[13px] text-secondary">Espace d'administration</p>
         </div>
 
         <x-ui.card class="shadow-sm ring-1 ring-black/5 dark:ring-white/5">
