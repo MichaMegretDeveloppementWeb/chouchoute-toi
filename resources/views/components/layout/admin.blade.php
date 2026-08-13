@@ -24,7 +24,11 @@
     {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
     @uiKitHead
 
-    @vite(['resources/css/ui-kit.css', 'resources/js/ui-kit.js'])
+    @vite([
+        'resources/css/ui-kit.css',
+        'resources/js/ui-kit.js',
+        'packages/falcon-booking/resources/js/booking-admin.js',
+    ])
 
     @livewireStyles
 </head>
@@ -45,7 +49,7 @@
                 :href="route($booking.'agenda')"
                 icon="calendar-days"
                 :active="request()->routeIs($booking.'agenda')">
-                Ma semaine
+                Planning
             </x-ui.sidebar.link>
 
             <x-ui.sidebar.link
@@ -53,6 +57,13 @@
                 icon="sparkles"
                 :active="request()->routeIs($booking.'catalogue')">
                 Prestations
+            </x-ui.sidebar.link>
+
+            <x-ui.sidebar.link
+                :href="route($booking.'categories')"
+                icon="rectangle-stack"
+                :active="request()->routeIs($booking.'categories')">
+                Catégories
             </x-ui.sidebar.link>
 
             <x-ui.sidebar.link
