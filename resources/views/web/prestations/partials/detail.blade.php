@@ -62,7 +62,7 @@
                     </p>
 
                     <div class="flex flex-wrap items-center gap-4">
-                        <a href="{{ route('contact', ['volume' => $slug]) }}" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
+                        <a href="{{ route('contact', ['volume' => $slug]) }}" data-track-event="pricing.cta.click" data-track-section="prestation-detail" data-track-prop-volume="{{ $slug }}" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
                             Réserver cette prestation
                             <x-icon.arrow-top-right />
                         </a>
@@ -106,7 +106,7 @@
                 </p>
 
                 <div class="flex flex-wrap items-center gap-4">
-                    <a href="{{ route('contact', ['volume' => 'depose']) }}" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
+                    <a href="{{ route('contact', ['volume' => 'depose']) }}" data-track-event="pricing.cta.click" data-track-section="prestation-detail" data-track-prop-volume="depose" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
                         Réserver une dépose
                         <x-icon.arrow-top-right />
                     </a>

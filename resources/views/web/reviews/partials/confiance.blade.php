@@ -8,7 +8,7 @@
             <span class="font-medium text-dark">3 ans</span> d'expérience
         </p>
 
-        <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
+        <a href="{{ route('contact') }}" data-track-event="contact.cta.click" data-track-section="avis" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
             Rejoindre mes clientes satisfaites
             <x-icon.arrow-top-right />
         </a>

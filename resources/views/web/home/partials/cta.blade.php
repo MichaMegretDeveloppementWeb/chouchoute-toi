@@ -9,7 +9,7 @@
             partout sur le bassin lémanique.
         </p>
 
-        <a href="{{ route('contact') }}" class="cta-banner__cta">
+        <a href="{{ route('contact') }}" data-track-event="contact.cta.click" data-track-section="banniere-accueil" class="cta-banner__cta">
             Prendre rendez-vous
             <x-icon.arrow-top-right />
         </a>

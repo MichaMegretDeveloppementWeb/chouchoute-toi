@@ -17,20 +17,20 @@
                 <h3 class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Contact</h3>
                 <ul class="space-y-3 text-sm">
                     <li>
-                        <a href="tel:+33671637666" class="text-white/70 transition-colors hover:text-white">
+                        <a href="tel:+33671637666" data-track-event="contact.phone.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
                             06 71 63 76 66
                         </a>
                     </li>
                     <li>
-                        <a href="mailto:dc.amandine@gmail.com" class="text-white/70 transition-colors hover:text-white">
+                        <a href="mailto:dc.amandine@gmail.com" data-track-event="contact.email.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
                             dc.amandine@gmail.com
                         </a>
                     </li>
                     <li class="flex items-center gap-3">
-                        <a href="https://www.instagram.com/chouchoutetoibyamande/" target="_blank" rel="noopener noreferrer" class="text-white/70 transition-colors hover:text-white" aria-label="Instagram">
+                        <a href="https://www.instagram.com/chouchoutetoibyamande/" target="_blank" rel="noopener noreferrer" data-track-event="social.instagram.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white" aria-label="Instagram">
                             <x-icon.instagram class="h-5 w-5" />
                         </a>
-                        <a href="https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/" target="_blank" rel="noopener noreferrer" class="text-white/70 transition-colors hover:text-white" aria-label="Facebook">
+                        <a href="https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/" target="_blank" rel="noopener noreferrer" data-track-event="social.facebook.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white" aria-label="Facebook">
                             <x-icon.facebook class="h-5 w-5" />
                         </a>
                     </li>

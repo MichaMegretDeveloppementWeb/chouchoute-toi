@@ -37,7 +37,7 @@
                         @endforeach
                     </div>
 
-                    <a href="{{ route('contact', ['volume' => $slug]) }}" class="mt-auto flex items-center justify-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
+                    <a href="{{ route('contact', ['volume' => $slug]) }}" data-track-event="pricing.cta.click" data-track-section="tarifs" data-track-prop-volume="{{ $slug }}" class="mt-auto flex items-center justify-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
                         Réserver
                         <x-icon.arrow-top-right />
                     </a>
@@ -57,7 +57,7 @@
                         <p class="text-[24px] font-light text-wine">{{ $depose['prix'] }}€</p>
                         <p class="text-xs text-charcoal/60">Durée : {{ $depose['duree'] }}</p>
                     </div>
-                    <a href="{{ route('contact', ['volume' => 'depose']) }}" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
+                    <a href="{{ route('contact', ['volume' => 'depose']) }}" data-track-event="pricing.cta.click" data-track-section="tarifs" data-track-prop-volume="depose" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark">
                         Réserver
                         <x-icon.arrow-top-right />
                     </a>

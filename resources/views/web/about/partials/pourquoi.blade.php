@@ -10,7 +10,7 @@
             nécessaire pour une prestation dans les règles de l'art.
         </p>
 
-        <a href="{{ route('contact') }}" class="cta-banner__cta">
+        <a href="{{ route('contact') }}" data-track-event="contact.cta.click" data-track-section="banniere-a-propos" class="cta-banner__cta">
             Prendre rendez-vous
             <x-icon.arrow-top-right />
         </a>

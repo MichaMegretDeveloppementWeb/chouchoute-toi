@@ -33,7 +33,7 @@
                     <p><span class="font-medium text-dark">SIRET :</span> 497 879 700 00035</p>
                     <p><span class="font-medium text-dark">Code APE :</span> 9602B — Soins de beauté</p>
                     <p><span class="font-medium text-dark">Adresse :</span> 261 rue des Tattes, 74500 Publier</p>
-                    <p><span class="font-medium text-dark">Téléphone :</span> <a href="tel:+33671637666" class="transition-colors hover:text-wine">06 71 63 76 66</a></p>
+                    <p><span class="font-medium text-dark">Téléphone :</span> <a data-track-event="contact.phone.click" data-track-section="mentions-legales" href="tel:+33671637666" class="transition-colors hover:text-wine">06 71 63 76 66</a></p>
                     <p><span class="font-medium text-dark">Email :</span> <a href="mailto:dc.amandine@gmail.com" class="transition-colors hover:text-wine">dc.amandine@gmail.com</a></p>
                     <p><span class="font-medium text-dark">TVA :</span> Non assujettie à la TVA (article 293 B du CGI)</p>
                 </div>

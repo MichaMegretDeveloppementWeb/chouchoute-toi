@@ -14,7 +14,7 @@
                 Extensions de cils à domicile sur le bassin lémanique, Évian, Thonon et alentours.
             </p>
 
-            <a href="{{ route('contact') }}" class="hero__cta">
+            <a href="{{ route('contact') }}" data-track-event="contact.cta.click" data-track-section="hero" class="hero__cta">
                 Réservez votre pose
                 <x-icon.arrow-top-right width="16" height="16" />
             </a>

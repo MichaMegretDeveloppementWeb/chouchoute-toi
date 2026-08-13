@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Mail\ContactMail;
+use Falcon\Analytics\Facades\Analytics;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -109,6 +110,14 @@ class ContactForm extends Component
             'prestation' => $this->prestation,
             'message' => $this->message,
         ]));
+
+        // Recorded here rather than on the click: only the server knows the mail
+        // actually left. Deferred, no-op for excluded traffic, never throws.
+        Analytics::record('contact.request.submitted', props: [
+            'volume' => $this->volume ?: null,
+            'prestation' => $this->prestation ?: null,
+            'commune' => $this->commune ?: null,
+        ]);
 
         $this->reset(['name', 'email', 'phone', 'commune', 'volume', 'prestation', 'message']);
         $this->sent = true;
