@@ -75,6 +75,13 @@
             </x-ui.sidebar.link>
 
             <x-ui.sidebar.link
+                :href="route($booking.'schedule')"
+                icon="clock"
+                :active="request()->routeIs($booking.'schedule')">
+                Horaires
+            </x-ui.sidebar.link>
+
+            <x-ui.sidebar.link
                 :href="route($booking.'settings')"
                 icon="adjustments-horizontal"
                 :active="request()->routeIs($booking.'settings')">
