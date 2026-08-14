@@ -33,7 +33,7 @@ final class SidebarNavigationTest extends TestCase
     {
         $shell = $this->shell();
 
-        foreach (['Agenda', 'Audience', 'Marketing'] as $section) {
+        foreach (['Agenda', 'Réglages', 'Audience', 'Marketing'] as $section) {
             $this->assertStringContainsString($section, $shell);
         }
 
@@ -42,12 +42,13 @@ final class SidebarNavigationTest extends TestCase
 
     /**
      * The bar renders twice, once per breakpoint, and the slot is compiled once
-     * then echoed into both. Three sections therefore have to appear six times:
-     * anything else means one of the two renderings has been lost.
+     * then echoed into both. Four sections, Reglages nested inside Agenda,
+     * therefore have to appear eight times: anything else means one of the two
+     * renderings has been lost.
      */
     public function test_the_bar_renders_its_sections_once_per_breakpoint(): void
     {
-        $this->assertSame(6, substr_count($this->shell(), 'x-collapse'));
+        $this->assertSame(8, substr_count($this->shell(), 'x-collapse'));
     }
 
     /**
@@ -58,9 +59,9 @@ final class SidebarNavigationTest extends TestCase
     {
         $shell = $this->shell();
 
-        $this->assertSame(6, substr_count($shell, "x-id=\"['ui-sidebar-sous-menu']\""));
-        $this->assertSame(6, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-sous-menu\')"'));
-        $this->assertSame(6, substr_count($shell, ':id="$id(\'ui-sidebar-sous-menu\')"'));
+        $this->assertSame(8, substr_count($shell, "x-id=\"['ui-sidebar-sous-menu']\""));
+        $this->assertSame(8, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-sous-menu\')"'));
+        $this->assertSame(8, substr_count($shell, ':id="$id(\'ui-sidebar-sous-menu\')"'));
     }
 
     public function test_the_section_holding_the_current_page_opens_by_itself(): void
@@ -72,13 +73,13 @@ final class SidebarNavigationTest extends TestCase
         // ever reads the attribute, so this is what actually ships.
         $this->assertStringContainsString('$persist(false).as(&#039;ui-sidebar-agenda&#039;)', $shell);
         $this->assertSame(2, substr_count($shell, 'actif: true'));
-        $this->assertSame(4, substr_count($shell, 'actif: false'));
+        $this->assertSame(6, substr_count($shell, 'actif: false'));
     }
 
     /**
-     * Journal comes last and Horaires sits next to Reglages: the order on
-     * screen is the order in the file, and a reordering that silently reverts
-     * would otherwise go unnoticed.
+     * The order on screen is the order in the file, and a reordering that
+     * silently reverts would otherwise go unnoticed. Horaires is no longer in
+     * this list: it sits inside Reglages now.
      */
     public function test_the_agenda_section_lists_its_screens_in_order(): void
     {
@@ -87,7 +88,7 @@ final class SidebarNavigationTest extends TestCase
 
         $rangs = [];
 
-        foreach (['agenda', 'catalogue', 'categories', 'schedule', 'settings', 'journal'] as $ecran) {
+        foreach (['agenda', 'catalogue', 'categories', 'journal', 'settings'] as $ecran) {
             $rangs[$ecran] = strpos($shell, route($booking.$ecran));
         }
 

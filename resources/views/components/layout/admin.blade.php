@@ -84,22 +84,47 @@
                 </x-ui.sidebar.link>
 
                 <x-ui.sidebar.link
-                    :href="route($booking.'schedule')"
-                    :active="request()->routeIs($booking.'schedule')">
-                    Horaires
-                </x-ui.sidebar.link>
-
-                <x-ui.sidebar.link
-                    :href="route($booking.'settings')"
-                    :active="request()->routeIs($booking.'settings')">
-                    Réglages
-                </x-ui.sidebar.link>
-
-                <x-ui.sidebar.link
                     :href="route($booking.'journal')"
                     :active="request()->routeIs($booking.'journal')">
                     Journal
                 </x-ui.sidebar.link>
+
+                {{-- Un troisième niveau : les réglages sont une section, une page
+                     par famille, et les horaires en font partie. --}}
+                <x-ui.sidebar.collapsible
+                    name="reglages"
+                    label="Réglages"
+                    :active="request()->routeIs($booking.'settings*') || request()->routeIs($booking.'schedule')">
+                    <x-ui.sidebar.link
+                        :href="route($booking.'settings')"
+                        :active="request()->routeIs($booking.'settings')">
+                        Établissement
+                    </x-ui.sidebar.link>
+
+                    <x-ui.sidebar.link
+                        :href="route($booking.'schedule')"
+                        :active="request()->routeIs($booking.'schedule')">
+                        Horaires
+                    </x-ui.sidebar.link>
+
+                    <x-ui.sidebar.link
+                        :href="route($booking.'settings.slots')"
+                        :active="request()->routeIs($booking.'settings.slots')">
+                        Créneaux
+                    </x-ui.sidebar.link>
+
+                    <x-ui.sidebar.link
+                        :href="route($booking.'settings.booking-window')"
+                        :active="request()->routeIs($booking.'settings.booking-window')">
+                        Réservation
+                    </x-ui.sidebar.link>
+
+                    <x-ui.sidebar.link
+                        :href="route($booking.'settings.clients')"
+                        :active="request()->routeIs($booking.'settings.clients')">
+                        Vos clientes
+                    </x-ui.sidebar.link>
+                </x-ui.sidebar.collapsible>
             </x-ui.sidebar.collapsible>
 
             <x-ui.sidebar.collapsible
