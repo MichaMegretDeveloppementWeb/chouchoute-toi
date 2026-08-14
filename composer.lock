@@ -800,7 +800,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "3edd03b4563c09746cc7993a09a71967197a4828"
+                "reference": "915d72be110f2299f6b2d2c33978cb9b13278cf3"
             },
             "require": {
                 "falcon/ui-kit": "^2.3",
@@ -852,16 +852,16 @@
         },
         {
             "name": "falcon/ui-kit",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "dc029d3429ac17a26512824c6f81c38a4ca87850"
+                "reference": "2c16ed1fbe584b32e6cec9ecdce1c0986a2f4518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/dc029d3429ac17a26512824c6f81c38a4ca87850",
-                "reference": "dc029d3429ac17a26512824c6f81c38a4ca87850",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/2c16ed1fbe584b32e6cec9ecdce1c0986a2f4518",
+                "reference": "2c16ed1fbe584b32e6cec9ecdce1c0986a2f4518",
                 "shasum": ""
             },
             "require": {
@@ -892,10 +892,10 @@
             ],
             "description": "Design system for Laravel admin interfaces — Blade components, tokens, and Claude Code documentation.",
             "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.4.0",
+                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.4.1",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-08-14T14:10:20+00:00"
+            "time": "2026-08-14T16:30:03+00:00"
         },
         {
             "name": "fruitcake/php-cors",
