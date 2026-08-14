@@ -1,4 +1,12 @@
-@props(['title' => 'Administration'])
+{{--
+    `wide` retire la largeur maximale et les marges du contenu.
+
+    La colonne centrée convient à un formulaire ou à une liste, qu'on lit sur
+    une ligne courte. Elle est fausse pour une grille temporelle : sur un grand
+    écran elle laisse près d'un tiers de la largeur vide alors que chaque
+    colonne de jour gagne à respirer.
+--}}
+@props(['title' => 'Administration', 'wide' => false])
 
 @php
     $analytics = config('analytics.dashboard.route_name', 'analytics');
@@ -174,7 +182,10 @@
         </header>
 
         <main class="flex-1">
-            <div class="mx-auto max-w-[90em] px-4 py-6 sm:px-6 sm:py-8">
+            <div @class([
+                'mx-auto max-w-[90em] px-4 py-6 sm:px-6 sm:py-8' => ! $wide,
+                'h-full' => $wide,
+            ])>
                 {{ $slot }}
             </div>
         </main>

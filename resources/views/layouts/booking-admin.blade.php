@@ -10,6 +10,9 @@
     du menu utilisateur, du thème sombre et des assets du back-office, au lieu
     de vivre dans la coquille autonome du package.
 --}}
-<x-layout.admin title="Agenda">
+{{-- Le titre vient de l'écran, pas de la famille de pages : la barre du haut
+     annonce « Planning » ou « Prestations », et non « Agenda » pour les quatre.
+     Le repli couvre un écran du package qui n'en fournirait pas. --}}
+<x-layout.admin :title="$bookingTitle ?? 'Agenda'" :wide="$bookingWide ?? false">
     @yield('content')
 </x-layout.admin>
