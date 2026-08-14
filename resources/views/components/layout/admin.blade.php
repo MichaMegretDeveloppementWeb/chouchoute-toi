@@ -82,6 +82,13 @@
             </x-ui.sidebar.link>
 
             <x-ui.sidebar.link
+                :href="route($booking.'journal')"
+                icon="clipboard-document-list"
+                :active="request()->routeIs($booking.'journal')">
+                Journal
+            </x-ui.sidebar.link>
+
+            <x-ui.sidebar.link
                 :href="route($booking.'settings')"
                 icon="adjustments-horizontal"
                 :active="request()->routeIs($booking.'settings')">
