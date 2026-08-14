@@ -11,9 +11,6 @@
 @import '../../vendor/falcon/ui-kit/resources/css/preset.css';
 @source '../../vendor/falcon/ui-kit/resources/views/**/*.blade.php';
 
-/* Composants du kit publies localement pour personnalisation. */
-@source '../views/components/ui/**/*.blade.php';
-
 /* Back-office screens: shell, admin views, admin Livewire components. */
 @source '../views/components/layout/admin*.blade.php';
 @source '../views/layouts/admin.blade.php';

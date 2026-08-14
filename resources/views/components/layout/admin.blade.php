@@ -42,134 +42,139 @@
 </head>
 <body class="min-h-full antialiased">
 
+    {{--
+        Un seul groupe : les sections sont maintenant des sous-menus repliables,
+        et l'etiquette de groupe ferait doublon avec leur libelle.
+
+        L'etat actif d'une section se calcule sur le prefixe de ses routes, pas
+        sur la liste de ses liens : « Integrations » n'apparait que si la Search
+        Console est configuree, donc la section ne peut pas se deduire de ce
+        qu'elle contient.
+    --}}
     <x-ui.sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
-        <x-ui.sidebar.group label="Pilotage">
+        <x-ui.sidebar.group>
             <x-ui.sidebar.link
                 :href="route('admin.dashboard')"
                 icon="home"
                 :active="request()->routeIs('admin.dashboard')">
                 Tableau de bord
             </x-ui.sidebar.link>
-        </x-ui.sidebar.group>
 
-        <x-ui.sidebar.group label="Agenda">
-            <x-ui.sidebar.link
-                :href="route($booking.'agenda')"
+            <x-ui.sidebar.collapsible
+                name="agenda"
+                label="Agenda"
                 icon="calendar-days"
-                :active="request()->routeIs($booking.'agenda')">
-                Planning
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($booking.'catalogue')"
-                icon="sparkles"
-                :active="request()->routeIs($booking.'catalogue')">
-                Prestations
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($booking.'categories')"
-                icon="rectangle-stack"
-                :active="request()->routeIs($booking.'categories')">
-                Catégories
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($booking.'schedule')"
-                icon="clock"
-                :active="request()->routeIs($booking.'schedule')">
-                Horaires
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($booking.'journal')"
-                icon="clipboard-document-list"
-                :active="request()->routeIs($booking.'journal')">
-                Journal
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($booking.'settings')"
-                icon="adjustments-horizontal"
-                :active="request()->routeIs($booking.'settings')">
-                Réglages
-            </x-ui.sidebar.link>
-        </x-ui.sidebar.group>
-
-        <x-ui.sidebar.group label="Audience">
-            <x-ui.sidebar.link
-                :href="route($analytics.'.overview')"
-                icon="chart-pie"
-                :active="request()->routeIs($analytics.'.overview')">
-                Vue d'ensemble
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($analytics.'.realtime')"
-                icon="signal"
-                :active="request()->routeIs($analytics.'.realtime')">
-                Temps réel
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($analytics.'.visitors')"
-                icon="user-group"
-                :active="request()->routeIs($analytics.'.visitors*')">
-                Visiteurs
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($analytics.'.sessions')"
-                icon="users"
-                :active="request()->routeIs($analytics.'.sessions*')">
-                Sessions
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($analytics.'.events')"
-                icon="bolt"
-                :active="request()->routeIs($analytics.'.events')">
-                Événements
-            </x-ui.sidebar.link>
-
-            <x-ui.sidebar.link
-                :href="route($analytics.'.funnels')"
-                icon="funnel"
-                :active="request()->routeIs($analytics.'.funnels')">
-                Tunnels
-            </x-ui.sidebar.link>
-
-            @if (trim((string) config('analytics.search_console.client_id')) !== '')
+                :active="request()->routeIs($booking.'*')">
                 <x-ui.sidebar.link
-                    :href="route($analytics.'.integrations')"
-                    icon="puzzle-piece"
-                    :active="request()->routeIs($analytics.'.integrations*')">
-                    Intégrations
+                    :href="route($booking.'agenda')"
+                    :active="request()->routeIs($booking.'agenda')">
+                    Planning
                 </x-ui.sidebar.link>
-            @endif
-        </x-ui.sidebar.group>
 
-        <x-ui.sidebar.group label="Marketing">
-            <x-ui.sidebar.link
-                :href="route($marketing.'.dashboard')"
-                icon="presentation-chart-line"
-                :active="request()->routeIs($marketing.'.dashboard')">
-                Vue d'ensemble
-            </x-ui.sidebar.link>
+                <x-ui.sidebar.link
+                    :href="route($booking.'catalogue')"
+                    :active="request()->routeIs($booking.'catalogue')">
+                    Prestations
+                </x-ui.sidebar.link>
 
-            <x-ui.sidebar.link
-                :href="route($marketing.'.campaigns')"
+                <x-ui.sidebar.link
+                    :href="route($booking.'categories')"
+                    :active="request()->routeIs($booking.'categories')">
+                    Catégories
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($booking.'schedule')"
+                    :active="request()->routeIs($booking.'schedule')">
+                    Horaires
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($booking.'settings')"
+                    :active="request()->routeIs($booking.'settings')">
+                    Réglages
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($booking.'journal')"
+                    :active="request()->routeIs($booking.'journal')">
+                    Journal
+                </x-ui.sidebar.link>
+            </x-ui.sidebar.collapsible>
+
+            <x-ui.sidebar.collapsible
+                name="audience"
+                label="Audience"
+                icon="chart-pie"
+                :active="request()->routeIs($analytics.'.*')">
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.overview')"
+                    :active="request()->routeIs($analytics.'.overview')">
+                    Vue d'ensemble
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.realtime')"
+                    :active="request()->routeIs($analytics.'.realtime')">
+                    Temps réel
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.visitors')"
+                    :active="request()->routeIs($analytics.'.visitors*')">
+                    Visiteurs
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.sessions')"
+                    :active="request()->routeIs($analytics.'.sessions*')">
+                    Sessions
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.events')"
+                    :active="request()->routeIs($analytics.'.events')">
+                    Événements
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($analytics.'.funnels')"
+                    :active="request()->routeIs($analytics.'.funnels')">
+                    Tunnels
+                </x-ui.sidebar.link>
+
+                @if (trim((string) config('analytics.search_console.client_id')) !== '')
+                    <x-ui.sidebar.link
+                        :href="route($analytics.'.integrations')"
+                        :active="request()->routeIs($analytics.'.integrations*')">
+                        Intégrations
+                    </x-ui.sidebar.link>
+                @endif
+            </x-ui.sidebar.collapsible>
+
+            <x-ui.sidebar.collapsible
+                name="marketing"
+                label="Marketing"
                 icon="megaphone"
-                :active="request()->routeIs($marketing.'.campaigns*')">
-                Campagnes
-            </x-ui.sidebar.link>
+                :active="request()->routeIs($marketing.'.*')">
+                <x-ui.sidebar.link
+                    :href="route($marketing.'.dashboard')"
+                    :active="request()->routeIs($marketing.'.dashboard')">
+                    Vue d'ensemble
+                </x-ui.sidebar.link>
 
-            <x-ui.sidebar.link
-                :href="route($marketing.'.ads')"
-                icon="cursor-arrow-rays"
-                :active="request()->routeIs($marketing.'.ads*')">
-                Publicités
-            </x-ui.sidebar.link>
+                <x-ui.sidebar.link
+                    :href="route($marketing.'.campaigns')"
+                    :active="request()->routeIs($marketing.'.campaigns*')">
+                    Campagnes
+                </x-ui.sidebar.link>
+
+                <x-ui.sidebar.link
+                    :href="route($marketing.'.ads')"
+                    :active="request()->routeIs($marketing.'.ads*')">
+                    Publicités
+                </x-ui.sidebar.link>
+            </x-ui.sidebar.collapsible>
         </x-ui.sidebar.group>
 
         <x-slot:user>
