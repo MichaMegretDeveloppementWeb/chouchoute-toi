@@ -122,7 +122,7 @@
                     <x-ui.sidebar.link
                         :href="route($booking.'settings.clients')"
                         :active="request()->routeIs($booking.'settings.clients')">
-                        Vos clientes
+                        Clients
                     </x-ui.sidebar.link>
                 </x-ui.sidebar.collapsible>
             </x-ui.sidebar.collapsible>
