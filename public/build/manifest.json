@@ -1,11 +1,11 @@
 {
   "packages/falcon-booking/resources/js/booking-admin.js": {
-    "file": "assets/booking-admin-CTgUG7oB.js",
+    "file": "assets/booking-admin-BcnXqh5l.js",
     "name": "booking-admin",
     "src": "packages/falcon-booking/resources/js/booking-admin.js",
     "isEntry": true,
     "css": [
-      "assets/booking-admin-CaAYHURV.css"
+      "assets/booking-admin-BOiTYj2o.css"
     ]
   },
   "resources/css/app.css": {
