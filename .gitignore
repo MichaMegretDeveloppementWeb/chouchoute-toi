@@ -33,7 +33,10 @@ optimize-google-sheet.md
 .mcp.json
 boost.json
 
-.ai
+# `.ai` n'est pas ignore : les regles qu'il contient sont versionnees et
+# partagees. Ignore alors que ses fichiers etaient suivis, il ne les sortait pas
+# du depot mais refusait tout `git add` sans `-f` : une regle ecrite par
+# quelqu'un restait invisible au commit, sans que rien ne le dise.
 .claude
 .codex
 .gemini
