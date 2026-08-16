@@ -63,3 +63,23 @@ Mesuré sur le filtre du Journal : `class="w-48"` rendait un champ de 1392 px au
 La largeur va sur un bloc autour du champ, jamais sur le champ. `x-ui.search-input` expose `wrapper-class` exactement pour ça ; les autres champs n'ont pas d'équivalent, donc on écrit le bloc à la main.
 
 Et penser à `npm run build` : une combinaison de classes jamais utilisée ailleurs (`sm:w-48`) n'existe pas encore dans le CSS, et la correction semble sans effet tant qu'on n'a pas régénéré.
+
+## Une classe ne s'annule pas en en ajoutant une autre du même utilitaire
+Même cause que ci-dessus, et elle ne concerne pas que le kit : elle vaut pour nos propres variables de classes. Deux valeurs d'un même utilitaire ont la même spécificité, donc c'est l'ordre de la **feuille générée** qui tranche, jamais l'ordre d'écriture. Écrire `{{ $base }} px-0` pour retirer le `px-4` de `$base` ne retire rien, et rien ne le signale.
+
+Trois cas mesurés dans le seul formulaire de rendez-vous :
+
+| Écrit | Rendu | Conséquence |
+| --- | --- | --- |
+| `$rangeeNue` + `px-0` | `px-4` | barre de gestes à 16 px des bords, filet trop court |
+| `$rangeeNue` + `gap-x-0` | `gap-x-3` | filet à 12 px du milieu entre deux cases égales |
+| `$valeur` + `text-muted` | `text-primary` | l'heure de fin, calculée, s'affichait comme une valeur qu'on saisit |
+
+Les variantes ne se neutralisent pas non plus entre elles : `sm:pr-0` ne défait pas `sm:px-2.5`.
+
+Deux façons de s'en sortir, dans cet ordre :
+
+1. **Extraire la mesure de ce qui varie.** `$mesure` sans couleur, puis `$texte = $mesure.' text-primary'` et le point d'appel écrit sa propre couleur. C'est ce que fait le formulaire pour ses valeurs.
+2. **Ne pas réutiliser la variable** quand l'élément en veut trop peu : écrire ses classes en clair vaut mieux qu'un empilement qui ne marche pas. C'est ce que fait la barre de gestes.
+
+Un retrait négatif (`-mx-4`) est un autre utilitaire, donc lui l'emporte — mais il déplace la boîte au lieu de retirer le retrait, ce qui n'est pas la même chose dès qu'un filet ou un fond entre en jeu.
