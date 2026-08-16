@@ -65,7 +65,7 @@ La largeur va sur un bloc autour du champ, jamais sur le champ. `x-ui.search-inp
 Et penser à `npm run build` : une combinaison de classes jamais utilisée ailleurs (`sm:w-48`) n'existe pas encore dans le CSS, et la correction semble sans effet tant qu'on n'a pas régénéré.
 
 ## Une classe ne s'annule pas en en ajoutant une autre du même utilitaire
-Même cause que ci-dessus, et elle ne concerne pas que le kit : elle vaut pour nos propres variables de classes. Deux valeurs d'un même utilitaire ont la même spécificité, donc c'est l'ordre de la **feuille générée** qui tranche, jamais l'ordre d'écriture. Écrire `{{ $base }} px-0` pour retirer le `px-4` de `$base` ne retire rien, et rien ne le signale.
+Même cause que ci-dessus, et pas seulement pour le kit : elle vaut pour nos propres variables de classes. Écrire `{{ $base }} px-0` pour retirer le `px-4` de `$base` ne retire rien, et rien ne le signale. Les variantes ne se neutralisent pas non plus entre elles : `sm:pr-0` ne défait pas `sm:px-2.5`.
 
 Trois cas mesurés dans le seul formulaire de rendez-vous :
 
@@ -75,11 +75,6 @@ Trois cas mesurés dans le seul formulaire de rendez-vous :
 | `$rangeeNue` + `gap-x-0` | `gap-x-3` | filet à 12 px du milieu entre deux cases égales |
 | `$valeur` + `text-muted` | `text-primary` | l'heure de fin, calculée, s'affichait comme une valeur qu'on saisit |
 
-Les variantes ne se neutralisent pas non plus entre elles : `sm:pr-0` ne défait pas `sm:px-2.5`.
+Deux façons de s'en sortir : **extraire la mesure de ce qui varie** (`$mesure` sans couleur, `$texte = $mesure.' text-primary'`, le point d'appel écrit la sienne), ou **ne pas réutiliser la variable** quand l'élément en veut trop peu.
 
-Deux façons de s'en sortir, dans cet ordre :
-
-1. **Extraire la mesure de ce qui varie.** `$mesure` sans couleur, puis `$texte = $mesure.' text-primary'` et le point d'appel écrit sa propre couleur. C'est ce que fait le formulaire pour ses valeurs.
-2. **Ne pas réutiliser la variable** quand l'élément en veut trop peu : écrire ses classes en clair vaut mieux qu'un empilement qui ne marche pas. C'est ce que fait la barre de gestes.
-
-Un retrait négatif (`-mx-4`) est un autre utilitaire, donc lui l'emporte — mais il déplace la boîte au lieu de retirer le retrait, ce qui n'est pas la même chose dès qu'un filet ou un fond entre en jeu.
+Un retrait négatif (`-mx-4`) est un autre utilitaire, donc il passe — mais il déplace la boîte au lieu de retirer le retrait, ce qui diffère dès qu'un filet ou un fond entre en jeu.
