@@ -78,3 +78,16 @@ Trois cas mesurés dans le seul formulaire de rendez-vous :
 Deux façons de s'en sortir : **extraire la mesure de ce qui varie** (`$mesure` sans couleur, `$texte = $mesure.' text-primary'`, le point d'appel écrit la sienne), ou **ne pas réutiliser la variable** quand l'élément en veut trop peu.
 
 Un retrait négatif (`-mx-4`) est un autre utilitaire, donc il passe — mais il déplace la boîte au lieu de retirer le retrait, ce qui diffère dès qu'un filet ou un fond entre en jeu.
+
+## Dans une modale du kit, click.outside est mort sans .capture
+Le panneau blanc de `<x-ui.modal>` porte `@click.stop` (vendor/falcon/ui-kit/.../ui/modal.blade.php). Alpine enregistre `click.outside` sur `document` **en phase de bulle** : aucun clic tombant dans la modale ne l'atteint donc jamais. La directive n'est pas cassée, elle est hors de portée, et rien ne le signale.
+
+Symptôme : une liste déroulante qui ne se ferme que si l'on clique dans la marge autour du panneau blanc. Trois panneaux du formulaire de rendez-vous en souffraient ; deux le masquaient par leur `focusout`.
+
+Correctif : ajouter `.capture` (`x-on:click.outside.capture`). La capture descend du document vers la cible, donc elle passe avant le `stopPropagation`.
+
+Quand le « dedans » n'est pas tout `$el` — une rangée qui porte d'autres champs que le déclencheur et son panneau — écouter `click.window.capture` et tester soi-même la containment sur deux `x-ref`.
+
+Échap : la modale écoute `keydown.escape.window`. Un panneau qui stoppe à vide empêche la modale de se refermer. Ne stopper que s'il y avait quelque chose à fermer : `x-on:keydown.escape="if (ouvert) { $event.stopPropagation(); ouvert = false }"`.
+
+Diagnostic : poser deux écouteurs sur document, un en capture et un en bulle, et cliquer. Vu en capture seulement = le stopPropagation est en cause.
