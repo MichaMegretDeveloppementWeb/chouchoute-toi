@@ -1,11 +1,11 @@
 /*
  * Falcon UI Kit · back-office CSS entrypoint.
  *
- * Loads Tailwind, the forms plugin, the DM Sans face and the kit preset
+ * Loads Tailwind, the forms plugin, the text face and the kit preset
  * (dark mode, tokens, scrollbars). Pulled in by the back-office layout only:
  * the public site keeps app.css untouched.
  */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @import '../../vendor/falcon/ui-kit/resources/css/preset.css';
@@ -23,7 +23,79 @@
 @theme {
     /* Chouchoute-toi identity carried over to the back-office. */
     --color-admin-brand: #512731;
+
+    /*
+     * Open Sans plutot que la DM Sans du kit.
+     *
+     * Ce bloc suit l'import du preset, donc il gagne : le point d'extension est
+     * prevu, rien n'est touche dans le vendor.
+     *
+     * La reference de ce projet ecrit ses valeurs de formulaire en 13 px gras
+     * 600, comme nous. Ce qui differait etait la famille : la DM Sans a une
+     * hauteur d'x plus faible et un gras plus serre, d'ou une lecture a la fois
+     * plus petite et plus lourde a mesures egales. Reprendre la famille rend ses
+     * mesures transposables telles quelles.
+     *
+     * Le site public garde la sienne : cet entrypoint n'est charge que par le
+     * shell d'administration.
+     */
+    --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 /* falcon/booking · vues du package, compilees par le build de l’hote. */
 @source '../../vendor/falcon/booking/resources/views/**/*.blade.php';
+
+/*
+ * ── Le focus d'un champ ───────────────────────────────────────────────────
+ *
+ * Un filet vert d'un pixel, sur toute l'administration.
+ *
+ * Le kit n'expose aucun jeton de focus : chaque composant ecrit
+ * `focus:ring-gray-900` en dur, et `search-input` diverge deja en gray-300. Les
+ * recolorer un par un demanderait de publier six composants et de suivre leurs
+ * montees de version.
+ *
+ * Ces regles vivent hors de tout `@layer`, donc elles l'emportent sur les
+ * utilitaires de Tailwind quelle que soit la specificite, sans `!important`. La
+ * feuille de falcon/booking se sert deja de ce mecanisme pour le contour de la
+ * modale.
+ *
+ * Ce que ca corrige : l'anneau etait noir et epais. Il devient un filet qui
+ * change de couleur sans changer de largeur, donc rien ne se decale au focus.
+ */
+:root {
+    --fb-focus: #48bb78;
+
+    /* Le trait au repos d'un champ et d'une rangee, releve sur la reference.
+       Un gris legerement plus clair et plus vert que le gris-200 du kit. */
+    --fb-trait: #eceeed;
+}
+
+.dark {
+    --fb-trait: var(--color-gray-800);
+}
+
+/*
+ * Les cases a cocher et les boutons radio ne prennent que la couleur : leur
+ * anneau vient du plugin de formulaires, pose a l'exterieur et double d'un
+ * liseré blanc. Lui imposer `inset` le ferait disparaitre sous la coche.
+ */
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+    --tw-ring-color: var(--fb-focus);
+}
+
+/*
+ * `:not([class*='ring-0'])` : un contrôle qui demande zero anneau n'en recoit
+ * pas. Les champs poses nus dans une boite encadree portent `focus:ring-0`
+ * justement pour laisser le cadre le dessiner ; leur imposer une largeur ici
+ * faisait apparaitre un second filet vert a l'interieur du premier.
+ */
+input:not([type='checkbox']):not([type='radio']):not([class*='ring-0']):focus,
+select:not([class*='ring-0']):focus,
+textarea:not([class*='ring-0']):focus,
+[class*='focus-within:ring']:not([class*='focus-within:ring-0']):focus-within {
+    --tw-ring-color: var(--fb-focus);
+    --tw-ring-shadow: inset 0 0 0 1px var(--fb-focus);
+}
