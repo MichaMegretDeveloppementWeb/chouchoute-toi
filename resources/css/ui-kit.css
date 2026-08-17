@@ -67,13 +67,37 @@
 :root {
     --fb-focus: #48bb78;
 
-    /* Le trait au repos d'un champ et d'une rangee, releve sur la reference.
-       Un gris legerement plus clair et plus vert que le gris-200 du kit. */
+    /*
+     * La palette du formulaire, relevee sur la reference.
+     *
+     * Elle est vert-gris la ou les gris de Tailwind sont bleu-gris. Sur un
+     * champ la difference ne se voit pas ; sur un formulaire entier c'est la
+     * temperature qui change. Cinq valeurs, nommees une fois :
+     *
+     *   encre        ce qu'on lit, valeurs et gestes
+     *   encre-2      le secondaire, titres et liants
+     *   muet         libelles, invites, ce qui est calcule
+     *   trait        le filet d'un champ ou d'une rangee au repos
+     *   trait-fort   un filet qui doit se voir, comme celui d'un bouton
+     *   case-grise   le fond d'une valeur qu'on ne saisit pas
+     */
+    --fb-encre: #34423e;
+    --fb-encre-2: #5f706a;
+    --fb-muet: #7f8c88;
     --fb-trait: #eceeed;
+    --fb-trait-fort: #98a29f;
+    --fb-case-grise: #eceeed;
+    --fb-cellule: #f9f9f9;
 }
 
 .dark {
+    --fb-encre: var(--color-gray-100);
+    --fb-encre-2: var(--color-gray-300);
+    --fb-muet: var(--color-gray-400);
     --fb-trait: var(--color-gray-800);
+    --fb-trait-fort: var(--color-gray-600);
+    --fb-case-grise: var(--color-gray-800);
+    --fb-cellule: var(--color-gray-800);
 }
 
 /*
