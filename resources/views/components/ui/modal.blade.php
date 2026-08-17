@@ -28,30 +28,52 @@ $maxWidth = match($variant) {
     // Media-heavy panels (image cropping, side-by-side diffs) need the screen, not a column.
     'wide' => 'max-w-[min(90rem,92vw)]',
     'form' => 'max-w-[1100px]',
+    // A list to pick from, over a form: narrower than the form, anchored at the top.
+    'picker' => 'max-w-[662px]',
     default => 'max-w-lg',
 };
+
+// Le selecteur s'ancre en haut, comme la reference : ce qu'on cherche se lit
+// depuis le debut, et il ne bouge pas quand la liste filtree raccourcit.
+$alignement = $variant === 'picker' ? 'items-start pt-[44px]' : 'items-center';
 
 // Le panneau du formulaire se detache par sa couleur, pas par un contour : un
 // cadre et une ombre par-dessus un voile sombre dessinent un lisere dur, la ou
 // la reference n'a ni l'un ni l'autre.
-$panneau = $variant === 'form'
-    ? 'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--fb-cellule)] transition duration-200 ease-out dark:bg-gray-950'
-    : 'relative w-full rounded-xl border border-gray-200 bg-white shadow-xl transition duration-200 ease-out dark:border-gray-700 dark:bg-gray-900 dark:shadow-2xl dark:shadow-black/20';
+$panneau = match ($variant) {
+    'form' => 'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--fb-cellule)] transition duration-200 ease-out dark:bg-gray-950',
+    'picker' => 'relative w-full overflow-hidden rounded-md bg-white transition duration-200 ease-out dark:bg-gray-900',
+    default => 'relative w-full rounded-xl border border-gray-200 bg-white shadow-xl transition duration-200 ease-out dark:border-gray-700 dark:bg-gray-900 dark:shadow-2xl dark:shadow-black/20',
+};
 @endphp
 
-<div x-data="{ open: false }"
+{{-- Un seul chemin de sortie, `fermer()`, qui emet `close-modal` : Echap, le
+     voile et le bouton faisaient `open = false` sans rien dire, et la pile de
+     modales du back-office, qui rend le focus et pose le piege de tabulation,
+     n'apprenait jamais la fermeture.
+
+     Echap ne repond que sur la modale du dessus, marquee par cette pile : deux
+     modales ouvertes, une confirmation par-dessus un formulaire, se fermaient
+     d'un coup. --}}
+<div x-data="{
+        open: false,
+        fermer() {
+            if (! this.open) return;
+            this.$dispatch('close-modal', '{{ $name }}');
+        },
+     }"
      x-on:open-modal.window="if ($event.detail === '{{ $name }}') open = true"
      x-on:close-modal.window="if ($event.detail === '{{ $name }}') open = false"
-     x-on:keydown.escape.window="open = false"
+     x-on:keydown.escape.window="if ($el.hasAttribute('data-fb-modale-dessus') || ! document.querySelector('[data-fb-modale-dessus]')) fermer()"
      x-show="open"
      x-cloak
      {{ $attributes->merge(['class' => 'fixed inset-0 z-50']) }}>
 
     {{-- Backdrop --}}
-    <div x-show="open" x-transition.opacity class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm dark:bg-black/60" @click="open = false"></div>
+    <div x-show="open" x-transition.opacity class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm dark:bg-black/60" @click="fermer()"></div>
 
     {{-- Panel --}}
-    <div class="flex min-h-full items-center justify-center p-4">
+    <div class="flex min-h-full {{ $alignement }} justify-center p-4">
         {{-- The animation runs on classes, not on x-show. The panel is a descendant of an
              element that x-show hides, and an enter transition started while that ancestor is
              still display:none never completes: the panel stayed invisible on the first open
@@ -61,7 +83,9 @@ $panneau = $variant === 'form'
              class="{{ $panneau }} {{ $maxWidth }}"
              @if($variant === 'form') style="max-height: 90vh" @endif>
 
-            @if($variant === 'form')
+            @if($variant === 'picker')
+                {{ $slot }}
+            @elseif($variant === 'form')
                 {{-- En-tete blanc : le titre a gauche, fermer et valider a droite en
                      deux boutons carres de 39 px. Mesures : 52 de haut, retrait
                      6 28 5, titre 15/700 dans l'encre secondaire. --}}
@@ -70,7 +94,7 @@ $panneau = $variant === 'form'
                         <h3 class="min-w-0 flex-1 truncate text-[15px] font-bold leading-6 text-[var(--fb-encre-2)]">{{ $title }}</h3>
                     @endif
 
-                    <button type="button" @click="open = false"
+                    <button type="button" @click="fermer()"
                         class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)]"
                         aria-label="Fermer">
                         <x-ui.icon name="arrow-left" class="h-5 w-5" />
@@ -79,7 +103,7 @@ $panneau = $variant === 'form'
                     @if($onValidate)
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-[var(--fb-focus)] text-white transition-colors hover:brightness-95 disabled:opacity-60"
+                            class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                             aria-label="Enregistrer">
                             <x-ui.icon name="check" class="h-5 w-5" stroke-width="2.5" />
                         </button>
@@ -127,7 +151,7 @@ $panneau = $variant === 'form'
                 @if($title)
                 <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
                     <h3 class="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{{ $title }}</h3>
-                    <button type="button" @click="open = false" class="rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
+                    <button type="button" @click="fermer()" class="rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
                         <x-ui.icon name="x-mark" class="h-4 w-4" />
                     </button>
                 </div>
