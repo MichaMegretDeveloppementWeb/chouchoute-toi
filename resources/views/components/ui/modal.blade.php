@@ -33,10 +33,6 @@ $maxWidth = match($variant) {
     default => 'max-w-lg',
 };
 
-// Le selecteur s'ancre en haut, comme la reference : ce qu'on cherche se lit
-// depuis le debut, et il ne bouge pas quand la liste filtree raccourcit.
-$alignement = $variant === 'picker' ? 'items-start pt-[44px]' : 'items-center';
-
 // Le panneau du formulaire se detache par sa couleur, pas par un contour : un
 // cadre et une ombre par-dessus un voile sombre dessinent un lisere dur, la ou
 // la reference n'a ni l'un ni l'autre.
@@ -73,7 +69,7 @@ $panneau = match ($variant) {
     <div x-show="open" x-transition.opacity class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm dark:bg-black/60" @click="fermer()"></div>
 
     {{-- Panel --}}
-    <div class="flex min-h-full {{ $alignement }} justify-center p-4">
+    <div class="flex min-h-full items-center justify-center p-4">
         {{-- The animation runs on classes, not on x-show. The panel is a descendant of an
              element that x-show hides, and an enter transition started while that ancestor is
              still display:none never completes: the panel stayed invisible on the first open

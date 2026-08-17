@@ -91,3 +91,10 @@ Quand le « dedans » n'est pas tout `$el` — une rangée qui porte d'autres ch
 Échap : la modale écoute `keydown.escape.window`. Un panneau qui stoppe à vide empêche la modale de se refermer. Ne stopper que s'il y avait quelque chose à fermer : `x-on:keydown.escape="if (ouvert) { $event.stopPropagation(); ouvert = false }"`.
 
 Diagnostic : poser deux écouteurs sur document, un en capture et un en bulle, et cliquer. Vu en capture seulement = le stopPropagation est en cause.
+
+## Un composant Alpine né d'un rendu Livewire relit ses données sur fb-morphe
+Un `x-data` ne se réévalue jamais de lui-même. Quand ses données viennent du HTML rendu par Livewire (un bloc `<script type="application/json">`, un `<input type="hidden">`), il les relit dans une méthode `lire()` appelée à `init()` **et** sur `x-on:fb-morphe.window="lire()"`. `booking-admin.js` émet `fb-morphe` à la fin de chaque morph ; un `Livewire.hook('morphed')` posé dans `init()` arriverait après le morph en cours et survivrait au composant.
+
+Deux pièges mesurés : le morph **vide** un `<input type="hidden">` qui n'a pas de `value` côté serveur, quoi que Livewire y ait écrit avant — rendre `value="{{ $value }}"` ; et les lignes clonées d'un `x-for` ne sont pas retrouvées dans le HTML serveur — la liste va sous `wire:ignore`, nourrie par le bloc JSON posé hors du `wire:ignore`.
+
+Un anneau `ring-inset` est une ombre intérieure : le fond d'un enfant la recouvre. Une boîte qui contient une cellule à fond (l'unité `min` / `€`) marque son focus par `border`, pas par `ring`.
