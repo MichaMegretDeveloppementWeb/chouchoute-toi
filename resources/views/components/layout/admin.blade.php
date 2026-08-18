@@ -32,6 +32,17 @@
     {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
     @uiKitHead
 
+    {{-- Le repli de la barre laterale, pose avant la peinture pour la meme
+         raison que le theme : lu apres, la barre s'ouvrirait grand le temps
+         d'une image avant de se replier sous les yeux. --}}
+    <script>
+        try {
+            if (localStorage.getItem('fb-barre') === 'repliee') {
+                document.documentElement.dataset.fbBarre = 'repliee';
+            }
+        } catch (e) {}
+    </script>
+
     @vite([
         'resources/css/ui-kit.css',
         'resources/js/ui-kit.js',
@@ -215,6 +226,23 @@
         <header class="flex h-14 shrink-0 items-center justify-between border-b border-base bg-surface px-4 sm:px-6">
             <div class="flex items-center gap-x-3">
                 <x-ui.sidebar.trigger />
+
+                {{-- Le pendant du declencheur mobile, pour l'autre bout de
+                     l'echelle : au-dela de 1500 px la barre est ouverte d'office
+                     et prend une largeur dont la grille du planning a besoin.
+                     Entre les deux, la barre est deja un rail et il n'y a rien a
+                     replier, d'ou `hidden wide:inline-flex`.
+
+                     Les deux fleches sont rendues et l'une des deux se cache par
+                     l'attribut : sans Alpine sur cet element, un `x-show` ne
+                     saurait pas d'ou lire l'etat. --}}
+                <button type="button" onclick="basculerLaBarre()"
+                    class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 wide:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                    aria-label="Replier ou deployer la barre laterale">
+                    <x-ui.icon name="chevron-double-left" class="h-5 w-5 fb-barre-ouverte" />
+                    <x-ui.icon name="chevron-double-right" class="h-5 w-5 fb-barre-repliee" />
+                </button>
+
                 <span class="text-[13px] font-medium text-secondary">{{ $title }}</span>
             </div>
 

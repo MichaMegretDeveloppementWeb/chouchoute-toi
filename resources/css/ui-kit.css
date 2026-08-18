@@ -68,6 +68,21 @@
     --fb-focus: #48bb78;
 
     /*
+     * Les deux etats qu'un rendez-vous garde une fois passe.
+     *
+     * Le bleu est releve sur la reference, sur son bouton « Venu » allume. Le
+     * rouge est son voisin de rang dans la meme palette : elle n'avait pas de
+     * visite manquee a montrer, et une teinte inventee aurait jure a cote.
+     *
+     * Assez sombres pour porter du blanc dans les deux themes, donc pas de
+     * variante sombre.
+     */
+    --fb-venu: #2c5282;
+    --fb-venu-fonce: #24456d;
+    --fb-absent: #9b2c2c;
+    --fb-absent-fonce: #822525;
+
+    /*
      * La palette du formulaire, relevee sur la reference.
      *
      * Elle est vert-gris la ou les gris de Tailwind sont bleu-gris. Sur un
@@ -122,4 +137,75 @@ textarea:not([class*='ring-0']):focus,
 [class*='focus-within:ring']:not([class*='focus-within:ring-0']):focus-within {
     --tw-ring-color: var(--fb-focus);
     --tw-ring-shadow: inset 0 0 0 1px var(--fb-focus);
+}
+
+/*
+ * Replier la barre laterale sur un grand ecran.
+ *
+ * Le kit ne connait que deux etats, tous deux en CSS pure : un rail de 62 px
+ * entre `lg` et `wide`, la barre ouverte a 260 au-dela. Sur un portable de
+ * 1500 px, cette barre ouverte prend un sixieme de la largeur, dont la grille
+ * du planning a besoin. Il manquait un troisieme etat, et rien dans le kit ne
+ * porte d'etat du tout.
+ *
+ * Le repli est donc un attribut sur `<html>`, pose avant la peinture par le
+ * script du layout, et ces regles ramenent les cinq utilitaires `wide:` a ce
+ * qu'ils valent sur le rail. Elles vivent hors de tout `@layer` : elles
+ * l'emportent ainsi sur les utilitaires de Tailwind sans `!important`.
+ *
+ * Pourquoi pas publier la barre du kit : la coquille de falcon/analytics porte
+ * les memes classes et vit dans `vendor/`, donc hors d'atteinte. Une regle qui
+ * vise les classes rendues vaut pour les deux coquilles a la fois.
+ *
+ * `:not(:hover)` partout : replie, le survol continue de deployer la barre,
+ * exactement comme il le fait sur le rail. Sans ca, une barre repliee ne se
+ * rouvrirait plus qu'en cliquant le bouton.
+ */
+@media (min-width: 93.75rem) {
+    html[data-fb-barre='repliee'] aside.group\/sidebar:not(:hover) {
+        width: 62px;
+    }
+
+    /* L'ombre du deploiement, que `wide:hover:shadow-none` retire : repliee, la
+       barre se pose de nouveau par-dessus le contenu et doit s'en detacher. */
+    html[data-fb-barre='repliee'] aside.group\/sidebar:hover {
+        box-shadow: 8px 0 24px -12px rgb(0 0 0 / 0.12);
+    }
+
+    html.dark[data-fb-barre='repliee'] aside.group\/sidebar:hover {
+        box-shadow: 8px 0 24px -12px rgb(0 0 0 / 0.4);
+    }
+
+    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:opacity-100 {
+        opacity: 0;
+    }
+
+    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:max-w-\[200px\] {
+        max-width: 0;
+    }
+
+    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:max-w-full {
+        max-width: 38px;
+    }
+
+    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:gap-x-3 {
+        column-gap: 0;
+    }
+
+    /* Les liens d'une section repliee sortent du flux et du parcours au
+       clavier, comme sur le rail : c'est l'icone de la section qui la nomme. */
+    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:block {
+        display: none;
+    }
+
+    /* Le contenu suit la barre, dans les deux coquilles. */
+    html[data-fb-barre='repliee'] .wide\:pl-\[260px\] {
+        padding-left: 62px;
+    }
+}
+
+/* Les deux fleches du bouton : celle qui dit ce que le clic va faire. */
+html:not([data-fb-barre='repliee']) .fb-barre-repliee,
+html[data-fb-barre='repliee'] .fb-barre-ouverte {
+    display: none;
 }

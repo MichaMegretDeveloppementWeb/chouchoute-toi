@@ -98,3 +98,12 @@ Un `x-data` ne se réévalue jamais de lui-même. Quand ses données viennent du
 Deux pièges mesurés : le morph **vide** un `<input type="hidden">` qui n'a pas de `value` côté serveur, quoi que Livewire y ait écrit avant — rendre `value="{{ $value }}"` ; et les lignes clonées d'un `x-for` ne sont pas retrouvées dans le HTML serveur — la liste va sous `wire:ignore`, nourrie par le bloc JSON posé hors du `wire:ignore`.
 
 Un anneau `ring-inset` est une ombre intérieure : le fond d'un enfant la recouvre. Une boîte qui contient une cellule à fond (l'unité `min` / `€`) marque son focus par `border`, pas par `ring`.
+
+## Rien n'interpole une propriété Livewire dans un x-data du formulaire
+`<x-ui.modal>` montre son contenu par `x-show`, jamais par `x-if` : le sous-arbre du formulaire est dans le document dès le premier rendu de la page, et Alpine ne réévalue jamais un `x-data` sur un élément qui existe déjà. Un `{{ $selectedId }}` écrit dans un `x-data` reste donc **à la valeur qu'il avait au chargement de la page**, quoi que le serveur ait fait depuis.
+
+Deux pannes vécues : « Venu » appelait `complete(null)` (TypeError sur le fil, invisible aux essais qui appellent la méthode avec un identifiant), et le champ de battement restait ouvert d'un formulaire à l'autre.
+
+La règle : on lit `$wire.<propriété>` **au moment de l'appel**. Un état Alpine qui dépend du serveur se recalcule sur `x-on:open-modal.window`, l'ouverture arrivant toujours après l'appel Livewire qui la précède (`ouvrirLaSaisie` et `ouvrirLEntree` l'attendent).
+
+Un essai qui appelle `->call('complete', $id)` court-circuite le Blade et ne voit rien. Le seul garde-fou est une assertion sur le rendu, comme `assertSeeHtml('$wire[action]($wire.selectedId)')`.
