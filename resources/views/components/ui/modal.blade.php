@@ -153,7 +153,7 @@ $panneau = match ($variant) {
                              pas besoin d'en faire plus pour se trouver. --}}
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-[50px] w-full items-center justify-center rounded border border-[var(--fb-encre)] text-[17px] font-normal text-[var(--fb-encre)] transition-colors active:bg-[var(--fb-cellule)] disabled:opacity-40">
+                            class="flex h-11 w-full items-center justify-center rounded border border-[var(--fb-encre)] text-[15px] font-normal text-[var(--fb-encre)] transition-colors active:bg-[var(--fb-cellule)] disabled:opacity-40">
                             Enregistrer
                         </button>
 
@@ -161,7 +161,7 @@ $panneau = match ($variant) {
                              la reference le pose sur telephone, et il y ferme la
                              lecture au lieu de flotter dans un coin du pied. --}}
                         @isset($validateNote)
-                            <p class="mt-3 text-center text-[17px] font-medium text-[var(--fb-encre)]">{{ $validateNote }}</p>
+                            <p class="mt-2.5 text-center text-[13px] font-medium text-[var(--fb-encre)]">{{ $validateNote }}</p>
                         @endisset
                     </div>
                 @endif
