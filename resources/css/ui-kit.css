@@ -157,44 +157,43 @@ textarea:not([class*='ring-0']):focus,
  * les memes classes et vit dans `vendor/`, donc hors d'atteinte. Une regle qui
  * vise les classes rendues vaut pour les deux coquilles a la fois.
  *
- * `:not(:hover)` partout : replie, le survol continue de deployer la barre,
- * exactement comme il le fait sur le rail. Sans ca, une barre repliee ne se
- * rouvrirait plus qu'en cliquant le bouton.
+ * Le survol ne la deploie pas. Entre `lg` et `wide` il le fait, parce que la
+ * barre y est repliee d'office et qu'il faut bien un moyen de lire les
+ * libelles ; ici c'est le bouton qui commande, et lui seul. Une barre qui
+ * s'ouvre au passage de la souris pousserait le regard hors du planning a
+ * chaque traversee de l'ecran, sans que rien ne l'ait demande.
  */
 @media (min-width: 93.75rem) {
-    html[data-fb-barre='repliee'] aside.group\/sidebar:not(:hover) {
-        width: 62px;
-    }
-
-    /* L'ombre du deploiement, que `wide:hover:shadow-none` retire : repliee, la
-       barre se pose de nouveau par-dessus le contenu et doit s'en detacher. */
+    html[data-fb-barre='repliee'] aside.group\/sidebar,
     html[data-fb-barre='repliee'] aside.group\/sidebar:hover {
-        box-shadow: 8px 0 24px -12px rgb(0 0 0 / 0.12);
+        width: 62px;
+        box-shadow: none;
     }
 
-    html.dark[data-fb-barre='repliee'] aside.group\/sidebar:hover {
-        box-shadow: 8px 0 24px -12px rgb(0 0 0 / 0.4);
-    }
-
-    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:opacity-100 {
+    html[data-fb-barre='repliee'] .group\/sidebar .wide\:opacity-100,
+    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:opacity-100 {
         opacity: 0;
     }
 
-    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:max-w-\[200px\] {
+    html[data-fb-barre='repliee'] .group\/sidebar .wide\:max-w-\[200px\],
+    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:max-w-\[200px\] {
         max-width: 0;
     }
 
-    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:max-w-full {
+    html[data-fb-barre='repliee'] .group\/sidebar .wide\:max-w-full,
+    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:max-w-full {
         max-width: 38px;
     }
 
-    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:gap-x-3 {
+    html[data-fb-barre='repliee'] .group\/sidebar .wide\:gap-x-3,
+    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:gap-x-3 {
         column-gap: 0;
     }
 
     /* Les liens d'une section repliee sortent du flux et du parcours au
        clavier, comme sur le rail : c'est l'icone de la section qui la nomme. */
-    html[data-fb-barre='repliee'] .group\/sidebar:not(:hover) .wide\:block {
+    html[data-fb-barre='repliee'] .group\/sidebar .wide\:block,
+    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:block {
         display: none;
     }
 
@@ -202,10 +201,4 @@ textarea:not([class*='ring-0']):focus,
     html[data-fb-barre='repliee'] .wide\:pl-\[260px\] {
         padding-left: 62px;
     }
-}
-
-/* Les deux fleches du bouton : celle qui dit ce que le clic va faire. */
-html:not([data-fb-barre='repliee']) .fb-barre-repliee,
-html[data-fb-barre='repliee'] .fb-barre-ouverte {
-    display: none;
 }

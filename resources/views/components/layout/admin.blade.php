@@ -233,14 +233,13 @@
                      Entre les deux, la barre est deja un rail et il n'y a rien a
                      replier, d'ou `hidden wide:inline-flex`.
 
-                     Les deux fleches sont rendues et l'une des deux se cache par
-                     l'attribut : sans Alpine sur cet element, un `x-show` ne
-                     saurait pas d'ou lire l'etat. --}}
+                     Le meme trait que le declencheur mobile : c'est le meme
+                     geste, sur l'autre bout de l'echelle. Une fleche aurait dit
+                     un sens, or ce bouton bascule. --}}
                 <button type="button" onclick="basculerLaBarre()"
                     class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 wide:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                     aria-label="Replier ou deployer la barre laterale">
-                    <x-ui.icon name="chevron-double-left" class="h-5 w-5 fb-barre-ouverte" />
-                    <x-ui.icon name="chevron-double-right" class="h-5 w-5 fb-barre-repliee" />
+                    <x-ui.icon name="bars-3" class="h-5 w-5" />
                 </button>
 
                 <span class="text-[13px] font-medium text-secondary">{{ $title }}</span>
