@@ -1,15 +1,15 @@
 {
   "packages/falcon-booking/resources/js/booking-admin.js": {
-    "file": "assets/booking-admin-Bw9aQqCt.js",
+    "file": "assets/booking-admin-CkT9rgMq.js",
     "name": "booking-admin",
     "src": "packages/falcon-booking/resources/js/booking-admin.js",
     "isEntry": true,
     "css": [
-      "assets/booking-admin-CV-mBwzF.css"
+      "assets/booking-admin-lsyk5w0f.css"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CnKKqDSh.css",
+    "file": "assets/app-CQQG1RqX.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -37,7 +37,7 @@
     ]
   },
   "resources/css/ui-kit.css": {
-    "file": "assets/ui-kit-yadUnTAp.css",
+    "file": "assets/ui-kit-BYqC2Gbb.css",
     "src": "resources/css/ui-kit.css",
     "isEntry": true,
     "name": "ui-kit",

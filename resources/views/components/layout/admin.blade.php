@@ -233,7 +233,10 @@
 
         <header class="flex h-14 shrink-0 items-center justify-between border-b border-base bg-surface px-4 sm:px-6">
             <div class="flex items-center gap-x-3">
-                <x-ui.sidebar.trigger />
+                {{-- Une hauteur posée plutôt qu'un retrait élargi : le kit
+                     dimensionne ce bouton par son `p-1.5`, et deux valeurs du
+                     même utilitaire ne s'annulent pas. --}}
+                <x-ui.sidebar.trigger class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
 
                 {{-- Le pendant du declencheur mobile, pour l'autre bout de
                      l'echelle : au-dela de 1500 px la barre est ouverte d'office
@@ -258,9 +261,13 @@
             </div>
 
             {{-- « Voir le site » et « Déconnexion » vivent dans le menu utilisateur
-                 de la sidebar : la topbar ne garde que le réglage d'affichage. --}}
+                 de la sidebar : la topbar ne garde que le réglage d'affichage.
+
+                 Le variant par défaut plutôt que l'interrupteur : celui-ci prend
+                 84 px pour trois éléments dont un seul se touche, large de 36 et
+                 haut de 20. Un bouton unique dit la même chose et se vise. --}}
             <div class="flex items-center gap-x-3">
-                <x-ui.theme-toggle variant="switch" />
+                <x-ui.theme-toggle class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
             </div>
         </header>
 

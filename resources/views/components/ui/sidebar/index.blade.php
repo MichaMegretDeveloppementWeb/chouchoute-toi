@@ -49,7 +49,9 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
                 @endisset
                 <span class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100">{{ $brand }}</span>
             </div>
-            <button type="button" onclick="closeMobileSidebar()" class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
+            {{-- Une hauteur posee, et non le retrait qui dimensionnait ce
+                 bouton : 32 px se manquent au doigt. --}}
+            <button type="button" onclick="closeMobileSidebar()" aria-label="Fermer le menu" class="flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
                 <x-ui.icon name="x-mark" class="h-5 w-5" />
             </button>
         </div>

@@ -11,7 +11,9 @@
 
 @php
 $labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
-$navLinkBase = 'fb-barre-lien group flex items-center rounded-lg px-2.5 py-[7px] text-[13px] font-normal gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
+// `max-sm:py-3` : sous 640 la barre est un tiroir qu'on vise au doigt, et
+// 34 px de haut est en dessous de ce qu'un doigt atteint sans se reprendre.
+$navLinkBase = 'fb-barre-lien group flex items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-normal gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 $stateClass = $active
     ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200';

@@ -45,7 +45,7 @@ $labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden 
 
 // Same geometry as a link, down to the max-width: it is what keeps the active
 // pill a 38 pixel square in the rail instead of a shape cut off at 62.
-$boutonBase = 'fb-barre-lien group flex w-full items-center rounded-lg px-2.5 py-[7px] text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
+$boutonBase = 'fb-barre-lien group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 
 // La pastille dit ou l'on est quand l'enfant actif est cache, c'est-a-dire sur
 // le rail. Ecrite en PHP plutot qu'en empilant des variantes, pour ne rien

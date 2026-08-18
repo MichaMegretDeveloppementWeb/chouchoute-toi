@@ -140,6 +140,29 @@ textarea:not([class*='ring-0']):focus,
 }
 
 /*
+ * ── La taille d'un champ sur telephone ────────────────────────────
+ *
+ * Safari iOS agrandit la page des qu'on entre dans un champ dont le texte fait
+ * moins de 16 px, et ne la ramene pas en sortant. Tous les controles du kit
+ * ecrivent `text-[13px]` en dur, sur une quarantaine de points d'appel : la
+ * mesure se pose donc une fois ici plutot que composant par composant.
+ *
+ * Hors de tout `@layer`, comme le reste du fichier, donc elle l'emporte sur
+ * l'utilitaire sans `!important`. Rien au-dela de 640 : le bureau garde ses
+ * 13 px.
+ *
+ * `range` est exclu comme les cases et les boutons radio : ces controles ne
+ * portent pas de texte, et une taille de police y change leur geometrie.
+ */
+@media (max-width: 639px) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/*
  * Les deux etats de la barre laterale de bureau.
  *
  * Le kit n'en connaissait que deux, tous deux commandes par la largeur de
