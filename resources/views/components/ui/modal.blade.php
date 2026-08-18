@@ -99,7 +99,10 @@ $panneau = match ($variant) {
                     @endif
 
                     <button type="button" @click="fermer()"
-                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)] sm:h-[39px] sm:w-[39px] max-sm:h-11 max-sm:w-11"
+        {{-- Sur telephone la fleche est nue : un cadre autour d'un retour, sur
+             un ecran qui n'a rien d'autre en haut a gauche, ne dit rien de plus
+             et pose une boite de plus dans une page qui n'en veut aucune. --}}
+                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)] max-sm:h-11 max-sm:w-11 max-sm:border-0"
                         aria-label="Fermer">
                         <x-ui.icon name="arrow-left" class="h-5 w-5" />
                     </button>
@@ -143,9 +146,14 @@ $panneau = match ($variant) {
                          l'action n'a pas de garde, et deux appuis rapides
                          enregistreraient deux fois. --}}
                     <div class="fb-modale-ancree shrink-0 border-t border-[var(--fb-trait)] bg-[#f6f7f8] px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3 sm:hidden dark:bg-gray-950">
+                        {{-- Un contour et non un aplat : sur la reference le
+                             bouton qui enregistre un rendez-vous est un cadre
+                             d'un pixel, en graisse normale. C'est le seul
+                             element de la page qui porte un trait, et il n'a
+                             pas besoin d'en faire plus pour se trouver. --}}
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-12 w-full items-center justify-center rounded-lg bg-gray-900 text-[15px] font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-60 dark:bg-white dark:text-gray-900">
+                            class="flex h-[50px] w-full items-center justify-center rounded border border-[var(--fb-encre)] text-[17px] font-normal text-[var(--fb-encre)] transition-colors active:bg-[var(--fb-cellule)] disabled:opacity-40">
                             Enregistrer
                         </button>
 
@@ -153,7 +161,7 @@ $panneau = match ($variant) {
                              la reference le pose sur telephone, et il y ferme la
                              lecture au lieu de flotter dans un coin du pied. --}}
                         @isset($validateNote)
-                            <p class="mt-2.5 text-center text-[13px] text-[var(--fb-encre-2)]">{{ $validateNote }}</p>
+                            <p class="mt-3 text-center text-[17px] font-medium text-[var(--fb-encre)]">{{ $validateNote }}</p>
                         @endisset
                     </div>
                 @endif
