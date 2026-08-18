@@ -37,7 +37,42 @@ final class SidebarNavigationTest extends TestCase
             $this->assertStringContainsString($section, $shell);
         }
 
-        $this->assertStringContainsString(':aria-expanded="ouvert"', $shell);
+        // Repliee, la barre ouvre un volet plutot que l'accordeon : le bouton
+        // annonce celui des deux qui s'applique.
+        $this->assertStringContainsString(':aria-expanded="rail() ? volet : ouvert"', $shell);
+    }
+
+    /**
+     * Le rail ne se deploie plus au survol, donc chaque section doit pouvoir
+     * montrer ses liens autrement : un volet flottant, ancre a son icone.
+     *
+     * Cinq sections par rendu, Reglages etant imbriquee dans Agenda, et deux
+     * rendus de la barre : dix volets. Teleportes, la barre etant en
+     * `overflow-clip`.
+     */
+    public function test_every_section_carries_a_flyout_for_the_rail(): void
+    {
+        $shell = $this->shell();
+
+        $this->assertSame(10, substr_count($shell, 'fb-barre-volet'));
+        $this->assertSame(11, substr_count($shell, 'x-teleport="body"'), 'Dix volets, plus l’infobulle de la barre.');
+    }
+
+    /**
+     * Une seule infobulle pour toute la barre, et chaque lien porte son titre.
+     *
+     * Posee sur chaque lien, elle etait rendue quatre-vingt-quatorze fois : la
+     * barre est rendue deux fois, et chaque section rend ses liens une fois
+     * dans son accordeon et une fois dans son volet.
+     */
+    public function test_the_bar_carries_one_tooltip_for_all_its_links(): void
+    {
+        $shell = $this->shell();
+
+        // Une seule : le tiroir du telephone montre ses libelles, il n'a rien a
+        // faire dire par une infobulle.
+        $this->assertSame(1, substr_count($shell, 'barreInfobulle()'));
+        $this->assertStringContainsString('data-fb-titre="Planning"', $shell);
     }
 
     /**
@@ -48,7 +83,7 @@ final class SidebarNavigationTest extends TestCase
      */
     public function test_the_bar_renders_its_sections_once_per_breakpoint(): void
     {
-        $this->assertSame(8, substr_count($this->shell(), 'x-collapse'));
+        $this->assertSame(10, substr_count($this->shell(), 'x-collapse'));
     }
 
     /**
@@ -59,9 +94,9 @@ final class SidebarNavigationTest extends TestCase
     {
         $shell = $this->shell();
 
-        $this->assertSame(8, substr_count($shell, "x-id=\"['ui-sidebar-sous-menu']\""));
-        $this->assertSame(8, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-sous-menu\')"'));
-        $this->assertSame(8, substr_count($shell, ':id="$id(\'ui-sidebar-sous-menu\')"'));
+        $this->assertSame(10, substr_count($shell, "x-id=\"['ui-sidebar-sous-menu']\""));
+        $this->assertSame(10, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-sous-menu\')"'));
+        $this->assertSame(10, substr_count($shell, ':id="$id(\'ui-sidebar-sous-menu\')"'));
     }
 
     public function test_the_section_holding_the_current_page_opens_by_itself(): void
@@ -71,9 +106,15 @@ final class SidebarNavigationTest extends TestCase
         // Quotes come out escaped, the expression being echoed rather than
         // written in the template. The HTML parser decodes them before Alpine
         // ever reads the attribute, so this is what actually ships.
-        $this->assertStringContainsString('$persist(false).as(&#039;ui-sidebar-agenda&#039;)', $shell);
-        $this->assertSame(2, substr_count($shell, 'actif: true'));
-        $this->assertSame(6, substr_count($shell, 'actif: false'));
+        //
+        // Le second argument dit si la section porte la page courante. Agenda
+        // est rendue une fois par rendu de la barre, donc deux fois.
+        $this->assertSame(2, substr_count(
+            $shell,
+            'barreSection($persist(false).as(&#039;ui-sidebar-agenda&#039;), true)',
+        ));
+
+        $this->assertSame(8, substr_count($shell, ', false)'), 'Les quatre autres sections, deux fois chacune.');
     }
 
     /**

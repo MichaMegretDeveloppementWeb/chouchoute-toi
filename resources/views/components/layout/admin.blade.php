@@ -32,15 +32,23 @@
     {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
     @uiKitHead
 
-    {{-- Le repli de la barre laterale, pose avant la peinture pour la meme
-         raison que le theme : lu apres, la barre s'ouvrirait grand le temps
-         d'une image avant de se replier sous les yeux. --}}
+    {{-- L'etat de la barre laterale, pose avant la peinture pour la meme raison
+         que le theme : lu apres, la barre changerait de largeur sous les yeux.
+
+         Rien de retenu : repliee en dessous de 1500 px, ouverte au-dela. C'est
+         la ou la barre ouverte coute un sixieme de la largeur a un portable, et
+         ou elle ne coute plus rien a un grand ecran. Le choix n'est pas ecrit
+         dans la memoire, pour qu'un autre ecran retrouve le sien. --}}
     <script>
         try {
-            if (localStorage.getItem('fb-barre') === 'repliee') {
-                document.documentElement.dataset.fbBarre = 'repliee';
-            }
-        } catch (e) {}
+            var barre = localStorage.getItem('fb-barre');
+
+            document.documentElement.dataset.fbBarre = (barre === 'repliee' || barre === 'ouverte')
+                ? barre
+                : (window.innerWidth >= 1500 ? 'ouverte' : 'repliee');
+        } catch (e) {
+            document.documentElement.dataset.fbBarre = 'repliee';
+        }
     </script>
 
     @vite([
@@ -235,9 +243,13 @@
 
                      Le meme trait que le declencheur mobile : c'est le meme
                      geste, sur l'autre bout de l'echelle. Une fleche aurait dit
-                     un sens, or ce bouton bascule. --}}
+                     un sens, or ce bouton bascule.
+
+                     Des `lg` et non des `wide` : le survol ne deploie plus la
+                     barre, donc sans ce bouton les libelles seraient hors
+                     d'atteinte entre 1024 et 1500 px. --}}
                 <button type="button" onclick="basculerLaBarre()"
-                    class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 wide:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                    class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 lg:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                     aria-label="Replier ou deployer la barre laterale">
                     <x-ui.icon name="bars-3" class="h-5 w-5" />
                 </button>

@@ -140,65 +140,129 @@ textarea:not([class*='ring-0']):focus,
 }
 
 /*
- * Replier la barre laterale sur un grand ecran.
+ * Les deux etats de la barre laterale de bureau.
  *
- * Le kit ne connait que deux etats, tous deux en CSS pure : un rail de 62 px
- * entre `lg` et `wide`, la barre ouverte a 260 au-dela. Sur un portable de
- * 1500 px, cette barre ouverte prend un sixieme de la largeur, dont la grille
- * du planning a besoin. Il manquait un troisieme etat, et rien dans le kit ne
- * porte d'etat du tout.
+ * Le kit n'en connaissait que deux, tous deux commandes par la largeur de
+ * l'ecran : un rail de 62 px entre `lg` et `wide`, la barre ouverte au-dela,
+ * et un `:hover` qui deployait le rail. Ce survol deplacait l'entree visee de
+ * 182 px pendant qu'on avancait vers elle, et le bouton d'une section repliee
+ * ne faisait rien de visible, sa liste etant en `display: none`.
  *
- * Le repli est donc un attribut sur `<html>`, pose avant la peinture par le
- * script du layout, et ces regles ramenent les cinq utilitaires `wide:` a ce
- * qu'ils valent sur le rail. Elles vivent hors de tout `@layer` : elles
+ * Desormais : un seul modele a toutes les largeurs. La barre est ouverte ou
+ * repliee, c'est le bouton de la barre du haut qui tranche, et l'etat vit sur
+ * `<html>` en `data-fb-barre`, pose avant la peinture. Le survol ne fait plus
+ * rien ; une section repliee ouvre ses liens dans un volet flottant.
+ *
+ * Les composants publies decrivent la barre **deployee** : ces regles la
+ * replient, piece par piece. Elles visent `.fb-barre`, la barre de bureau, donc
+ * le tiroir du telephone garde ses libelles.
+ *
+ * Hors de tout `@layer`, comme les autres regles de ce fichier : elles
  * l'emportent ainsi sur les utilitaires de Tailwind sans `!important`.
- *
- * Pourquoi pas publier la barre du kit : la coquille de falcon/analytics porte
- * les memes classes et vit dans `vendor/`, donc hors d'atteinte. Une regle qui
- * vise les classes rendues vaut pour les deux coquilles a la fois.
- *
- * Le survol ne la deploie pas. Entre `lg` et `wide` il le fait, parce que la
- * barre y est repliee d'office et qu'il faut bien un moyen de lire les
- * libelles ; ici c'est le bouton qui commande, et lui seul. Une barre qui
- * s'ouvre au passage de la souris pousserait le regard hors du planning a
- * chaque traversee de l'ecran, sans que rien ne l'ait demande.
  */
-@media (min-width: 93.75rem) {
-    html[data-fb-barre='repliee'] aside.group\/sidebar,
-    html[data-fb-barre='repliee'] aside.group\/sidebar:hover {
-        width: 62px;
-        box-shadow: none;
-    }
+:root {
+    /* Ce que la feuille sait de l'etat, lisible par Alpine : c'est elle qui
+       decide, et le volet d'une section ne s'ouvre que sur le rail. */
+    --fb-rail: 0;
+}
 
-    html[data-fb-barre='repliee'] .group\/sidebar .wide\:opacity-100,
-    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:opacity-100 {
-        opacity: 0;
-    }
+html[data-fb-barre='repliee'] {
+    --fb-rail: 1;
+}
 
-    html[data-fb-barre='repliee'] .group\/sidebar .wide\:max-w-\[200px\],
-    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:max-w-\[200px\] {
-        max-width: 0;
-    }
+html[data-fb-barre='repliee'] .fb-barre {
+    width: 62px;
+}
 
-    html[data-fb-barre='repliee'] .group\/sidebar .wide\:max-w-full,
-    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:max-w-full {
-        max-width: 38px;
-    }
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-libelle {
+    opacity: 0;
+    max-width: 0;
+}
 
-    html[data-fb-barre='repliee'] .group\/sidebar .wide\:gap-x-3,
-    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:gap-x-3 {
-        column-gap: 0;
-    }
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-titre {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0;
+}
 
-    /* Les liens d'une section repliee sortent du flux et du parcours au
-       clavier, comme sur le rail : c'est l'icone de la section qui la nomme. */
-    html[data-fb-barre='repliee'] .group\/sidebar .wide\:block,
-    html[data-fb-barre='repliee'] .group\/sidebar:hover .wide\:block {
-        display: none;
-    }
+/* 38 px : la largeur d'une pastille carree, et non une forme coupee a 62. */
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-lien {
+    max-width: 38px;
+    column-gap: 0;
+}
 
-    /* Le contenu suit la barre, dans les deux coquilles. */
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-ecart {
+    column-gap: 0;
+}
+
+/* `display: none` et non une opacite : les liens sortent aussi du parcours au
+   clavier et de l'arbre d'accessibilite, ce qu'une transparence ne fait pas. */
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-sous-menu {
+    display: none;
+}
+
+/* La section qui porte la page courante : sur le rail, son enfant actif est
+   cache et plus rien d'autre ne dirait ou l'on est. */
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille {
+    background-color: var(--color-gray-900);
+    color: var(--color-white);
+}
+
+html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
+    color: var(--color-white);
+}
+
+.dark html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille,
+html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille {
+    background-color: var(--color-white);
+    color: var(--color-gray-900);
+}
+
+html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
+    color: var(--color-gray-900);
+}
+
+/*
+ * Le volet d'une section repliee, et l'infobulle d'un lien.
+ *
+ * Teleportes vers `body` : la barre est en `overflow-clip` et les rognerait.
+ * Ils reprennent donc a leur compte ce que le rail replie, sans quoi leurs
+ * liens sortiraient a 38 px de large, et ils remettent `--fb-rail` a zero pour
+ * qu'une sous-section a l'interieur se deroule sur place au lieu d'ouvrir un
+ * volet de plus.
+ */
+.fb-barre-volet {
+    --fb-rail: 0;
+}
+
+.fb-barre-volet .fb-barre-lien {
+    max-width: 100%;
+    column-gap: 0.75rem;
+}
+
+.fb-barre-volet .fb-barre-libelle {
+    opacity: 1;
+    max-width: 200px;
+}
+
+.fb-barre-volet .fb-barre-sous-menu {
+    display: block;
+}
+
+/*
+ * Le contenu suit la barre, dans les deux coquilles.
+ *
+ * Vise les utilitaires rendus et non une classe a nous : la coquille de
+ * falcon/analytics porte les memes et vit dans `vendor/`, hors d'atteinte.
+ * Sous `lg` la barre est un tiroir, d'ou la requete de media : sans elle, un
+ * telephone heriterait d'un retrait de 260 px.
+ */
+@media (min-width: 64rem) {
     html[data-fb-barre='repliee'] .wide\:pl-\[260px\] {
         padding-left: 62px;
+    }
+
+    html[data-fb-barre='ouverte'] .lg\:pl-\[62px\] {
+        padding-left: 260px;
     }
 }

@@ -6,7 +6,9 @@
 @php
     // Same collapse animation as the ui-kit sidebar labels: the text folds away
     // while the rail is narrow, and unfolds on hover or on a wide screen.
-    $labelClass = 'whitespace-nowrap lg:opacity-0 lg:max-w-0 lg:overflow-hidden lg:group-hover/sidebar:opacity-100 lg:group-hover/sidebar:max-w-[200px] wide:opacity-100 wide:max-w-[200px] transition-[opacity,max-width] duration-300 ease-in-out';
+    // Le repli passe par la classe, comme dans les composants publies de la
+    // barre : c'est la feuille qui decide, et non la largeur de l'ecran.
+    $labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 
     $initials = collect(explode(' ', trim($name)))
         ->filter()
@@ -26,7 +28,7 @@
         @click="open = !open"
         :aria-expanded="open"
         aria-haspopup="true"
-        class="flex w-full items-center gap-x-3 px-5 py-3 transition-[gap,background-color] duration-300 ease-in-out hover:bg-gray-50 lg:gap-x-0 lg:px-0 lg:py-3 lg:group-hover/sidebar:gap-x-3 wide:gap-x-3 dark:hover:bg-gray-800"
+        class="fb-barre-ecart flex w-full items-center gap-x-3 px-5 py-3 transition-[gap,background-color] duration-300 ease-in-out hover:bg-gray-50 lg:px-0 lg:py-3 dark:hover:bg-gray-800"
     >
         <x-ui.avatar :initials="$initials" size="default" class="shrink-0" />
 

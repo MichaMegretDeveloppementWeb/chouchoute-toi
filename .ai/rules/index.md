@@ -7,4 +7,5 @@ Before planning or editing, find the row whose globs match the file's path and r
 | packages/falcon-booking/** | .ai/rules/falcon-booking.md |
 | **/*.blade.php | .ai/rules/general.md |
 | packages/falcon-booking/resources/js/** | .ai/rules/js.md |
+| resources/views/components/ui/** | .ai/rules/ui.md |
 | packages/falcon-booking/resources/views/** | .ai/rules/views.md |
