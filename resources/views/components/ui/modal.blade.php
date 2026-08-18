@@ -74,10 +74,13 @@ $panneau = match ($variant) {
              element that x-show hides, and an enter transition started while that ancestor is
              still display:none never completes: the panel stayed invisible on the first open
              even though the modal reported itself open. --}}
+        {{-- La hauteur maximale est une classe et non un style en ligne : la
+             feuille du telephone ouvre ce panneau en plein ecran, et un style
+             en ligne ne se laisse pas battre par une feuille. Il restait 91 px
+             de page visible sous le formulaire. --}}
         <div x-bind:class="open ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
              @click.stop
-             class="{{ $panneau }} {{ $maxWidth }}"
-             @if($variant === 'form') style="max-height: 90vh" @endif>
+             class="{{ $panneau }} {{ $maxWidth }} @if($variant === 'form') sm:max-h-[90vh] @endif">
 
             @if($variant === 'picker')
                 {{ $slot }}
@@ -91,15 +94,22 @@ $panneau = match ($variant) {
                     @endif
 
                     <button type="button" @click="fermer()"
-                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)]"
+                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)] sm:h-[39px] sm:w-[39px] max-sm:h-11 max-sm:w-11"
                         aria-label="Fermer">
                         <x-ui.icon name="arrow-left" class="h-5 w-5" />
                     </button>
 
+                    {{-- Sur telephone, l'en-tete ne porte que le retour, le titre
+                         et le geste destructeur : la validation descend au pouce,
+                         dans la barre ancree en bas. --}}
+                    @isset($headerAction)
+                        <span class="shrink-0 sm:hidden">{{ $headerAction }}</span>
+                    @endisset
+
                     @if($onValidate)
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                            class="hidden h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 sm:flex dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                             aria-label="Enregistrer">
                             <x-ui.icon name="check" class="h-5 w-5" stroke-width="2.5" />
                         </button>
@@ -116,6 +126,23 @@ $panneau = match ($variant) {
                          total et les actions a droite. --}}
                     <div class="fb-modale-pied flex min-h-[72px] shrink-0 items-center gap-x-4 border-t border-[var(--fb-trait)] bg-[#f6f7f8] py-3 pl-[18px] pr-7 dark:bg-gray-950">
                         {{ $footer }}
+                    </div>
+                @endif
+
+                @if($onValidate)
+                    {{-- La barre du pouce, et le dernier enfant du panneau : les
+                         regles du telephone se posent par classe, mais l'ordre
+                         reste ce sur quoi un ajout futur se glisserait.
+
+                         Le meme `wire:loading` que le bouton de l'en-tete :
+                         l'action n'a pas de garde, et deux appuis rapides
+                         enregistreraient deux fois. --}}
+                    <div class="fb-modale-ancree shrink-0 border-t border-[var(--fb-trait)] bg-[#f6f7f8] px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3 sm:hidden dark:bg-gray-950">
+                        <button type="button" x-on:click="{{ $onValidate }}"
+                            @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
+                            class="flex h-12 w-full items-center justify-center rounded-lg bg-gray-900 text-[15px] font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-60 dark:bg-white dark:text-gray-900">
+                            Enregistrer
+                        </button>
                     </div>
                 @endif
             @elseif($variant === 'confirm')
