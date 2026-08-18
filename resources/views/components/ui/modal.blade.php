@@ -85,7 +85,7 @@ $panneau = match ($variant) {
                 {{-- En-tete blanc : le titre a gauche, fermer et valider a droite en
                      deux boutons carres de 39 px. Mesures : 52 de haut, retrait
                      6 28 5, titre 15/700 dans l'encre secondaire. --}}
-                <div class="flex shrink-0 items-center gap-x-3 bg-white pb-[5px] pl-7 pr-7 pt-1.5 dark:bg-gray-900">
+                <div class="fb-modale-entete flex shrink-0 items-center gap-x-3 bg-white pb-[5px] pl-7 pr-7 pt-1.5 dark:bg-gray-900">
                     @if($title)
                         <h3 class="min-w-0 flex-1 truncate text-[15px] font-bold leading-6 text-[var(--fb-encre-2)]">{{ $title }}</h3>
                     @endif
@@ -107,14 +107,14 @@ $panneau = match ($variant) {
                 </div>
 
                 {{-- Le corps defile seul : l'en-tete et le pied restent en vue. --}}
-                <div class="min-h-0 flex-1 overflow-y-auto bg-[#f6f7f8] px-7 py-4 dark:bg-gray-950">
+                <div class="fb-modale-corps min-h-0 flex-1 overflow-y-auto bg-[#f6f7f8] px-7 py-4 dark:bg-gray-950">
                     {{ $slot }}
                 </div>
 
                 @if(isset($footer))
                     {{-- Pied gris sous filet, 72 px : les gestes a gauche, le
                          total et les actions a droite. --}}
-                    <div class="flex min-h-[72px] shrink-0 items-center gap-x-4 border-t border-[var(--fb-trait)] bg-[#f6f7f8] py-3 pl-[18px] pr-7 dark:bg-gray-950">
+                    <div class="fb-modale-pied flex min-h-[72px] shrink-0 items-center gap-x-4 border-t border-[var(--fb-trait)] bg-[#f6f7f8] py-3 pl-[18px] pr-7 dark:bg-gray-950">
                         {{ $footer }}
                     </div>
                 @endif
