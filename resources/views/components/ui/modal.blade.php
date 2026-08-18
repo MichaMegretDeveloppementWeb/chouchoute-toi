@@ -145,7 +145,10 @@ $panneau = match ($variant) {
                          Le meme `wire:loading` que le bouton de l'en-tete :
                          l'action n'a pas de garde, et deux appuis rapides
                          enregistreraient deux fois. --}}
-                    <div class="fb-modale-ancree shrink-0 border-t border-[var(--fb-trait)] bg-[#f6f7f8] px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3 sm:hidden dark:bg-gray-950">
+                    {{-- Une section blanche a ombre, comme celles du corps :
+                         un filet sur du gris la faisait lire comme le bord de la
+                         fenetre plutot que comme la derniere chose de la page. --}}
+                    <div class="fb-modale-ancree shrink-0 bg-surface px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3.5 shadow-[0_-1px_4px_rgba(0,0,0,0.13)] sm:hidden">
                         {{-- Un contour et non un aplat : sur la reference le
                              bouton qui enregistre un rendez-vous est un cadre
                              d'un pixel, en graisse normale. C'est le seul
