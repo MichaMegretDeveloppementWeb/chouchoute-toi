@@ -10,6 +10,11 @@
     Deux slots de plus pour `form` : `valider` (le contenu du bouton vert, ou
     rien pour une coche) et `pied` (les gestes de gauche ; le total et les
     actions de droite passent par `footer` comme ailleurs).
+
+    Deux slots de telephone : `headerAction`, le geste destructeur a droite de
+    l'en-tete, et `validateNote`, une ligne centree sous le bouton ancre. Les
+    deux ne se rendent que sous 640, ou l'en-tete et la barre du pouce prennent
+    la place que le pied tenait au bureau.
 --}}
 @props([
     'name' => null,               // Unique name, used to open via $dispatch('open-modal', 'name')
@@ -143,6 +148,13 @@ $panneau = match ($variant) {
                             class="flex h-12 w-full items-center justify-center rounded-lg bg-gray-900 text-[15px] font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-60 dark:bg-white dark:text-gray-900">
                             Enregistrer
                         </button>
+
+                        {{-- Le total se lit sous le bouton, centre : c'est la ou
+                             la reference le pose sur telephone, et il y ferme la
+                             lecture au lieu de flotter dans un coin du pied. --}}
+                        @isset($validateNote)
+                            <p class="mt-2.5 text-center text-[13px] text-[var(--fb-encre-2)]">{{ $validateNote }}</p>
+                        @endisset
                     </div>
                 @endif
             @elseif($variant === 'confirm')
