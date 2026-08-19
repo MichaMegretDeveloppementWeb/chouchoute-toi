@@ -113,8 +113,8 @@ Sans clé, passer d'une branche à l'autre remplace le sous-arbre au lieu de le 
 
 La clé va sur le bloc qui doit tenir en place, jamais sur le champ qu'il contient : chaque frappe remplace ce que le bloc contient.
 
-## Un composant Alpine né d'un rendu Livewire relit ses données sur fb-morphe
-Un `x-data` ne se réévalue jamais de lui-même. Quand ses données viennent du HTML rendu par Livewire (un bloc `<script type="application/json">`, un `<input type="hidden">`), il les relit dans une méthode `lire()` appelée à `init()` **et** sur `x-on:fb-morphe.window="lire()"`. `booking-admin.js` émet `fb-morphe` à la fin de chaque morph ; un `Livewire.hook('morphed')` posé dans `init()` arriverait après le morph en cours et survivrait au composant.
+## Un composant Alpine né d'un rendu Livewire relit ses données sur fb-morphed
+Un `x-data` ne se réévalue jamais de lui-même. Quand ses données viennent du HTML rendu par Livewire (un bloc `<script type="application/json">`, un `<input type="hidden">`), il les relit dans une méthode `lire()` appelée à `init()` **et** sur `x-on:fb-morphed.window="lire()"`. `booking-admin.js` émet `fb-morphed` à la fin de chaque morph ; un `Livewire.hook('morphed')` posé dans `init()` arriverait après le morph en cours et survivrait au composant.
 
 Deux pièges mesurés : le morph **vide** un `<input type="hidden">` qui n'a pas de `value` côté serveur, quoi que Livewire y ait écrit avant — rendre `value="{{ $value }}"` ; et les lignes clonées d'un `x-for` ne sont pas retrouvées dans le HTML serveur — la liste va sous `wire:ignore`, nourrie par le bloc JSON posé hors du `wire:ignore`.
 
