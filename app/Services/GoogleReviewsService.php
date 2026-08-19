@@ -40,8 +40,14 @@ class GoogleReviewsService
 
                 $data = $response->json();
 
-                $reviews = collect($data['reviews'] ?? [])
-                    ->filter(fn (array $review) => ($review['rating'] ?? 0) >= 4)
+                // Ce que l'API rend n'est promis par personne : chaque champ se
+                // lit avec son defaut, et la forme est declaree pour que la
+                // suite se type au lieu de partir en mixed.
+                /** @var list<array<string, mixed>> $brutes */
+                $brutes = is_array($data['reviews'] ?? null) ? array_values($data['reviews']) : [];
+
+                $reviews = collect($brutes)
+                    ->filter(fn (array $review): bool => ((int) ($review['rating'] ?? 0)) >= 4)
                     ->map(fn (array $review) => [
                         'nom' => $review['authorAttribution']['displayName'] ?? 'Cliente',
                         'note' => (int) ($review['rating'] ?? 5),

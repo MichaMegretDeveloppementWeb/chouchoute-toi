@@ -1,0 +1,29 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Meme palier que le paquet, pour qu'une regle ne soit pas plus lache d'un
+    # cote de la frontiere que de l'autre.
+    level: 7
+
+    # Deux absences, et chacune a sa raison.
+    #
+    # `config/` : fichiers livres par Laravel, que nous n'ecrivons pas. Les
+    # corriger pour l'analyseur serait a refaire a chaque montee de version. Le
+    # paquet analyse le sien, qui est de nous.
+    #
+    # `database/seeders/` : Laravel documente `Seeder::$command` comme non nul,
+    # ce qui est faux hors d'une commande artisan. Son propre code se protege
+    # par `isset()`, que l'analyseur refuse aussi sur la foi de cette meme
+    # annotation. Aucune ecriture n'y est a la fois correcte et acceptee.
+    paths:
+        - app
+        - database/migrations
+        - routes
+
+    databaseMigrationsPath:
+        - database/migrations
+
+    # Les modeles declarent leurs casts par la methode `casts()` de Laravel 11,
+    # que larastan ne lit pas sans cela.
+    parseModelCastsMethod: true

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Mail\ContactMail;
 use Falcon\Analytics\Facades\Analytics;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -68,6 +69,9 @@ class ContactForm extends Component
         $this->prestation = '';
     }
 
+    /**
+     * @return list<array{value: string, label: string}>
+     */
     public function getPrestationOptionsProperty(): array
     {
         if (! $this->volume || $this->volume === 'indecise') {
@@ -128,7 +132,7 @@ class ContactForm extends Component
         $this->sent = false;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.contact-form');
     }
