@@ -41,6 +41,26 @@ Deux conséquences à connaître :
 ## `assertReturned(false)` passe sur une erreur 500
 Piège du harnais Livewire : quand la requête d'update échoue, `SubsequentRender` rend un `ComponentState` aux effets vides plutôt que de lever. `returns.0` vaut alors `null`, et `assertReturned(false)` compare par `assertEquals`, donc passe. Le test échoue plus loin, sur un `assertDispatched` — ce qui fait lire une erreur fatale comme un toast manquant. Devant ce symptôme, vérifier le code de réponse avant de chercher la logique.
 
+## Le JS du paquet est un point d'entrée et des modules
+`resources/js/booking-admin.js` n'est plus qu'une entrée : imports, `alpine:init`, `livewire:init`. Tout le reste vit dans `resources/js/admin/`, un module par composant Alpine, et le calendrier dans son sous-dossier (`index`, `options`, `cards`, `grid`, `navigation`).
+
+Les quatre modules du calendrier **exportent un objet de méthodes**, fusionné dans le composant par étalement. `this` y est le composant, exactement comme si les méthodes étaient écrites dans le littéral. Deux conséquences :
+- **`{...objet}` évalue les accesseurs.** `libelleDuMois` et `casesDuMois` restent donc dans le littéral du composant ; y ajouter un `get` dans un module fusionné le copierait comme valeur, une fois pour toutes.
+- le littéral d'options de FullCalendar est devenu le corps d'une méthode, `calendarOptions(fuseau, horaires)`, ce qui a évité de réécrire ses 502 lignes.
+
+`BookingAssetsTest` parcourt **tout** `resources/js/`, et non le seul point d'entrée : un import npm ajouté dans un module doit être déclaré par `BookingAssets::npmDependencies()`, sans quoi le build de l'hôte casse.
+
+Le poids du paquet compilé est le repère : **360 010 octets** aujourd'hui. Une baisse sensible après une découpe signale un module oublié à l'import.
+
+## Le gabarit de la modale est une coquille et huit partiels
+`appointment-create-modal.blade.php` garde le commentaire d'en-tête, les deux blocs `@php` et la racine Alpine, et n'ordonne que des inclusions.
+
+**`@include` transmet `get_defined_vars()` de l'appelant** : les quarante-cinq variables de mise en page définies dans l'en-tête sont visibles dans chaque partiel sans qu'on ait rien à passer. Ne pas croire l'inverse, un commentaire du paquet l'a longtemps affirmé alors que le fichier qui le portait en dépendait.
+
+Piège rencontré en découpant : `@php(...)` sur une ligne **n'est pas compilé** dans ce fichier, il sort tel quel et ouvre PHP jusqu'à la fin. Employer la forme `@php … @endphp`, y compris sur une ligne, comme le reste du fichier.
+
+Attention aux noms de variables de boucle : `$rangee` est une chaîne de classes de l'en-tête, et la masquer dans un `@foreach` casse la mise en page sans lever d'erreur.
+
 ## Les fins de ligne viennent de `.gitattributes`, pas de l'outil
 `core.autocrlf` vaut `true` sur cette machine, donc git rend du CRLF au checkout sauf indication contraire. L'index est propre (100 % LF) ; c'est la copie de travail qui se salit, et Pint signale alors `line_ending` sur des fichiers qui n'ont rien d'autre à se reprocher.
 

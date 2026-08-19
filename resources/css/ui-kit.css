@@ -95,6 +95,8 @@
      *   trait        le filet d'un champ ou d'une rangee au repos
      *   trait-fort   un filet qui doit se voir, comme celui d'un bouton
      *   case-grise   le fond d'une valeur qu'on ne saisit pas
+     *   fond-modale  le gris sur lequel se detachent les groupes d'un ecran
+     *                plein, sur telephone
      */
     --fb-encre: #34423e;
     --fb-encre-2: #5f706a;
@@ -103,6 +105,7 @@
     --fb-trait-fort: #98a29f;
     --fb-case-grise: #eceeed;
     --fb-cellule: #f9f9f9;
+    --fb-fond-modale: #f6f7f8;
 }
 
 .dark {
@@ -113,6 +116,7 @@
     --fb-trait-fort: var(--color-gray-600);
     --fb-case-grise: var(--color-gray-800);
     --fb-cellule: var(--color-gray-800);
+    --fb-fond-modale: var(--color-gray-950);
 }
 
 /*
