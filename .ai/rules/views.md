@@ -92,6 +92,27 @@ Quand le « dedans » n'est pas tout `$el` — une rangée qui porte d'autres ch
 
 Diagnostic : poser deux écouteurs sur document, un en capture et un en bulle, et cliquer. Vu en capture seulement = le stopPropagation est en cause.
 
+## Les trois écoutes qu'un panneau ouvert au focus doit poser
+Un champ qui déroule sa liste au focus (`filter-field`, `phone-field`, `time-field`, la recherche client) a besoin des trois, et chacune corrige une panne distincte :
+
+| Écoute | Sans elle |
+| --- | --- |
+| `x-on:click` en plus de `x-on:focus` | un champ déjà focalisé ne reçoit plus de `focus`, et un `<label>` qui l'enveloppe lui transmet le clic reçu n'importe où dans la boîte : cliquer à côté du texte fermait le panneau par le clic extérieur sans le rouvrir |
+| `x-on:focusout` **gardé** par `$event.relatedTarget && ! $el.contains(...)` | au doigt `relatedTarget` vaut `null`, et le panneau se fermait avant que le clic n'aboutisse ; sans l'écoute du tout, il restait ouvert pendant qu'on saisissait ailleurs |
+| `x-on:mousedown.prevent` sur les options, jamais `click` | le champ perd le focus avant que le clic n'aboutisse, et le panneau se referme sous le doigt |
+
+## Un `<label>` n'ouvre pas le sélecteur d'un champ natif
+Un `<label>` donne le focus au champ, ce qui n'ouvre pas son sélecteur : sur `<input type="date">`, cliquer à côté du texte ne faisait rien. Le geste s'écrit à la main, `champ.focus()` puis `champ.showPicker()`.
+
+Au doigt il faut aussi ouvrir quand on touche le champ **lui-même** : le navigateur n'ouvre son calendrier que depuis son icône, que la feuille masque, et il n'y a pas de segment à viser sur un écran tactile. Au bureau on laisse le clic dans le texte à la saisie clavier.
+
+Un `<button>` satisfait `:focus-within` sur lui-même : une boîte qui s'ouvre au clic prenait donc la couleur de focus d'un champ qu'on saisit. Elle garde son gris, et retire le contour du navigateur qui prendrait la place.
+
+## Chaque branche conditionnelle du formulaire porte son `wire:key`
+Sans clé, passer d'une branche à l'autre remplace le sous-arbre au lieu de le muter. L'état d'ouverture de la modale vivant dans Alpine, choisir un client refermait le formulaire.
+
+La clé va sur le bloc qui doit tenir en place, jamais sur le champ qu'il contient : chaque frappe remplace ce que le bloc contient.
+
 ## Un composant Alpine né d'un rendu Livewire relit ses données sur fb-morphe
 Un `x-data` ne se réévalue jamais de lui-même. Quand ses données viennent du HTML rendu par Livewire (un bloc `<script type="application/json">`, un `<input type="hidden">`), il les relit dans une méthode `lire()` appelée à `init()` **et** sur `x-on:fb-morphe.window="lire()"`. `booking-admin.js` émet `fb-morphe` à la fin de chaque morph ; un `Livewire.hook('morphed')` posé dans `init()` arriverait après le morph en cours et survivrait au composant.
 
