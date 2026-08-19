@@ -26,6 +26,21 @@ Les propriétés calculées de Livewire sont déclarées en `@property-read` sur
 
 Le `phpstan.neon` de l'hôte exclut `config/` (fichiers livrés par Laravel) et `database/seeders/` (Laravel documente `Seeder::$command` comme non nul, ce qui est faux hors artisan ; son propre code se protège par `isset()`, que l'analyseur refuse sur la foi de la même annotation). Les deux absences sont commentées sur place.
 
+## Injection : les Actions par la signature, les dépôts par `boot()`
+Les composants Livewire du paquet ne résolvent plus rien par `app()`. La règle tient en une phrase : **une Action s'injecte dans la signature de la méthode qui la déclenche ; un dépôt ou un service de lecture s'injecte une fois par `boot()`**. La raison est la nature des deux : une Action ouvre une transaction et n'est déclenchée que par un geste, donc elle appartient à la signature de ce geste ; un dépôt est lu par des propriétés `#[Computed]` et des méthodes privées, qui n'ont aucune signature à recevoir.
+
+Ce qui rend la première moitié possible : Livewire appelle les actions **et les hooks de cycle de vie** par `wrap($component)->__call()` → `ImplicitlyBoundMethod::call()`. `updatedPieceJointe(AttachFileToAppointmentAction $attach)` fonctionne donc comme `moveAppointment(int $id, string $debut, RescheduleAppointmentAction $action)`. Un paramètre typé n'y consomme aucun argument venu du navigateur, donc il peut se placer avant un paramètre optionnel — et il le doit, PHP dépréciant un paramètre requis déclaré après un optionnel.
+
+Deux conséquences à connaître :
+- un appel **direct sur l'instance** (`->instance()->cancel($id)`) court-circuite le conteneur : il faut passer l'Action à la main, ce que fait `CapabilitiesAndActorTest` ;
+- `createEntry()` est le seul point que le navigateur appelle sur l'agenda, donc le seul endroit où le conteneur peut remettre les Actions d'écriture. Il les transmet à `saveAppointment()` ou `saveUnavailability()`.
+
+## Deux Actions ne sont pas `final`, et c'est écrit dessus
+`SaveScheduleExceptionAction` et `DeleteScheduleExceptionAction` ont perdu leur `final`. Aucun refus qu'elles portent n'est atteignable depuis l'écran, qui résout la ligne sur son propre agenda avant d'appeler : le seul moyen d'éprouver le `try/catch` du composant est une doublure liée par le conteneur, et un paramètre typé n'accepte qu'un sous-type. Même motif que `AppointmentDeletionPolicy`. Les doublures vivent dans `AgendaScreenTest` et **héritent** désormais, ce qui les oblige à suivre la signature de ce qu'elles remplacent.
+
+## `assertReturned(false)` passe sur une erreur 500
+Piège du harnais Livewire : quand la requête d'update échoue, `SubsequentRender` rend un `ComponentState` aux effets vides plutôt que de lever. `returns.0` vaut alors `null`, et `assertReturned(false)` compare par `assertEquals`, donc passe. Le test échoue plus loin, sur un `assertDispatched` — ce qui fait lire une erreur fatale comme un toast manquant. Devant ce symptôme, vérifier le code de réponse avant de chercher la logique.
+
 ## Les fins de ligne viennent de `.gitattributes`, pas de l'outil
 `core.autocrlf` vaut `true` sur cette machine, donc git rend du CRLF au checkout sauf indication contraire. L'index est propre (100 % LF) ; c'est la copie de travail qui se salit, et Pint signale alors `line_ending` sur des fichiers qui n'ont rien d'autre à se reprocher.
 
