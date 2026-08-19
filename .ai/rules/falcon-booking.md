@@ -5,6 +5,18 @@ paths:
 
 # Falcon Booking
 
+## `pint --dirty` depuis la racine ne voit rien du paquet
+`packages/falcon-booking` est un **dépôt git distinct**. `--dirty` interroge le git de l'hôte, qui n'y voit jamais aucun changement : Pint répond « passed » sans avoir lu un seul fichier du paquet. La consigne de `CLAUDE.md` s'exécute donc sans rien vérifier, et c'est ainsi que quatorze fichiers ont dérivé sans que personne le voie.
+
+Pour tout fichier du paquet : lancer `vendor/bin/pint` **depuis `packages/falcon-booking`** (le binaire reste celui de l'hôte, `../../vendor/bin/pint`), ou lui passer les chemins explicitement. Le préréglage est épinglé dans `packages/falcon-booking/pint.json`.
+
+Même piège pour les tests : la suite du paquet ne se lance pas par `artisan test` de l'hôte, mais par `vendor/bin/phpunit` depuis le paquet.
+
+## Les fins de ligne viennent de `.gitattributes`, pas de l'outil
+`core.autocrlf` vaut `true` sur cette machine, donc git rend du CRLF au checkout sauf indication contraire. L'index est propre (100 % LF) ; c'est la copie de travail qui se salit, et Pint signale alors `line_ending` sur des fichiers qui n'ont rien d'autre à se reprocher.
+
+`packages/falcon-booking/.gitattributes` porte `* text=auto eol=lf`, comme celui de l'hôte. Ne pas le retirer : sans lui la dérive revient à chaque `git checkout`.
+
 ## Commentaires du paquet : régime 2 (doctrine pro), déjà appliqué
 Le chantier de nettoyage `commentaires.md` a été fait sur tout falcon-booking. L'état livré est le régime 2, pas le régime 1 : ne pas y revenir en ajoutant du contexte de session.
 
