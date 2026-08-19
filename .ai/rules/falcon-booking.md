@@ -66,15 +66,22 @@ Attention aux noms de variables de boucle : `$rangee` est une chaîne de classes
 
 `packages/falcon-booking/.gitattributes` porte `* text=auto eol=lf`, comme celui de l'hôte. Ne pas le retirer : sans lui la dérive revient à chaque `git checkout`.
 
-## Commentaires du paquet : régime 2 (doctrine pro), déjà appliqué
-Le chantier de nettoyage `commentaires.md` a été fait sur tout falcon-booking. L'état livré est le régime 2, pas le régime 1 : ne pas y revenir en ajoutant du contexte de session.
+## Commentaires du paquet : régime 2 (doctrine pro), appliqué partout
+Le chantier de nettoyage `commentaires.md` a été passé sur tout falcon-booking, en quatre lots : les assets, les gabarits, le code, les tests. L'état livré est le régime 2, pas le régime 1 : ne pas y revenir en ajoutant du contexte de session.
 
 Ce qui est interdit dans ce paquet :
 - toute mention d'un client ou d'un cas d'usage particulier (c'est un paquet généraliste, pas un développement sur mesure) ;
 - la narration : historique d'un bug corrigé, « avant, l'écran faisait… », dates de décision, références de lot ou de sprint, renvois au cahier des charges ;
 - les tournures genrées désignant l'utilisatrice (« she », « her »), et les données de jeu d'essai reprenant le nom d'un vrai établissement ;
-- le tiret cadratin U+2014 (utiliser « : », « , » ou reformuler).
+- le tiret cadratin U+2014 (utiliser « : », « , » ou reformuler) ;
+- les `TODO`, `FIXME`, `XXX` : il n'en reste aucun. Ce qui était un vrai périmètre de règle a été reformulé en phrase.
 
-Ce qui est attendu : PHPDoc concis en anglais décrivant ce que fait la méthode, plus le « pourquoi » non évident quand il existe. Rien sur le trivial, rien en décoration de vue. Seuls les TODO restent tolérés, en anglais et sans référence interne.
+Ce qui est attendu : PHPDoc concis en anglais décrivant ce que fait la méthode, plus le « pourquoi » non évident quand il existe. Rien sur le trivial.
+
+**Un gabarit et une feuille de style ne narrent pas leur rendu.** C'est le principe de placement de la brique, valable dans les deux régimes : le balisage se lit seul. Les 35 gabarits sont passés de 573 lignes de commentaire à 91, la feuille de l'agenda de 300 à 99. Ce qui subsiste est ce que la déclaration ne peut pas dire : un élément vide qui réserve une place, un `wire:key` sans lequel une modale se referme, un `wire:ignore` que le morph viderait, une mesure sous le pixel, un couplage avec le JS. Une mesure relevée sur la référence, un choix de graisse, la raison d'une colonne : rien de tout cela n'a sa place dans une vue. Ce qui traverse plusieurs fichiers va dans `.ai/rules/views.md`.
 
 Les strings runtime (messages de validation, toasts, exceptions, textes UI) restent en français et ne se touchent pas : des tests les assertent.
+
+**L'invariant à reproduire** si le chantier est rejoué : comparer avant et après les fichiers privés de leurs commentaires. En PHP, `token_get_all` sans `T_COMMENT` ni `T_DOC_COMMENT`. En Blade, la même chose sur le **source** et non sur le compilé — Livewire dérive une graine de clé du hachage du source, donc retirer un commentaire change le compilé sans rien changer au rendu. En JS et CSS, le paquet compilé doit garder **le même nom de fichier**, qui porte le hachage de son contenu.
+
+Deux pièges vus en le faisant : Blade compile les directives avant de retirer les commentaires, donc aucun commentaire ne porte d'arobase (contrôle : compiler chaque gabarit puis `php -l`) ; et Tailwind lit aussi les commentaires, donc retirer un nom de classe cité entre accents graves retire une règle du paquet compilé.
