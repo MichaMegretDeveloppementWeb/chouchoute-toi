@@ -37,7 +37,6 @@ boost.json
 # partagees. Ignore alors que ses fichiers etaient suivis, il ne les sortait pas
 # du depot mais refusait tout `git add` sans `-f` : une regle ecrite par
 # quelqu'un restait invisible au commit, sans que rien ne le dise.
-.ai
 .claude
 .codex
 .gemini
