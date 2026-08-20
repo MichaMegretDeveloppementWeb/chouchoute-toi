@@ -111,7 +111,7 @@
                 {{-- Un troisième niveau : les réglages sont une section, une page
                      par famille, et les horaires en font partie. --}}
                 <x-ui.sidebar.collapsible
-                    name="reglages"
+                    name="settings"
                     label="Réglages"
                     :active="request()->routeIs($booking.'settings*') || request()->routeIs($booking.'schedule')">
                     <x-ui.sidebar.link
