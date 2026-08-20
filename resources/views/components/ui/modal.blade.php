@@ -42,7 +42,7 @@ $maxWidth = match($variant) {
 // cadre et une ombre par-dessus un voile sombre dessinent un lisere dur, la ou
 // la reference n'a ni l'un ni l'autre.
 $panneau = match ($variant) {
-    'form' => 'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--fb-cellule)] transition duration-200 ease-out dark:bg-gray-950',
+    'form' => 'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--fb-cell)] transition duration-200 ease-out dark:bg-gray-950',
     'picker' => 'relative w-full overflow-hidden rounded-md bg-white transition duration-200 ease-out dark:bg-gray-900',
     default => 'relative w-full rounded-xl border border-gray-200 bg-white shadow-xl transition duration-200 ease-out dark:border-gray-700 dark:bg-gray-900 dark:shadow-2xl dark:shadow-black/20',
 };
@@ -65,7 +65,7 @@ $panneau = match ($variant) {
      }"
      x-on:open-modal.window="if ($event.detail === '{{ $name }}') open = true"
      x-on:close-modal.window="if ($event.detail === '{{ $name }}') open = false"
-     x-on:keydown.escape.window="if ($el.hasAttribute('data-fb-modale-dessus') || ! document.querySelector('[data-fb-modale-dessus]')) fermer()"
+     x-on:keydown.escape.window="if ($el.hasAttribute('data-fb-topmost-modal') || ! document.querySelector('[data-fb-topmost-modal]')) fermer()"
      x-show="open"
      x-cloak
      {{ $attributes->merge(['class' => 'fixed inset-0 z-50']) }}>
@@ -93,16 +93,16 @@ $panneau = match ($variant) {
                 {{-- En-tete blanc : le titre a gauche, fermer et valider a droite en
                      deux boutons carres de 39 px. Mesures : 52 de haut, retrait
                      6 28 5, titre 15/700 dans l'encre secondaire. --}}
-                <div class="fb-modale-entete flex shrink-0 items-center gap-x-3 bg-white pb-[5px] pl-7 pr-7 pt-1.5 dark:bg-gray-900">
+                <div class="fb-modal-header flex shrink-0 items-center gap-x-3 bg-white pb-[5px] pl-7 pr-7 pt-1.5 dark:bg-gray-900">
                     @if($title)
-                        <h3 class="min-w-0 flex-1 truncate text-[15px] font-bold leading-6 text-[var(--fb-encre-2)]">{{ $title }}</h3>
+                        <h3 class="min-w-0 flex-1 truncate text-[15px] font-bold leading-6 text-[var(--fb-text-soft)]">{{ $title }}</h3>
                     @endif
 
                     <button type="button" @click="fermer()"
         {{-- Sur telephone la fleche est nue : un cadre autour d'un retour, sur
              un ecran qui n'a rien d'autre en haut a gauche, ne dit rien de plus
              et pose une boite de plus dans une page qui n'en veut aucune. --}}
-                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-encre-2)] text-[var(--fb-encre)] transition-colors hover:bg-[var(--fb-cellule)] max-sm:h-11 max-sm:w-11 max-sm:border-0"
+                        class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md border border-[var(--fb-text-soft)] text-[var(--fb-text)] transition-colors hover:bg-[var(--fb-cell)] max-sm:h-11 max-sm:w-11 max-sm:border-0"
                         aria-label="Fermer">
                         <x-ui.icon name="arrow-left" class="h-5 w-5" />
                     </button>
@@ -125,14 +125,14 @@ $panneau = match ($variant) {
                 </div>
 
                 {{-- Le corps defile seul : l'en-tete et le pied restent en vue. --}}
-                <div class="fb-modale-corps min-h-0 flex-1 overflow-y-auto bg-[#f6f7f8] px-7 py-4 dark:bg-gray-950">
+                <div class="fb-modal-body min-h-0 flex-1 overflow-y-auto bg-[#f6f7f8] px-7 py-4 dark:bg-gray-950">
                     {{ $slot }}
                 </div>
 
                 @if(isset($footer))
                     {{-- Pied gris sous filet, 72 px : les gestes a gauche, le
                          total et les actions a droite. --}}
-                    <div class="fb-modale-pied flex min-h-[72px] shrink-0 items-center gap-x-4 border-t border-[var(--fb-trait)] bg-[#f6f7f8] py-3 pl-[18px] pr-7 dark:bg-gray-950">
+                    <div class="fb-modal-footer flex min-h-[72px] shrink-0 items-center gap-x-4 border-t border-[var(--fb-border)] bg-[#f6f7f8] py-3 pl-[18px] pr-7 dark:bg-gray-950">
                         {{ $footer }}
                     </div>
                 @endif
@@ -148,7 +148,7 @@ $panneau = match ($variant) {
                     {{-- Une section blanche a ombre, comme celles du corps :
                          un filet sur du gris la faisait lire comme le bord de la
                          fenetre plutot que comme la derniere chose de la page. --}}
-                    <div class="fb-modale-ancree shrink-0 bg-surface px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3.5 shadow-[0_-1px_4px_rgba(0,0,0,0.13)] sm:hidden">
+                    <div class="fb-modal-anchored shrink-0 bg-surface px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3.5 shadow-[0_-1px_4px_rgba(0,0,0,0.13)] sm:hidden">
                         {{-- Un contour et non un aplat : sur la reference le
                              bouton qui enregistre un rendez-vous est un cadre
                              d'un pixel, en graisse normale. C'est le seul
@@ -156,7 +156,7 @@ $panneau = match ($variant) {
                              pas besoin d'en faire plus pour se trouver. --}}
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-11 w-full items-center justify-center rounded border border-[var(--fb-encre)] text-[15px] font-normal text-[var(--fb-encre)] transition-colors active:bg-[var(--fb-cellule)] disabled:opacity-40">
+                            class="flex h-11 w-full items-center justify-center rounded border border-[var(--fb-text)] text-[15px] font-normal text-[var(--fb-text)] transition-colors active:bg-[var(--fb-cell)] disabled:opacity-40">
                             Enregistrer
                         </button>
 
@@ -164,7 +164,7 @@ $panneau = match ($variant) {
                              la reference le pose sur telephone, et il y ferme la
                              lecture au lieu de flotter dans un coin du pied. --}}
                         @isset($validateNote)
-                            <p class="mt-2.5 text-center text-[13px] font-medium text-[var(--fb-encre)]">{{ $validateNote }}</p>
+                            <p class="mt-2.5 text-center text-[13px] font-medium text-[var(--fb-text)]">{{ $validateNote }}</p>
                         @endisset
                     </div>
                 @endif

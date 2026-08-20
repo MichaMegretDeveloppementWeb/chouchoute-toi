@@ -77,10 +77,10 @@
      * Assez sombres pour porter du blanc dans les deux themes, donc pas de
      * variante sombre.
      */
-    --fb-venu: #2c5282;
-    --fb-venu-fonce: #24456d;
-    --fb-absent: #9b2c2c;
-    --fb-absent-fonce: #822525;
+    --fb-completed: #2c5282;
+    --fb-completed-dark: #24456d;
+    --fb-no-show: #9b2c2c;
+    --fb-no-show-dark: #822525;
 
     /*
      * La palette du formulaire, relevee sur la reference.
@@ -98,25 +98,25 @@
      *   fond-modale  le gris sur lequel se detachent les groupes d'un ecran
      *                plein, sur telephone
      */
-    --fb-encre: #34423e;
-    --fb-encre-2: #5f706a;
-    --fb-muet: #7f8c88;
-    --fb-trait: #eceeed;
-    --fb-trait-fort: #98a29f;
-    --fb-case-grise: #eceeed;
-    --fb-cellule: #f9f9f9;
-    --fb-fond-modale: #f6f7f8;
+    --fb-text: #34423e;
+    --fb-text-soft: #5f706a;
+    --fb-text-muted: #7f8c88;
+    --fb-border: #eceeed;
+    --fb-border-strong: #98a29f;
+    --fb-surface-sunken: #eceeed;
+    --fb-cell: #f9f9f9;
+    --fb-modal-ground: #f6f7f8;
 }
 
 .dark {
-    --fb-encre: var(--color-gray-100);
-    --fb-encre-2: var(--color-gray-300);
-    --fb-muet: var(--color-gray-400);
-    --fb-trait: var(--color-gray-800);
-    --fb-trait-fort: var(--color-gray-600);
-    --fb-case-grise: var(--color-gray-800);
-    --fb-cellule: var(--color-gray-800);
-    --fb-fond-modale: var(--color-gray-950);
+    --fb-text: var(--color-gray-100);
+    --fb-text-soft: var(--color-gray-300);
+    --fb-text-muted: var(--color-gray-400);
+    --fb-border: var(--color-gray-800);
+    --fb-border-strong: var(--color-gray-600);
+    --fb-surface-sunken: var(--color-gray-800);
+    --fb-cell: var(--color-gray-800);
+    --fb-modal-ground: var(--color-gray-950);
 }
 
 /*
@@ -180,11 +180,11 @@ textarea:not([class*='ring-0']):focus,
  *
  * Desormais : un seul modele a toutes les largeurs. La barre est ouverte ou
  * repliee, c'est le bouton de la barre du haut qui tranche, et l'etat vit sur
- * `<html>` en `data-fb-barre`, pose avant la peinture. Le survol ne fait plus
+ * `<html>` en `data-fb-sidebar`, pose avant la peinture. Le survol ne fait plus
  * rien ; une section repliee ouvre ses liens dans un volet flottant.
  *
  * Les composants publies decrivent la barre **deployee** : ces regles la
- * replient, piece par piece. Elles visent `.fb-barre`, la barre de bureau, donc
+ * replient, piece par piece. Elles visent `.fb-sidebar`, la barre de bureau, donc
  * le tiroir du telephone garde ses libelles.
  *
  * Hors de tout `@layer`, comme les autres regles de ce fichier : elles
@@ -196,59 +196,59 @@ textarea:not([class*='ring-0']):focus,
     --fb-rail: 0;
 }
 
-html[data-fb-barre='repliee'] {
+html[data-fb-sidebar='repliee'] {
     --fb-rail: 1;
 }
 
-html[data-fb-barre='repliee'] .fb-barre {
+html[data-fb-sidebar='repliee'] .fb-sidebar {
     width: 62px;
 }
 
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-libelle {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-label {
     opacity: 0;
     max-width: 0;
 }
 
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-titre {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-title {
     opacity: 0;
     max-height: 0;
     margin-bottom: 0;
 }
 
 /* 38 px : la largeur d'une pastille carree, et non une forme coupee a 62. */
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-lien {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-link {
     max-width: 38px;
     column-gap: 0;
 }
 
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-ecart {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-gap {
     column-gap: 0;
 }
 
 /* `display: none` et non une opacite : les liens sortent aussi du parcours au
    clavier et de l'arbre d'accessibilite, ce qu'une transparence ne fait pas. */
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-sous-menu {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-submenu {
     display: none;
 }
 
 /* La section qui porte la page courante : sur le rail, son enfant actif est
    cache et plus rien d'autre ne dirait ou l'on est. */
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge {
     background-color: var(--color-gray-900);
     color: var(--color-white);
 }
 
-html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
+html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge-icon {
     color: var(--color-white);
 }
 
-.dark html[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille,
-html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille {
+.dark html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge,
+html.dark[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge {
     background-color: var(--color-white);
     color: var(--color-gray-900);
 }
 
-html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
+html.dark[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge-icon {
     color: var(--color-gray-900);
 }
 
@@ -261,21 +261,21 @@ html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
  * qu'une sous-section a l'interieur se deroule sur place au lieu d'ouvrir un
  * volet de plus.
  */
-.fb-barre-volet {
+.fb-sidebar-panel {
     --fb-rail: 0;
 }
 
-.fb-barre-volet .fb-barre-lien {
+.fb-sidebar-panel .fb-sidebar-link {
     max-width: 100%;
     column-gap: 0.75rem;
 }
 
-.fb-barre-volet .fb-barre-libelle {
+.fb-sidebar-panel .fb-sidebar-label {
     opacity: 1;
     max-width: 200px;
 }
 
-.fb-barre-volet .fb-barre-sous-menu {
+.fb-sidebar-panel .fb-sidebar-submenu {
     display: block;
 }
 
@@ -288,11 +288,11 @@ html.dark[data-fb-barre='repliee'] .fb-barre .fb-barre-pastille-icone {
  * telephone heriterait d'un retrait de 260 px.
  */
 @media (min-width: 64rem) {
-    html[data-fb-barre='repliee'] .wide\:pl-\[260px\] {
+    html[data-fb-sidebar='repliee'] .wide\:pl-\[260px\] {
         padding-left: 62px;
     }
 
-    html[data-fb-barre='ouverte'] .lg\:pl-\[62px\] {
+    html[data-fb-sidebar='ouverte'] .lg\:pl-\[62px\] {
         padding-left: 260px;
     }
 }

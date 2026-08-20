@@ -40,22 +40,22 @@ $etat = $persist
     : ($open ? 'true' : 'false');
 
 // Ces classes decrivent la barre deployee ; la feuille de l'hote les replie
-// par leur nom quand `data-fb-barre` vaut « repliee ».
-$labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
+// par leur nom quand `data-fb-sidebar` vaut « repliee ».
+$labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 
 // Same geometry as a link, down to the max-width: it is what keeps the active
 // pill a 38 pixel square in the rail instead of a shape cut off at 62.
-$boutonBase = 'fb-barre-lien group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
+$boutonBase = 'fb-sidebar-link group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 
 // La pastille dit ou l'on est quand l'enfant actif est cache, c'est-a-dire sur
 // le rail. Ecrite en PHP plutot qu'en empilant des variantes, pour ne rien
 // devoir a l'ordre dans lequel Tailwind les trie.
 $boutonEtat = $active
-    ? 'fb-barre-pastille text-primary'
+    ? 'fb-sidebar-badge text-primary'
     : 'text-secondary hover:bg-elevated hover:text-primary';
 
 $iconeEtat = $active
-    ? 'fb-barre-pastille-icone text-primary'
+    ? 'fb-sidebar-badge-icon text-primary'
     : 'text-muted group-hover:text-secondary';
 @endphp
 
@@ -103,7 +103,7 @@ $iconeEtat = $active
              The rule is left of the section icon by one pixel of border plus
              its padding, which lands the children's text on the exact column of
              the parent's label. --}}
-        <ul class="fb-barre-sous-menu mt-0.5 block space-y-0.5 pb-1 ml-[19px] border-l border-base pl-2.5">
+        <ul class="fb-sidebar-submenu mt-0.5 block space-y-0.5 pb-1 ml-[19px] border-l border-base pl-2.5">
             {{ $slot }}
         </ul>
     </div>
@@ -121,7 +121,7 @@ $iconeEtat = $active
             x-on:scroll.window="fermerLeVolet()"
             x-bind:style="`top: ${haut}px; left: ${gauche}px`"
             role="group" aria-label="{{ $label }}"
-            class="fb-barre-volet fixed z-[60] w-[220px] rounded-xl border border-base bg-surface p-2 shadow-lg">
+            class="fb-sidebar-panel fixed z-[60] w-[220px] rounded-xl border border-base bg-surface p-2 shadow-lg">
 
             <p class="px-2.5 pb-1.5 pt-1 text-[11px] font-semibold uppercase tracking-wider text-muted">{{ $label }}</p>
 

@@ -14,7 +14,7 @@ window.Chart = Chart;
 /*
  * La barre laterale : ouverte ou repliee, et rien entre les deux.
  *
- * L'etat vit sur `<html>` en `data-fb-barre`, pose avant la peinture par le
+ * L'etat vit sur `<html>` en `data-fb-sidebar`, pose avant la peinture par le
  * script du layout, et la feuille en tire la largeur de la barre comme celle du
  * contenu. Retenu comme le theme : on ne redemande pas a chaque page ce qui a
  * ete decide une fois.
@@ -24,13 +24,13 @@ window.Chart = Chart;
  * vers elle.
  */
 window.basculerLaBarre = function () {
-    const repliee = document.documentElement.dataset.fbBarre === 'repliee';
+    const repliee = document.documentElement.dataset.fbSidebar === 'repliee';
     const voulu = repliee ? 'ouverte' : 'repliee';
 
-    document.documentElement.dataset.fbBarre = voulu;
+    document.documentElement.dataset.fbSidebar = voulu;
 
     try {
-        localStorage.setItem('fb-barre', voulu);
+        localStorage.setItem('fb-sidebar', voulu);
     } catch (e) {
         /* Navigation privee : l'etat vaut pour la page, et c'est deja ca. */
     }
@@ -86,7 +86,7 @@ function ancrerAuRail(declencheur, hauteur) {
     // Le bord du rail, et non celui du bouton : la navigation est en retrait de
     // ses cotes, et un panneau pose sur le bouton commencait quatre pixels a
     // l'interieur de la barre.
-    const barre = declencheur.closest('.fb-barre');
+    const barre = declencheur.closest('.fb-sidebar');
     const bord = barre ? barre.getBoundingClientRect().right : cadre.right;
 
     return {
@@ -188,7 +188,7 @@ document.addEventListener('alpine:init', () => {
         panneau: null,
 
         viser(evenement) {
-            const lien = evenement.target.closest('[data-fb-titre]');
+            const lien = evenement.target.closest('[data-fb-title]');
 
             if (! lien || ! this.panneau || ! surLeRail(this.$root)) {
                 return;
@@ -200,7 +200,7 @@ document.addEventListener('alpine:init', () => {
                 // Le titre s'ecrit dans l'element plutot que par une liaison :
                 // la boite se dimensionne sur lui, et une liaison ne serait
                 // appliquee qu'au tour suivant, donc apres la mesure.
-                this.panneau.textContent = lien.dataset.fbTitre;
+                this.panneau.textContent = lien.dataset.fbTitle;
 
                 const cadre = lien.getBoundingClientRect();
                 const hauteur = hauteurCachee(this.panneau);
@@ -216,7 +216,7 @@ document.addEventListener('alpine:init', () => {
             // lien : on ne ferme que si le curseur a bien quitte la barre ou
             // change de lien.
             if (evenement.relatedTarget && this.$root.contains(evenement.relatedTarget)
-                && evenement.relatedTarget.closest('[data-fb-titre]') === evenement.target.closest('[data-fb-titre]')) {
+                && evenement.relatedTarget.closest('[data-fb-title]') === evenement.target.closest('[data-fb-title]')) {
                 return;
             }
 

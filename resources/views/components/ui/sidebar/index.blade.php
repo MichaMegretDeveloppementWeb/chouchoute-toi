@@ -4,10 +4,10 @@
     les largeurs d'ecran. Un rail qui s'ouvrait sous la souris deplacait
     l'entree qu'on visait pendant qu'on avancait vers elle.
 
-    L'etat vit sur `<html>` en `data-fb-barre`, pose avant la peinture. Les
+    L'etat vit sur `<html>` en `data-fb-sidebar`, pose avant la peinture. Les
     classes ci-dessous decrivent la barre **deployee** ; la feuille de l'hote
-    replie chaque piece par sa classe `fb-barre-*` quand l'attribut le demande.
-    La barre du telephone garde ses libelles : les regles visent `.fb-barre`,
+    replie chaque piece par sa classe `fb-sidebar-*` quand l'attribut le demande.
+    La barre du telephone garde ses libelles : les regles visent `.fb-sidebar`,
     qui n'existe que sur le bureau.
 
     The bar has two roots, one per breakpoint, so unknown attributes are not
@@ -25,7 +25,7 @@
 ])
 
 @php
-$labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
+$labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-black/5 dark:ring-white/10';
 @endphp
 
@@ -73,7 +73,7 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
 <aside x-data="barreInfobulle()"
     x-on:mouseover="viser($event)"
     x-on:mouseout="quitter($event)"
-    class="fb-barre group/sidebar hidden lg:block fixed inset-y-0 left-0 z-30 w-[260px] overflow-clip border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900">
+    class="fb-sidebar group/sidebar hidden lg:block fixed inset-y-0 left-0 z-30 w-[260px] overflow-clip border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900">
 
     {{-- Une seule infobulle pour tous les liens du rail, posee a cote de celui
          qu'on survole. Teleportee comme le volet d'une section : la barre est
@@ -85,7 +85,7 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
     </template>
     <div class="flex h-full w-[260px] flex-col">
         <!-- Brand -->
-        <div class="fb-barre-ecart flex h-14 shrink-0 items-center gap-x-2.5 border-b border-gray-100 px-5 transition-[gap] duration-300 ease-in-out dark:border-gray-800">
+        <div class="fb-sidebar-gap flex h-14 shrink-0 items-center gap-x-2.5 border-b border-gray-100 px-5 transition-[gap] duration-300 ease-in-out dark:border-gray-800">
             @isset($logo)
                 {{ $logo }}
             @elseif($brandLogo)

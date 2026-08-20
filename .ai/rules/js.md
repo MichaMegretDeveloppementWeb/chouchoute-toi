@@ -24,16 +24,16 @@ Deux pièges rencontrés en sortant un catalogue déroulant du conteneur de déf
 Un panneau fixe ne suit pas son déclencheur : le refermer sur `scroll` et `resize`. Et ne pas le téléporter vers `body` s'il contient des `$wire.*` : il quitterait la racine Livewire. Quand la liste peut être longue, préférer une seconde modale.
 
 ## Une modale par-dessus une autre : la pile décide, et toute fermeture passe par close-modal
-`MODAL_STACK` (booking-admin.js) suit les modales ouvertes et marque celle du dessus par `data-fb-modale-dessus`. La modale publiée (`resources/views/components/ui/modal.blade.php`) ne réagit à Échap que si elle porte ce marqueur : Échap ferme la sélection de prestation, pas le formulaire dessous.
+`MODAL_STACK` (booking-admin.js) suit les modales ouvertes et marque celle du dessus par `data-fb-topmost-modal`. La modale publiée (`resources/views/components/ui/modal.blade.php`) ne réagit à Échap que si elle porte ce marqueur : Échap ferme la sélection de prestation, pas le formulaire dessous.
 
 Cela ne tient que si **chaque** fermeture émet `close-modal` : Échap, le voile et le bouton fermer appellent `fermer()`, qui émet l'événement. Un `open = false` posé à la main laisse la modale dans la pile, le focus n'est pas rendu et le piège de tabulation tourne dans une racine invisible.
 
 À l'ouverture, le focus va sur le panneau, sauf si un élément porte `data-fb-autofocus` (la recherche d'une modale qui n'est qu'une recherche). Un `focus()` posé dans un `$nextTick` arrive avant que `x-show` n'affiche le panneau et ne fait rien.
 
-`data-fb-modale-dessus` n'existe que côté client, et le morph de Livewire synchronise les attributs sur le HTML du serveur : **il le retire**. Un rendu fait pendant qu'une modale est ouverte lui enlevait donc sa marque, et Échap ne savait plus laquelle fermer. Le hook `morphed` de `booking-admin.js` rappelle `markTheTopmost()` pour ça.
+`data-fb-topmost-modal` n'existe que côté client, et le morph de Livewire synchronise les attributs sur le HTML du serveur : **il le retire**. Un rendu fait pendant qu'une modale est ouverte lui enlevait donc sa marque, et Échap ne savait plus laquelle fermer. Le hook `morphed` de `booking-admin.js` rappelle `markTheTopmost()` pour ça.
 
 ## FullCalendar 7 monte ses cartes deux fois, et la boîte n'est placée qu'après
-Le calendrier rend chaque événement une première fois **masqué**, pour mesurer ce qu'il demande, puis une seconde fois à l'écran. `document.querySelectorAll('.fb-rdv')` renvoie donc les deux jeux, et les invisibles font 6 px de haut : une mesure prise dessus est fausse. Filtrer par `checkVisibility()`, ou viser la carte par `document.elementFromPoint`.
+Le calendrier rend chaque événement une première fois **masqué**, pour mesurer ce qu'il demande, puis une seconde fois à l'écran. `document.querySelectorAll('.fb-appointment')` renvoie donc les deux jeux, et les invisibles font 6 px de haut : une mesure prise dessus est fausse. Filtrer par `checkVisibility()`, ou viser la carte par `document.elementFromPoint`.
 
 Dans `eventDidMount`, la boîte que le calendrier place **n'a pas encore son style en ligne** : `info.el.closest('[style*="inset-inline"]')` rend `null`. Ce qui doit voyager jusqu'à la mise en page se pose sur `info.el` en `data-*`, et se relit depuis la boîte dans la passe.
 

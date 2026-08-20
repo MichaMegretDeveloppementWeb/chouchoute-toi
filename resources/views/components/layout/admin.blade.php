@@ -41,13 +41,13 @@
          dans la memoire, pour qu'un autre ecran retrouve le sien. --}}
     <script>
         try {
-            var barre = localStorage.getItem('fb-barre');
+            var barre = localStorage.getItem('fb-sidebar');
 
-            document.documentElement.dataset.fbBarre = (barre === 'repliee' || barre === 'ouverte')
+            document.documentElement.dataset.fbSidebar = (barre === 'repliee' || barre === 'ouverte')
                 ? barre
                 : (window.innerWidth >= 1500 ? 'ouverte' : 'repliee');
         } catch (e) {
-            document.documentElement.dataset.fbBarre = 'repliee';
+            document.documentElement.dataset.fbSidebar = 'repliee';
         }
     </script>
 

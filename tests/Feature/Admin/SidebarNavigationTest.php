@@ -54,7 +54,7 @@ final class SidebarNavigationTest extends TestCase
     {
         $shell = $this->shell();
 
-        $this->assertSame(10, substr_count($shell, 'fb-barre-volet'));
+        $this->assertSame(10, substr_count($shell, 'fb-sidebar-panel'));
         $this->assertSame(11, substr_count($shell, 'x-teleport="body"'), 'Dix volets, plus l’infobulle de la barre.');
     }
 
@@ -72,7 +72,7 @@ final class SidebarNavigationTest extends TestCase
         // Une seule : le tiroir du telephone montre ses libelles, il n'a rien a
         // faire dire par une infobulle.
         $this->assertSame(1, substr_count($shell, 'barreInfobulle()'));
-        $this->assertStringContainsString('data-fb-titre="Planning"', $shell);
+        $this->assertStringContainsString('data-fb-title="Planning"', $shell);
     }
 
     /**

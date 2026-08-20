@@ -10,10 +10,10 @@
 ])
 
 @php
-$labelClass = 'fb-barre-libelle whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
+$labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 // `max-sm:py-3` : sous 640 la barre est un tiroir qu'on vise au doigt, et
 // 34 px de haut est en dessous de ce qu'un doigt atteint sans se reprendre.
-$navLinkBase = 'fb-barre-lien group flex items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-normal gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
+$navLinkBase = 'fb-sidebar-link group flex items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-normal gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 $stateClass = $active
     ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200';
@@ -26,12 +26,12 @@ $iconClass = $active
     {{-- aria-current, not the class alone: the colours say where we are to
          whoever sees them, and nothing said it to anyone else.
 
-         `data-fb-titre` : sur le rail, l'icone est seule et ne dit rien a qui
+         `data-fb-title` : sur le rail, l'icone est seule et ne dit rien a qui
          ne la connait pas encore. Une seule infobulle sert toute la barre, du
          cote de celle-ci ; la poser sur chaque lien en faisait quatre-vingt-
          quatorze, la barre etant rendue deux fois et chaque section rendant ses
          liens deux fois de plus. --}}
-    <a href="{{ $href }}" data-fb-titre="{{ trim($slot) }}"
+    <a href="{{ $href }}" data-fb-title="{{ trim($slot) }}"
         @if($active) aria-current="page" @endif
         {{ $attributes->merge(['class' => "$navLinkBase $stateClass"]) }}>
         @if($icon)

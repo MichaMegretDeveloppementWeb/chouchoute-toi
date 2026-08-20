@@ -3,7 +3,7 @@
 ])
 
 @php
-$sectionLabel = 'fb-barre-titre whitespace-nowrap max-h-6 mb-2 overflow-hidden transition-[opacity,max-height,margin] duration-300 ease-in-out';
+$sectionLabel = 'fb-sidebar-title whitespace-nowrap max-h-6 mb-2 overflow-hidden transition-[opacity,max-height,margin] duration-300 ease-in-out';
 @endphp
 
 <li>
