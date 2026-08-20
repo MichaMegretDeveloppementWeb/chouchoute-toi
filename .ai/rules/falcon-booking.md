@@ -5,6 +5,20 @@ paths:
 
 # Falcon Booking
 
+## Chaque règle de validation a son message, et un test l'exige
+`tests/Feature/EveryRuleHasAMessageTest.php` monte chaque formulaire de l'admin, développe son `rules()` en `champ.règle` et exige une entrée dans `messages()`. Il couvre les branches d'état (`entryType` rendez-vous/indisponibilité, `formAllDay`), sans quoi la moitié des règles ne serait jamais lue.
+
+Ce n'est pas une exigence de style. Le projet n'a **aucune** traduction de framework pour ses propres règles : `lang/fr/validation.php` est un filet pour ce que le moteur produit hors de nos composants (l'upload Livewire, validé dans une requête séparée que `messages()` n'atteint jamais), pas la source des messages. Une règle sans message affichait donc `validation.max.string` à qui saisissait un code postal trop long.
+
+Ajouter une règle sans son message fait échouer ce test. C'est voulu.
+
+## `integer` n'est pas décorative : elle décide comment `min` et `max` mesurent
+Piège coûteux, vérifié en cassant trois tests. On croit `'integer'` redondante sur une propriété `public int` — Livewire caste à l'hydratation, la règle ne verra jamais autre chose qu'un entier. C'est vrai, et ce n'est pas la question.
+
+Laravel choisit la sémantique de `min`/`max`/`between`/`size` selon la **présence d'une règle numérique dans la liste** (`getSize()` : `is_numeric($value) && $hasNumeric`). Retirer `'integer'` fait donc basculer `min:5` de « la valeur vaut au moins 5 » à « la chaîne fait au moins 5 caractères », et un pas de créneaux de 15 minutes se voit refusé parce que « 15 » n'a que deux caractères.
+
+Règle : **ne jamais retirer `'integer'` d'une liste qui contient `min`, `max`, `between` ou `size`.** `'string'` et `'boolean'` n'ont pas ce rôle et peuvent, eux, être retirés quand le type de la propriété les garantit.
+
 ## `pint --dirty` depuis la racine ne voit rien du paquet
 `packages/falcon-booking` est un **dépôt git distinct**. `--dirty` interroge le git de l'hôte, qui n'y voit jamais aucun changement : Pint répond « passed » sans avoir lu un seul fichier du paquet. La consigne de `CLAUDE.md` s'exécute donc sans rien vérifier, et c'est ainsi que quatorze fichiers ont dérivé sans que personne le voie.
 
