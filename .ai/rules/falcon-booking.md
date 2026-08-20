@@ -49,6 +49,16 @@ Deux conséquences à connaître :
 - un appel **direct sur l'instance** (`->instance()->cancel($id)`) court-circuite le conteneur : il faut passer l'Action à la main, ce que fait `CapabilitiesAndActorTest` ;
 - `createEntry()` est le seul point que le navigateur appelle sur l'agenda, donc le seul endroit où le conteneur peut remettre les Actions d'écriture. Il les transmet à `saveAppointment()` ou `saveUnavailability()`.
 
+## Un paramètre `enum` sur une méthode appelée par le navigateur casse la résolution
+Corollaire de la section précédente, et il tire dans l'autre sens. Livewire résout **tout** paramètre typé par une classe via le conteneur, qu'il porte une valeur par défaut ou non. Un enum est une classe et n'est pas instanciable : `saveAppointment(..., ?AppointmentSeriesScope $scope = null)` faisait donc échouer chaque appel, y compris ceux qui ne passent pas de portée.
+
+La forme qui marche : la valeur voyage en `string` sur la méthode publique, qui la convertit par `tryFrom()` — jamais `from()`, qui lève un `ValueError` portant le nom de la classe jusqu'à l'écran. Le corps partagé, lui, est privé et prend l'enum.
+
+## Une projection est une promesse sur ce que la carte peut dire
+`AgendaRepository` ne sélectionne qu'une dizaine de colonnes, à raison : la table en porte une trentaine, dont la note interne et l'adresse. Mais une colonne oubliée ne lève rien — l'attribut revient `null`, et le drapeau qui en dépend devient faux pour tout le monde. Le `⟳` des visites récurrentes est resté invisible ainsi, code de rendu écrit et testé au niveau du modèle.
+
+Règle : **ajouter une colonne à la projection en même temps que ce qui la lit**, et l'éprouver depuis `eventsBetween()` et non depuis le modèle. Un test qui lit `$appointment->series_id` passe quoi qu'il arrive.
+
 ## Deux Actions ne sont pas `final`, et c'est écrit dessus
 `SaveScheduleExceptionAction` et `DeleteScheduleExceptionAction` ont perdu leur `final`. Aucun refus qu'elles portent n'est atteignable depuis l'écran, qui résout la ligne sur son propre agenda avant d'appeler : le seul moyen d'éprouver le `try/catch` du composant est une doublure liée par le conteneur, et un paramètre typé n'accepte qu'un sous-type. Même motif que `AppointmentDeletionPolicy`. Les doublures vivent dans `AgendaScreenTest` et **héritent** désormais, ce qui les oblige à suivre la signature de ce qu'elles remplacent.
 
