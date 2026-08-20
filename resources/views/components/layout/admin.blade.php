@@ -41,13 +41,13 @@
          dans la memoire, pour qu'un autre ecran retrouve le sien. --}}
     <script>
         try {
-            var barre = localStorage.getItem('fb-sidebar');
+            var stored = localStorage.getItem('fb-sidebar');
 
-            document.documentElement.dataset.fbSidebar = (barre === 'repliee' || barre === 'ouverte')
-                ? barre
-                : (window.innerWidth >= 1500 ? 'ouverte' : 'repliee');
+            document.documentElement.dataset.fbSidebar = (stored === 'collapsed' || stored === 'expanded')
+                ? stored
+                : (window.innerWidth >= 1500 ? 'expanded' : 'collapsed');
         } catch (e) {
-            document.documentElement.dataset.fbSidebar = 'repliee';
+            document.documentElement.dataset.fbSidebar = 'collapsed';
         }
     </script>
 
@@ -251,7 +251,7 @@
                      Des `lg` et non des `wide` : le survol ne deploie plus la
                      barre, donc sans ce bouton les libelles seraient hors
                      d'atteinte entre 1024 et 1500 px. --}}
-                <button type="button" onclick="basculerLaBarre()"
+                <button type="button" onclick="toggleSidebar()"
                     class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 lg:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                     aria-label="Replier ou deployer la barre laterale">
                     <x-ui.icon name="bars-3" class="h-5 w-5" />

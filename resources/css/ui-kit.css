@@ -196,59 +196,59 @@ textarea:not([class*='ring-0']):focus,
     --fb-rail: 0;
 }
 
-html[data-fb-sidebar='repliee'] {
+html[data-fb-sidebar='collapsed'] {
     --fb-rail: 1;
 }
 
-html[data-fb-sidebar='repliee'] .fb-sidebar {
+html[data-fb-sidebar='collapsed'] .fb-sidebar {
     width: 62px;
 }
 
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-label {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-label {
     opacity: 0;
     max-width: 0;
 }
 
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-title {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-title {
     opacity: 0;
     max-height: 0;
     margin-bottom: 0;
 }
 
 /* 38 px : la largeur d'une pastille carree, et non une forme coupee a 62. */
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-link {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-link {
     max-width: 38px;
     column-gap: 0;
 }
 
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-gap {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-gap {
     column-gap: 0;
 }
 
 /* `display: none` et non une opacite : les liens sortent aussi du parcours au
    clavier et de l'arbre d'accessibilite, ce qu'une transparence ne fait pas. */
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-submenu {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-submenu {
     display: none;
 }
 
 /* La section qui porte la page courante : sur le rail, son enfant actif est
    cache et plus rien d'autre ne dirait ou l'on est. */
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-badge {
     background-color: var(--color-gray-900);
     color: var(--color-white);
 }
 
-html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge-icon {
+html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-badge-icon {
     color: var(--color-white);
 }
 
-.dark html[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge,
-html.dark[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge {
+.dark html[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-badge,
+html.dark[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-badge {
     background-color: var(--color-white);
     color: var(--color-gray-900);
 }
 
-html.dark[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge-icon {
+html.dark[data-fb-sidebar='collapsed'] .fb-sidebar .fb-sidebar-badge-icon {
     color: var(--color-gray-900);
 }
 
@@ -288,11 +288,11 @@ html.dark[data-fb-sidebar='repliee'] .fb-sidebar .fb-sidebar-badge-icon {
  * telephone heriterait d'un retrait de 260 px.
  */
 @media (min-width: 64rem) {
-    html[data-fb-sidebar='repliee'] .wide\:pl-\[260px\] {
+    html[data-fb-sidebar='collapsed'] .wide\:pl-\[260px\] {
         padding-left: 62px;
     }
 
-    html[data-fb-sidebar='ouverte'] .lg\:pl-\[62px\] {
+    html[data-fb-sidebar='expanded'] .lg\:pl-\[62px\] {
         padding-left: 260px;
     }
 }

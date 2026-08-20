@@ -23,14 +23,14 @@ window.Chart = Chart;
  * 1500 px, et l'entree qu'on visait descendait de 182 px pendant qu'on avancait
  * vers elle.
  */
-window.basculerLaBarre = function () {
-    const repliee = document.documentElement.dataset.fbSidebar === 'repliee';
-    const voulu = repliee ? 'ouverte' : 'repliee';
+window.toggleSidebar = function () {
+    const collapsed = document.documentElement.dataset.fbSidebar === 'collapsed';
+    const wanted = collapsed ? 'expanded' : 'collapsed';
 
-    document.documentElement.dataset.fbSidebar = voulu;
+    document.documentElement.dataset.fbSidebar = wanted;
 
     try {
-        localStorage.setItem('fb-sidebar', voulu);
+        localStorage.setItem('fb-sidebar', wanted);
     } catch (e) {
         /* Navigation privee : l'etat vaut pour la page, et c'est deja ca. */
     }
