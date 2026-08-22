@@ -143,9 +143,9 @@ Un spinner posé seul à côté d'un libellé ne se voit pas : le voile est la f
 
 **Un indicateur par surface, pas un par geste.** L'écran a son voile, la modale posée dessus a le sien et le bouton qui valide. Un bouton de la page qui aurait le sien en plus du voile ferait lire deux attentes là où il n'y en a qu'une — et un geste passant par un menu qui se referme au clic ne laisserait rien où le poser.
 
-Toujours `.delay.longer` (500 ms) : un seuil unique pour tout le back-office, un seuil qui change d'un écran à l'autre se remarque. Jamais de spinner sans délai.
+Toujours `.delay.long` (300 ms) : un seuil unique pour tout le back-office, un seuil qui change d'un écran à l'autre se remarque. Jamais de spinner sans délai. L'agenda, qui compte lui-même, porte la même valeur dans `beginWaiting()`.
 
-**Livewire ne masque au repos que les combinaisons de modificateurs listées dans sa feuille** (`[wire:loading]`, `[wire:loading.flex]`, `[wire:loading.delay.longer]`…). `wire:loading.flex.delay.longer` n'en est pas une : l'élément reste visible en permanence, sans erreur. Le centrage va donc sur un enfant, jamais sur l'élément qui porte la directive.
+**Livewire ne masque au repos que les combinaisons de modificateurs listées dans sa feuille** (`[wire:loading]`, `[wire:loading.flex]`, `[wire:loading.delay.long]`…). `wire:loading.flex.delay.long` n'en est pas une : l'élément reste visible en permanence, sans erreur. Le centrage va donc sur un enfant, jamais sur l'élément qui porte la directive.
 
 **Ni `@if` ni `{!! !!}` dans une balise de composant** (`<x-ui.icon …>`) : le compilateur ne reconnaît plus la balise et l'écrit telle quelle dans la page. Les directives conditionnelles vont sur un élément HTML autour.
 

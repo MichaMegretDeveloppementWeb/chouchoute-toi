@@ -138,12 +138,12 @@ $placement = 'items-center justify-center p-4';
                             class="fb-primary-action relative hidden h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 sm:flex dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                             aria-label="Enregistrer">
                             <span class="flex transition-opacity"
-                                @if($validateTarget) wire:loading.class.delay.longer="opacity-0" wire:target="{{ $validateTarget }}" @endif>
+                                @if($validateTarget) wire:loading.class.delay.long="opacity-0" wire:target="{{ $validateTarget }}" @endif>
                                 <x-ui.icon name="check" class="h-5 w-5" stroke-width="2.5" />
                             </span>
 
                             @if($validateTarget)
-                                <span wire:loading.delay.longer wire:target="{{ $validateTarget }}"
+                                <span wire:loading.delay.long wire:target="{{ $validateTarget }}"
                                     class="absolute inset-0">
                                     <span class="flex h-full w-full items-center justify-center">
                                         <x-ui.spinner size="md" />
@@ -168,7 +168,7 @@ $placement = 'items-center justify-center p-4';
                          ne vient pas ne doit pas emprisonner dans la modale. La
                          validation est exclue, son bouton la portant deja. --}}
                     @if($validateTarget)
-                        <div wire:loading.delay.longer wire:target.except="{{ $validateTarget }}"
+                        <div wire:loading.delay.long wire:target.except="{{ $validateTarget }}"
                             class="absolute inset-0 z-20 bg-[#f6f7f8]/80 dark:bg-gray-950/80">
                             <div class="flex h-full w-full items-center justify-center">
                                 <x-ui.spinner size="xl" class="text-[var(--fb-text-soft)]" />
@@ -203,11 +203,11 @@ $placement = 'items-center justify-center p-4';
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
                             class="fb-primary-mobile-action relative flex h-11 w-full items-center justify-center rounded border border-[var(--fb-text)] text-[15px] font-normal text-[var(--fb-text)] transition-colors active:bg-[var(--fb-cell)] disabled:opacity-40">
-                            <span @if($validateTarget) wire:loading.class.delay.longer="opacity-0" wire:target="{{ $validateTarget }}" @endif
+                            <span @if($validateTarget) wire:loading.class.delay.long="opacity-0" wire:target="{{ $validateTarget }}" @endif
                                 class="transition-opacity">Enregistrer</span>
 
                             @if($validateTarget)
-                                <x-ui.spinner size="md" wire:loading.delay.longer wire:target="{{ $validateTarget }}"
+                                <x-ui.spinner size="md" wire:loading.delay.long wire:target="{{ $validateTarget }}"
                                     class="absolute inset-0 m-auto" />
                             @endif
                         </button>

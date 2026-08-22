@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "258a283fc9da0eac7e0e4a175471c798",
+    "content-hash": "cf9d8f9e4b6967eb9461906f3656e6b4",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -800,10 +800,10 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "daefc1e3e5c60edbcea00793c26dd6fa0cdd4e00"
+                "reference": "288454565d61a3ec7ebfc4da9530150a24b2ae97"
             },
             "require": {
-                "falcon/ui-kit": "^2.6",
+                "falcon/ui-kit": "^2.7",
                 "laravel/framework": "^13.0",
                 "livewire/livewire": "^4.2",
                 "php": "^8.4"
@@ -857,16 +857,16 @@
         },
         {
             "name": "falcon/ui-kit",
-            "version": "2.6.2",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a"
+                "reference": "6ab813c4343690bfd6afea9de433eacd84dddf6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a",
-                "reference": "fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/6ab813c4343690bfd6afea9de433eacd84dddf6a",
+                "reference": "6ab813c4343690bfd6afea9de433eacd84dddf6a",
                 "shasum": ""
             },
             "require": {
@@ -897,10 +897,10 @@
             ],
             "description": "Design system for Laravel admin interfaces — Blade components, tokens, and Claude Code documentation.",
             "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.6.2",
+                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.7.0",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-08-22T19:35:08+00:00"
+            "time": "2026-08-22T20:25:38+00:00"
         },
         {
             "name": "fruitcake/php-cors",

@@ -77,15 +77,15 @@ $wireTarget = ($target && !$isLink) ? "wire:target=\"{$target}\"" : '';
          garde sa largeur, donc rien ne saute autour de lui. --}}
     <span
         {!! $wireTarget !!}
-        wire:loading.class.delay.longer="opacity-0"
+        wire:loading.class.delay.long="opacity-0"
         class="inline-flex items-center gap-x-1.5 transition-opacity"
     >{{ $slot }}</span>
 
     {{-- Deux pieges, d'ou ces deux `<span>` : un `{!! !!}` dans une balise de
          composant empeche Blade de la reconnaitre, et Livewire ne masque au
          repos que les combinaisons de modificateurs qu'il liste dans sa
-         feuille — `loading.flex.delay.longer` n'en est pas une. --}}
-    <span {!! $wireTarget !!} wire:loading.delay.longer class="absolute inset-0">
+         feuille — `loading.flex.delay.long` n'en est pas une. --}}
+    <span {!! $wireTarget !!} wire:loading.delay.long class="absolute inset-0">
         <span class="flex h-full w-full items-center justify-center"><x-ui.spinner size="sm" /></span>
     </span>
     @else
