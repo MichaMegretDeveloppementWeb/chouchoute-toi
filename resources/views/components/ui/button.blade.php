@@ -20,9 +20,13 @@ $base = 'inline-flex items-center gap-x-1.5 rounded-lg text-[13px] font-medium t
 
 $variants = [
     'primary' => 'bg-gray-900 text-white shadow-sm hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200',
+    'booking' => 'bg-[var(--fb-primary)] text-white shadow-sm hover:bg-[var(--fb-primary-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fb-primary)]',
     'secondary' => 'bg-white text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 dark:hover:bg-gray-700',
     'danger' => 'bg-red-600 text-white shadow-sm hover:bg-red-500 dark:bg-red-600 dark:hover:bg-red-500',
     'ghost' => 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200',
+    'confirm-primary' => '!rounded-[4px] bg-[var(--fb-primary)] text-white !shadow-none hover:bg-[var(--fb-primary-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fb-primary)]',
+    'confirm-secondary' => '!rounded-[4px] border border-gray-300 bg-white text-gray-700 !shadow-none hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--fb-primary)] dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800',
+    'confirm-danger' => '!rounded-[4px] bg-red-600 text-white !shadow-none hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600',
 ];
 
 /*
@@ -37,6 +41,7 @@ $variants = [
 $sizes = [
     'default' => 'px-4 py-1.5 max-sm:min-h-11',
     'compact' => 'px-3 py-1.5 max-sm:min-h-11',
+    'confirm' => 'min-h-10 px-4 py-2.5 max-sm:min-h-11',
 ];
 
 $classes = implode(' ', [

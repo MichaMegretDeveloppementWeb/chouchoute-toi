@@ -1,11 +1,12 @@
 {{--
-    Publie depuis falcon/ui-kit pour porter la variante `form`.
+    Published from falcon/ui-kit to carry the `form` and `confirm` variants.
 
     `form` est le formulaire de rendez-vous : un panneau plus large sur fond gris,
     sans cadre ni ombre, avec un en-tete blanc qui porte le titre et deux boutons
     carres (fermer, valider), et un pied gris sous filet ou vivent les gestes.
-    Ses mesures sont relevees sur la reference du projet. Les autres variantes
-    sont celles du kit, inchangees.
+    `confirm` follows the reference's compact hierarchy: warning, centred copy,
+    then stacked full-width actions. Dedicated button variants keep these
+    measurements from changing actions outside confirmation modals.
 
     Deux slots de plus pour `form` : `valider` (le contenu du bouton vert, ou
     rien pour une coche) et `pied` (les gestes de gauche ; le total et les
@@ -18,7 +19,7 @@
 --}}
 @props([
     'name' => null,               // Unique name, used to open via $dispatch('open-modal', 'name')
-    'variant' => 'content',       // content|confirm|large|wide|form
+    'variant' => 'content',       // content|confirm|large|wide|form|repeat
     'title' => null,
     'onValidate' => null,         // form : l'expression Alpine du bouton de validation
     'validateTarget' => null,     // form : la methode Livewire dont on attend la fin
@@ -26,13 +27,15 @@
 
 @php
 $maxWidth = match($variant) {
-    'confirm' => 'max-w-sm',
+    'confirm' => 'max-w-[440px]',
     // A form whose rows carry several fields side by side. Below this it wraps into a
     // column and reads as a list; above it there is more width than the fields can use.
     'large' => 'max-w-5xl',
     // Media-heavy panels (image cropping, side-by-side diffs) need the screen, not a column.
     'wide' => 'max-w-[min(90rem,92vw)]',
     'form' => 'max-w-[1100px]',
+    // The recurrence panel measured on Planity: 800 px at desktop width.
+    'repeat' => 'max-w-[800px]',
     // A list to pick from, over a form: narrower than the form, anchored at the top.
     'picker' => 'max-w-[662px]',
     default => 'max-w-lg',
@@ -44,8 +47,16 @@ $maxWidth = match($variant) {
 $panneau = match ($variant) {
     'form' => 'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--fb-cell)] transition duration-200 ease-out dark:bg-gray-950',
     'picker' => 'relative w-full overflow-hidden rounded-md bg-white transition duration-200 ease-out dark:bg-gray-900',
+    'repeat' => 'relative flex w-full flex-col overflow-hidden rounded-lg bg-white transition duration-200 ease-out',
+    'confirm' => 'relative w-full overflow-hidden rounded-[7px] bg-white transition duration-200 ease-out dark:bg-gray-900',
     default => 'relative w-full rounded-xl border border-gray-200 bg-white shadow-xl transition duration-200 ease-out dark:border-gray-700 dark:bg-gray-900 dark:shadow-2xl dark:shadow-black/20',
 };
+
+$voile = $variant === 'repeat'
+    ? 'bg-[rgb(52_66_62/0.5)] backdrop-blur-[8px]'
+    : 'bg-gray-900/50 backdrop-blur-sm dark:bg-black/60';
+
+$placement = 'items-center justify-center p-4';
 @endphp
 
 {{-- Un seul chemin de sortie, `fermer()`, qui emet `close-modal` : Echap, le
@@ -71,10 +82,10 @@ $panneau = match ($variant) {
      {{ $attributes->merge(['class' => 'fixed inset-0 z-50']) }}>
 
     {{-- Backdrop --}}
-    <div x-show="open" x-transition.opacity class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm dark:bg-black/60" @click="fermer()"></div>
+    <div x-show="open" x-transition.opacity class="absolute inset-0 {{ $voile }}" @click="fermer()"></div>
 
     {{-- Panel --}}
-    <div class="flex min-h-full items-center justify-center p-4">
+    <div class="flex min-h-full {{ $placement }}">
         {{-- The animation runs on classes, not on x-show. The panel is a descendant of an
              element that x-show hides, and an enter transition started while that ancestor is
              still display:none never completes: the panel stayed invisible on the first open
@@ -85,7 +96,7 @@ $panneau = match ($variant) {
              de page visible sous le formulaire. --}}
         <div x-bind:class="open ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
              @click.stop
-             class="{{ $panneau }} {{ $maxWidth }} @if($variant === 'form') sm:max-h-[90vh] @endif">
+             class="{{ $panneau }} {{ $maxWidth }} @if($variant === 'form') sm:max-h-[90vh] @elseif($variant === 'repeat') max-h-[calc(100vh-2rem)] @endif">
 
             @if($variant === 'picker')
                 {{ $slot }}
@@ -117,7 +128,7 @@ $panneau = match ($variant) {
                     @if($onValidate)
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="hidden h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 sm:flex dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                            class="fb-primary-action hidden h-[39px] w-[39px] shrink-0 items-center justify-center rounded-md bg-gray-900 text-white transition-colors hover:bg-gray-800 disabled:opacity-60 sm:flex dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
                             aria-label="Enregistrer">
                             <x-ui.icon name="check" class="h-5 w-5" stroke-width="2.5" />
                         </button>
@@ -149,14 +160,12 @@ $panneau = match ($variant) {
                          un filet sur du gris la faisait lire comme le bord de la
                          fenetre plutot que comme la derniere chose de la page. --}}
                     <div class="fb-modal-anchored shrink-0 bg-surface px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3.5 shadow-[0_-1px_4px_rgba(0,0,0,0.13)] sm:hidden">
-                        {{-- Un contour et non un aplat : sur la reference le
-                             bouton qui enregistre un rendez-vous est un cadre
-                             d'un pixel, en graisse normale. C'est le seul
-                             element de la page qui porte un trait, et il n'a
-                             pas besoin d'en faire plus pour se trouver. --}}
+                        {{-- Le kit conserve son contour par defaut ; le package
+                             de reservation utilise ce crochet pour en faire son
+                             action primaire pleine, accessible au pouce. --}}
                         <button type="button" x-on:click="{{ $onValidate }}"
                             @if($validateTarget) wire:loading.attr="disabled" wire:target="{{ $validateTarget }}" @endif
-                            class="flex h-11 w-full items-center justify-center rounded border border-[var(--fb-text)] text-[15px] font-normal text-[var(--fb-text)] transition-colors active:bg-[var(--fb-cell)] disabled:opacity-40">
+                            class="fb-primary-mobile-action flex h-11 w-full items-center justify-center rounded border border-[var(--fb-text)] text-[15px] font-normal text-[var(--fb-text)] transition-colors active:bg-[var(--fb-cell)] disabled:opacity-40">
                             Enregistrer
                         </button>
 
@@ -168,26 +177,51 @@ $panneau = match ($variant) {
                         @endisset
                     </div>
                 @endif
+            @elseif($variant === 'repeat')
+                {{-- Planity recurrence panel: 53 px header, scrolling white body,
+                     then a 64 px footer carrying one full-width action. --}}
+                <div class="flex h-[53px] shrink-0 items-center justify-between border-b border-[var(--fb-border)] px-6">
+                    @if($title)
+                        <h3 class="text-[15px] font-semibold leading-6 text-[var(--fb-text)]">{{ $title }}</h3>
+                    @endif
+
+                    <button type="button" @click="fermer()"
+                        class="flex h-8 w-8 items-center justify-center rounded-md text-[var(--fb-text-soft)] transition-colors hover:bg-[var(--fb-cell)] hover:text-[var(--fb-text)]"
+                        aria-label="Fermer">
+                        <x-ui.icon name="x-mark" class="h-4 w-4" />
+                    </button>
+                </div>
+
+                <div class="min-h-0 flex-1 overflow-y-auto px-6">
+                    {{ $slot }}
+                </div>
+
+                @if(isset($footer))
+                    <div class="flex min-h-16 shrink-0 items-center border-t border-[var(--fb-border)] px-6 py-3">
+                        {{ $footer }}
+                    </div>
+                @endif
             @elseif($variant === 'confirm')
-                {{-- Confirmation layout: icon + text side by side --}}
-                <div class="p-5">
-                    <div class="flex items-start gap-x-3">
+                {{-- A compact, centred warning followed by full-width actions. --}}
+                <div class="px-5 pb-5 pt-6 text-center">
+                    <div class="flex flex-col items-center">
                         @if(isset($icon))
                             {{ $icon }}
                         @else
-                            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/20">
-                                <x-ui.icon name="exclamation-triangle" class="h-5 w-5 text-red-600 dark:text-red-400" />
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-500/15">
+                                <x-ui.icon name="exclamation-triangle" class="h-[18px] w-[18px] text-red-600 dark:text-red-400" />
                             </div>
                         @endif
-                        <div class="min-w-0 flex-1">
-                            @if($title)
-                                <h3 class="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{{ $title }}</h3>
-                            @endif
-                            <p class="mt-1 text-[12px] text-gray-500 dark:text-gray-400 leading-relaxed">{{ $slot }}</p>
-                        </div>
+
+                        @if($title)
+                            <h3 class="mt-3 text-[15px] font-semibold leading-5 text-gray-900 dark:text-gray-100">{{ $title }}</h3>
+                        @endif
+
+                        <div class="mt-1.5 text-[13px] leading-5 text-gray-500 dark:text-gray-400">{{ $slot }}</div>
                     </div>
+
                     @if(isset($actions))
-                        <div class="mt-5 flex items-center justify-end gap-x-2">
+                        <div class="mt-5 flex w-full flex-col gap-y-2 [&>button]:w-full [&>button]:justify-center">
                             {{ $actions }}
                         </div>
                     @endif
