@@ -796,11 +796,11 @@
         },
         {
             "name": "falcon/booking",
-            "version": "dev-chantier-i-segmentation-par-espace",
+            "version": "dev-corrections-audit-externe",
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "288454565d61a3ec7ebfc4da9530150a24b2ae97"
+                "reference": "7210eaa0b77b9739891ff09c755b4339051608ec"
             },
             "require": {
                 "falcon/ui-kit": "^2.7",
