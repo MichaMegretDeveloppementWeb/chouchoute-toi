@@ -1,9 +1,9 @@
 {{--
-    Publie depuis falcon/ui-kit pour porter la hauteur tactile.
+    Publie depuis falcon/ui-kit pour porter la hauteur tactile et les couleurs
+    de la reservation.
 
-    Seul `$sizes` change : sous 640 les deux tailles du kit sortent a 32 px de
-    haut, en dessous de ce qu'un doigt atteint sans se reprendre. Le reste est
-    celui du kit, inchange.
+    Deux ecarts avec le kit : `$sizes`, ses deux tailles sortant a 32 px de haut
+    sous 640 ; et les variantes `booking` et `confirm-*`. Le reste suit le kit.
 --}}
 @props([
     'variant' => 'primary',
@@ -49,7 +49,7 @@ $classes = implode(' ', [
     $variants[$variant] ?? $variants['primary'],
     $sizes[$size] ?? $sizes['default'],
     $disabled ? 'opacity-50 cursor-not-allowed' : '',
-    $loading ? 'disabled:opacity-75 disabled:cursor-not-allowed' : '',
+    $loading ? 'relative disabled:opacity-75 disabled:cursor-not-allowed' : '',
 ]);
 
 /*
@@ -73,12 +73,21 @@ $wireTarget = ($target && !$isLink) ? "wire:target=\"{$target}\"" : '';
     {{ $attributes->merge(['class' => $classes, 'type' => 'button']) }}
 >
     @if($loading)
-    <svg {!! $wireTarget !!} wire:loading class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-    <span {!! $wireTarget !!} wire:loading.remove class="inline-flex items-center gap-x-1.5">{{ $slot }}</span>
-    <span {!! $wireTarget !!} wire:loading>Chargement...</span>
+    {{-- Le libelle s'efface sur place plutot que d'etre remplace : le bouton
+         garde sa largeur, donc rien ne saute autour de lui. --}}
+    <span
+        {!! $wireTarget !!}
+        wire:loading.class.delay.longer="opacity-0"
+        class="inline-flex items-center gap-x-1.5 transition-opacity"
+    >{{ $slot }}</span>
+
+    {{-- Deux pieges, d'ou ces deux `<span>` : un `{!! !!}` dans une balise de
+         composant empeche Blade de la reconnaitre, et Livewire ne masque au
+         repos que les combinaisons de modificateurs qu'il liste dans sa
+         feuille — `loading.flex.delay.longer` n'en est pas une. --}}
+    <span {!! $wireTarget !!} wire:loading.delay.longer class="absolute inset-0">
+        <span class="flex h-full w-full items-center justify-center"><x-ui.spinner size="sm" /></span>
+    </span>
     @else
     {{ $slot }}
     @endif

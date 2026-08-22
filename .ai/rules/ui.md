@@ -15,3 +15,10 @@ Le modèle est maintenant : **ouverte ou repliée, à toutes les largeurs ≥ lg
 Les composants décrivent la barre **déployée**. `resources/css/ui-kit.css` la replie par les classes `fb-sidebar`, `fb-sidebar-label`, `fb-sidebar-link`, `fb-sidebar-gap`, `fb-sidebar-submenu`, `fb-sidebar-title`, `fb-sidebar-badge`, scopées à `.fb-sidebar` pour que le tiroir du téléphone garde ses libellés. `--fb-rail` porte l'état jusqu'à Alpine : c'est la feuille qui décide, jamais un `matchMedia` recopié.
 
 Sur le rail, une section ouvre un **volet flottant** ancré à son icône, et la barre affiche **une seule** infobulle pour tous ses liens (`data-fb-title`) : posée sur chaque lien, elle était rendue 94 fois, la barre étant rendue deux fois et chaque section rendant ses liens une fois de plus dans son volet.
+
+## button et modal sont publiés et divergents
+Comme `sidebar/`, ces deux-là sont publiés depuis falcon/ui-kit et modifiés : ne pas les écraser par `ui-kit:publish`.
+
+`button` : `$sizes` porte `max-sm:min-h-11`, les tailles du kit sortant à 32 px de haut sous 640 ; et les variantes `booking` et `confirm-*` prennent la couleur du paquet. Le reste suit le kit — l'état de chargement vient de la version 2.6.0 et doit continuer de le suivre.
+
+`modal` : les variantes `form`, `repeat`, `picker` et `confirm`, qui n'existent pas dans le kit.

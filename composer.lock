@@ -796,14 +796,14 @@
         },
         {
             "name": "falcon/booking",
-            "version": "dev-corrections-audit-externe",
+            "version": "dev-chantier-i-segmentation-par-espace",
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "1b89a53ab228eab075df58ef1b43e037225a05fb"
+                "reference": "daefc1e3e5c60edbcea00793c26dd6fa0cdd4e00"
             },
             "require": {
-                "falcon/ui-kit": "^2.3",
+                "falcon/ui-kit": "^2.6",
                 "laravel/framework": "^13.0",
                 "livewire/livewire": "^4.2",
                 "php": "^8.4"
@@ -857,16 +857,16 @@
         },
         {
             "name": "falcon/ui-kit",
-            "version": "2.5.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "57ee40f03a44f0b71f35190235a12804c65a499a"
+                "reference": "fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/57ee40f03a44f0b71f35190235a12804c65a499a",
-                "reference": "57ee40f03a44f0b71f35190235a12804c65a499a",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a",
+                "reference": "fe9a3a335a1863d4562b1fea8e44c5bf39fd8b3a",
                 "shasum": ""
             },
             "require": {
@@ -897,10 +897,10 @@
             ],
             "description": "Design system for Laravel admin interfaces — Blade components, tokens, and Claude Code documentation.",
             "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.5.1",
+                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v2.6.2",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-08-21T19:29:27+00:00"
+            "time": "2026-08-22T19:35:08+00:00"
         },
         {
             "name": "fruitcake/php-cors",

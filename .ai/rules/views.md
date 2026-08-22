@@ -104,7 +104,9 @@ Un champ qui déroule sa liste au focus (`filter-field`, `phone-field`, `time-fi
 ## Un `<label>` n'ouvre pas le sélecteur d'un champ natif
 Un `<label>` donne le focus au champ, ce qui n'ouvre pas son sélecteur : sur `<input type="date">`, cliquer à côté du texte ne faisait rien. Le geste s'écrit à la main, `champ.focus()` puis `champ.showPicker()`.
 
-Au doigt il faut aussi ouvrir quand on touche le champ **lui-même** : le navigateur n'ouvre son calendrier que depuis son icône, que la feuille masque, et il n'y a pas de segment à viser sur un écran tactile. Au bureau on laisse le clic dans le texte à la saisie clavier.
+Au doigt il faut aussi ouvrir quand on touche le champ **lui-même** : le navigateur n'ouvre son calendrier que depuis son icône, que la feuille masque, et il n'y a pas de segment à viser sur un écran tactile.
+
+Au bureau, laisser le clic dans le texte à la saisie clavier **suppose que la boîte offre de la marge autour du champ**, sinon il n'y a nulle part où viser et le champ n'ouvre plus rien du tout. La fin de répétition (`appointment-repeat-modal`) est dans ce cas — 132 px que le champ remplit — et ouvre donc au clic dans le champ, aux deux largeurs. Le formulaire de rendez-vous, dont la boîte est large et porte une icône, garde la distinction.
 
 Un `<button>` satisfait `:focus-within` sur lui-même : une boîte qui s'ouvre au clic prenait donc la couleur de focus d'un champ qu'on saisit. Elle garde son gris, et retire le contour du navigateur qui prendrait la place.
 
@@ -128,3 +130,27 @@ Deux pannes vécues : « Venu » appelait `complete(null)` (TypeError sur le fil
 La règle : on lit `$wire.<propriété>` **au moment de l'appel**. Un état Alpine qui dépend du serveur se recalcule sur `x-on:open-modal.window`, l'ouverture arrivant toujours après l'appel Livewire qui la précède (`ouvrirLaSaisie` et `ouvrirLEntree` l'attendent).
 
 Un essai qui appelle `->call('complete', $id)` court-circuite le Blade et ne voit rien. Le seul garde-fou est une assertion sur le rendu, comme `assertSeeHtml('$wire[action]($wire.selectedId)')`.
+
+## Une attente au-delà de 500 ms se montre, et toujours au même endroit
+Deux formes, jamais deux pour un même geste.
+
+| Ce qui attend | La forme |
+| --- | --- |
+| Un bouton qui valide ou supprime, **dans une modale** | `<x-ui.button :loading="true" target="…">` : le libellé s'efface sur place, le spinner prend le centre, la largeur ne bouge pas |
+| Tout le reste — liste, tableau, grille, corps d'un formulaire | `<x-booking::loader>` sur un parent `relative` : un voile à la taille du bloc, le spinner au centre |
+
+Un spinner posé seul à côté d'un libellé ne se voit pas : le voile est la forme par défaut.
+
+**Un indicateur par surface, pas un par geste.** L'écran a son voile, la modale posée dessus a le sien et le bouton qui valide. Un bouton de la page qui aurait le sien en plus du voile ferait lire deux attentes là où il n'y en a qu'une — et un geste passant par un menu qui se referme au clic ne laisserait rien où le poser.
+
+Toujours `.delay.longer` (500 ms) : un seuil unique pour tout le back-office, un seuil qui change d'un écran à l'autre se remarque. Jamais de spinner sans délai.
+
+**Livewire ne masque au repos que les combinaisons de modificateurs listées dans sa feuille** (`[wire:loading]`, `[wire:loading.flex]`, `[wire:loading.delay.longer]`…). `wire:loading.flex.delay.longer` n'en est pas une : l'élément reste visible en permanence, sans erreur. Le centrage va donc sur un enfant, jamais sur l'élément qui porte la directive.
+
+**Ni `@if` ni `{!! !!}` dans une balise de composant** (`<x-ui.icon …>`) : le compilateur ne reconnaît plus la balise et l'écrit telle quelle dans la page. Les directives conditionnelles vont sur un élément HTML autour.
+
+`wire:target` prend l'identifiant quand la méthode est appelée depuis plusieurs rangées (`target="editCategory({{ $id }})"`), sinon toutes s'allument ensemble. Sur `<x-booking::loader>`, préférer `except` à `target` : nommer ce qui doit voiler laisse muet le geste ajouté demain.
+
+Le voile d'un formulaire couvre son corps, jamais son en-tête ni son pied : une réponse qui ne vient pas ne doit pas emprisonner dans la modale. Et il se pose **autour** du conteneur qui défile, pas dedans, sinon il part avec le contenu.
+
+L'agenda ne passe pas par `wire:loading` : sa grille est sous `wire:ignore` et interroge le serveur elle-même. Le voile est tenu par Alpine (`waiting`, `whileWaiting()` dans `calendar/index.js`), alimenté par l'option `loading` de FullCalendar et par les `$wire` du glisser-déposer. Pas de `x-transition` dessus : mesuré, il laisse le voile allumé après la première fermeture.
