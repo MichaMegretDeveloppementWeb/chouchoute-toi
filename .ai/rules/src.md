@@ -24,3 +24,14 @@ Ce que cela remplace : un drapeau `byAdministrator` qui voyageait dans le DTO et
 Les identifiants ne reviennent pas non plus : les relire, et vérifier le compte contre ce qui a été demandé avant tout appariement par position.
 
 Le filet : comparer colonne par colonne une ligne écrite en masse et une écrite par la voie ordinaire (`SeriesWrittenInOneGoTest`).
+
+## Le fuseau de l'établissement se lit par BusinessClock, jamais par config()
+`business.timezone` est un **réglage**, pas une clé de configuration : un institut qui déménage n'a pas à redéployer. `config('booking.timezone')` n'en est que la valeur d'amorce, et ne doit plus être lu nulle part dans `src/`.
+
+`Services/Shared/Time/BusinessClock` est le seul endroit qui sait quelle zone c'est : `zone()`, `now()`, `today()`, `on($instant)` — le même instant à l'heure de l'institut — et `at('2026-09-07 09:00')` — une heure tapée, devenue l'instant qu'elle nomme.
+
+`at()` compte : sans zone explicite, `CarbonImmutable::parse()` lit dans `app.timezone`, qui vaut `UTC` sur une installation Laravel par défaut. Toute heure tapée s'y décalerait d'une à deux heures.
+
+Les horaires d'ouverture ne passent pas par là : ce sont des heures de paroi (`WallClockTime`), pas des instants. Neuf heures reste neuf heures des deux côtés d'un changement d'heure.
+
+Changer ce réglage ne déplace aucun instant stocké — ils sont absolus — mais déplace l'heure d'affichage de tous. L'écran Réglages porte l'avertissement, et un test l'assert sur son libellé.
