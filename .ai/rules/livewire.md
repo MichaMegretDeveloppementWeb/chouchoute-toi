@@ -11,3 +11,12 @@ Une propriété `#[Computed]` qui attrape une lecture ratée et appelle `addErro
 Le correctif : lire dans `render()`, avant que la vue soit construite. Le trait `Concerns/ReadsBeforeRendering` donne un nom à ce geste (`$this->readBeforeRendering($this->sections)`) — une expression nue `$this->sections;` serait par ailleurs refusée par PHPStan (`expr.resultUnused`).
 
 Corollaire de doctrine : l'alerte **remplace** le contenu, elle ne s'affiche pas à côté. Une liste vide dit « il n'y a rien », qui n'est pas « la liste n'a pas pu être lue » — sur le Journal, c'est la différence entre deux réponses opposées.
+
+## Un même refus ne se dit qu'une fois, et avec le bon chiffre
+Un plafond fixe sur un champ, doublé plus loin d'un contrôle exact, donne deux messages et deux chiffres pour une seule erreur.
+
+Mesuré sur le nombre de répétitions : `max:732` répondait « au plus 732 » à 4000, puis le contrôle d'horizon répondait « 104 au plus » à 105. Le premier chiffre n'a jamais rien voulu dire pour le motif à l'écran.
+
+La règle du champ porte la mesure exacte (`repetitionsThatFitTheHorizon()`), calculée sur un motif d'une répétition — au-delà du plafond structurel le domaine refuse de construire la règle et il ne resterait rien à mesurer. Le contrôle en aval ne garde que le cas qu'aucune règle de champ ne sait exprimer : une fin par **date**, où ce qui compte est où tombe la dernière occurrence, pas la date saisie.
+
+Le plafond de `RecurrenceData` reste, mais comme invariant du domaine, pas comme message.
