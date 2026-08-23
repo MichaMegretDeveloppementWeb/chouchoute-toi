@@ -1,9 +1,23 @@
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+
+/*
+ * Le cache de vues compilees n'est pas une source.
+ *
+ * `storage/framework/views` etait scanne ici, ligne heritee du squelette
+ * Laravel. Le contenu de cette feuille dependait donc de ce qui avait ete
+ * visite ou mis en cache avant le build : 67 Ko cache vide, 125 Ko cache
+ * plein, et un fichier commite different de celui que le build suivant
+ * produit. Le site public y gagnait jusqu'a 58 Ko de classes du back-office
+ * qu'il n'utilise jamais.
+ *
+ * Rien n'est perdu : le gabarit public n'inclut que `x-layout.header` et
+ * `x-layout.footer`, tous deux sous `resources/views`, que la ligne
+ * ci-dessus couvre deja.
+ */
 
 @theme {
     --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
