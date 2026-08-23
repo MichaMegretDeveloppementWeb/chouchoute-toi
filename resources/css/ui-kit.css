@@ -63,9 +63,12 @@
  *
  * Ce que ca corrige : l'anneau etait noir et epais. Il devient un filet qui
  * change de couleur sans changer de largeur, donc rien ne se decale au focus.
+ *
+ * Le vert est celui qui se voit : #48bb78 rendait 2,43 contre le blanc, quand
+ * un indicateur de focus en demande 3. Meme famille, un cran plus fonce.
  */
 :root {
-    --fb-focus: #48bb78;
+    --fb-focus: #38a169;
 
     /*
      * Les deux etats qu'un rendez-vous garde une fois passe.
