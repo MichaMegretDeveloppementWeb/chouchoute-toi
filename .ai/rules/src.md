@@ -10,7 +10,22 @@ paths:
 
 Ce que cela remplace : un drapeau `byAdministrator` qui voyageait dans le DTO et se faisait retester à trois profondeurs pour décider quelles gardes sauter. Ne pas le réintroduire sous un autre nom. Réserver et déplacer existent en deux exemplaires ; celui du comptoir ne demande rien et ne refuse rien, celui du client garde les trois gardes.
 
-`Repositories/`, `Data/`, `Enums/` et `Exceptions/` restent à plat : transverses par nature, et le corpus interdit d'ajouter l'axe par anticipation.
+## L'axe Domaine est toujours requis ; c'est l'axe Espace qui est optionnel
+Ne pas confondre les deux, l'erreur a déjà été faite ici. `structure-fichiers.md` §19 dit « **Axe Domaine (toujours)** » et son tableau donne `Data/{Domaine}/`, `Enums/{Domaine}/`, `Exceptions/{Domaine}/`, `Repositories/{Domaine}/`. La phrase « ne pas ajouter l'axe par anticipation pure » du §24 vise l'axe **Espace**, et lui seul.
+
+Un chantier antérieur a cité cette phrase pour laisser `Data/` à plat. C'était une mauvaise lecture, et elle avait été gravée ici même. Les six domaines du paquet — **Appointment, Catalogue, Client, Schedule, Settings, Agenda** — viennent de `Actions/` et `Services/`, déjà segmentés : un fichier se cherche au même endroit dans toutes les couches.
+
+Trois exceptions, chacune pour une raison :
+
+- **`Models/`** reste à plat, le corpus le range explicitement dans le plat.
+- **`Exceptions/BaseBookingException`** reste à la racine de sa couche : elle n'appartient à aucun domaine, elle les porte tous.
+- **`tests/Isolation/`** reste à plat : son axe n'est pas le domaine mais la contrainte d'exécution — ce qui ne peut pas tourner dans une transaction. Huit fichiers cohérents ne sont pas un fourre-tout.
+
+Les tests qui vérifient le paquet lui-même — installation, diagnostic, assets, invariants de schéma, contrat d'erreur — vont dans `Package/`, que le corpus autorise comme **famille fonctionnelle** au même titre qu'une entité métier.
+
+**Un renommage de ce genre se fait à la main, fichier par fichier.** Une tentative par script a vidé 297 fichiers : `preg_replace` rend `null` quand sa regex ne compile pas, et ce `null` avait été réécrit tel quel. Trois contrôles avant chaque commit : aucun fichier vide, aucune occurrence de l'ancien chemin qualifié, aucune ligne ajoutée hors `use` et `namespace`.
+
+**Le piège du déplacement des tests** : tout chemin en `__DIR__` ou `dirname(__DIR__, n)` descend d'un niveau avec le fichier. Sept sites dans quatre fichiers, que seule l'exécution révèle.
 
 `AgendaLockService` n'est jamais dupliqué : c'est lui qui rend les deux espaces sûrs l'un vis-à-vis de l'autre, et deux verrous qui ne se voient pas ne sont plus un verrou.
 
