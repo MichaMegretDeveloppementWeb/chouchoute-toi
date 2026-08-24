@@ -126,6 +126,13 @@ Ce qui va au journal reste ce qui l'y allait : les transitions d'état, l'écrit
 
 Ce qui a sa place dans la configuration est ce que l'hôte a ajouté **par-dessus** `web` — un `auth:admin`, par exemple. Et comme le middleware persistant est global à Livewire, cela vaut pour tous les composants de l'hôte, pas seulement les écrans du paquet.
 
+## « Avoir été déplacé » n'est pas un critère de trace, et ne doit pas le redevenir
+`AppointmentDeletionPolicy::leavesATrace()` retient trois cas : un encaissement, une origine autre que `admin`, un rappel parti, un état honoré ou absent. Chacun nomme **quelque chose qui est sorti de l'établissement** — quelqu'un dehors croit quelque chose, et il faudra peut-être dire ce qu'il en est advenu.
+
+Un quatrième a existé : avoir été déplacé, au motif qu'un déplacement suppose qu'on a prévenu. C'est faux. L'établissement qui traîne sa propre carte ne prévient personne, et rien n'enregistre qu'un appel a été passé. C'était le seul des quatre à ne rien nommer de sortant, et il gardait des entrées d'effacement pour des lignes qui n'avaient jamais quitté l'arrière-boutique. Ne pas le rajouter.
+
+Le refus porté par `refusalFor()` n'est pas la barrière de l'établissement, qui peut toujours retirer une ligne fautive : c'est le point d'extension d'un hôte qui donne le droit d'effacer à un acteur plus étroit. L'encaissement y figure parce que la facturation n'est pas construite et qu'un montant vit sur la ligne elle-même ; ce paquet tient un agenda, il ne certifie pas une recette.
+
 ## L'acompte n'est pas construit, mais son cadre l'est : ne pas le retirer
 `Appointment::holdHasExpired()` n'a aucun appelant, et c'est voulu. Autour d'elle tient tout ce qu'il faut le jour où l'acompte se construit : la colonne `hold_expires_at`, l'index `fb_appointments_hold_idx` qui la couvre, les états `PendingPayment` et `Expired`, et l'Action de transition qui efface déjà le marqueur au passage.
 

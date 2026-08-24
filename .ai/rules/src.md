@@ -29,6 +29,10 @@ Les tests qui vérifient le paquet lui-même — installation, diagnostic, asset
 
 `AgendaLockService` n'est jamais dupliqué : c'est lui qui rend les deux espaces sûrs l'un vis-à-vis de l'autre, et deux verrous qui ne se voient pas ne sont plus un verrou.
 
+**Les agendas se verrouillent par clé croissante, toujours.** Deux écrivains qui touchent les deux mêmes agendas prennent le plus petit d'abord, donc aucun ne tient l'un en attendant l'autre : aucun cycle ne peut se former. La ligne du rendez-vous se verrouille après eux, et c'est le seul ordre que suit tout le paquet. Une instruction par agenda plutôt qu'une requête ordonnée pour tous : l'ordre vient alors du code et non du plan que choisit l'optimiseur.
+
+`assertFree()` ne concerne que l'espace client, deux personnes ne pouvant pas se voir vendre la même heure. L'établissement n'a rien à y appeler : superposer deux cartes est une façon normale de tenir un agenda, et elles sont visiblement empilées à l'écran de qui les a empilées.
+
 ## Une insertion groupée ne déclenche ni cast ni hook : passer par un modèle jamais enregistré
 `insert()` court-circuite tout ce qu'Eloquent fait sur le chemin d'une ligne. Trois conséquences, et chacune a coûté cher ailleurs :
 
