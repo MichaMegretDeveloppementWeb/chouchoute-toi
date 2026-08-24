@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Falcon\Booking\Models\Service;
+use Falcon\Booking\Models\ServiceCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 /**
  * Moves the price list out of config/tarifs.php and into the database, where
- * Amandine can edit names, durations, prices and colours herself.
+ * names, durations, prices and colours can be edited from the back office.
+ *
+ * Each range of the price list becomes a category, and its treatments hang from
+ * it. Flattened, the fifteen of them landed under « sans catégorie », which is
+ * how the catalogue screen shows what belongs nowhere.
  *
  * Idempotent, keyed on the slug: replayable on production without touching a
- * service she has already adjusted.
+ * service that has already been adjusted.
  */
 final class ServiceSeeder extends Seeder
 {
@@ -28,10 +33,22 @@ final class ServiceSeeder extends Seeder
 
     public function run(): void
     {
-        $position = 0;
         $created = 0;
+        $categories = 0;
+        $rank = 0;
 
         foreach (config('tarifs.categories') as $slug => $category) {
+            $range = ServiceCategory::query()->firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $category['nom'], 'description' => $category['description'], 'position' => $rank++],
+            );
+
+            $categories += $range->wasRecentlyCreated ? 1 : 0;
+
+            // Restarted per range: a position orders treatments inside their
+            // category, and the catalogue screen reads it that way.
+            $position = 0;
+
             $created += $this->createService(
                 name: $category['pose']['nom'],
                 slug: $slug.'-pose-complete',
@@ -40,6 +57,7 @@ final class ServiceSeeder extends Seeder
                 priceCents: $category['pose']['prix'] * 100,
                 color: self::COLORS[$slug] ?? '#512731',
                 position: $position++,
+                categoryId: $range->id,
             );
 
             foreach ($category['remplissages'] as $refill) {
@@ -51,12 +69,15 @@ final class ServiceSeeder extends Seeder
                     priceCents: $refill['prix'] * 100,
                     color: self::COLORS[$slug] ?? '#512731',
                     position: $position++,
+                    categoryId: $range->id,
                 );
             }
         }
 
         $depose = config('tarifs.depose');
 
+        // Deliberately under no category: it belongs to no range, and the
+        // catalogue has a place for exactly that.
         $created += $this->createService(
             name: $depose['nom'],
             slug: 'depose',
@@ -64,10 +85,13 @@ final class ServiceSeeder extends Seeder
             duration: $this->durationToMinutes($depose['duree']),
             priceCents: $depose['prix'] * 100,
             color: self::COLORS['depose'],
-            position: $position,
+            position: 0,
+            categoryId: null,
         );
 
-        $this->command?->info("{$created} prestation(s) créée(s), le reste était déjà en base.");
+        $this->command?->info(
+            "{$categories} gamme(s) et {$created} prestation(s) créée(s), le reste était déjà en base."
+        );
     }
 
     private function createService(
@@ -78,10 +102,12 @@ final class ServiceSeeder extends Seeder
         int $priceCents,
         string $color,
         int $position,
+        ?int $categoryId,
     ): int {
         $service = Service::query()->firstOrCreate(
             ['slug' => $slug],
             [
+                'service_category_id' => $categoryId,
                 'name' => $name,
                 'description' => $description,
                 'duration_minutes' => $duration,

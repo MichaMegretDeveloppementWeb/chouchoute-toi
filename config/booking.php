@@ -18,6 +18,64 @@ return [
 
     'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
 
+    /*
+    | Where the package writes its errors.
+    |
+    | Null by default: the package writes where the application already writes.
+    | A host that centralises to an external service is not fragmented without
+    | having asked for it.
+    |
+    | The package also registers a channel named "booking", to
+    | storage/logs/booking.log, which it is enough to name here to use. It never
+    | overwrites a channel of the same name already defined by the host.
+    */
+    'logging' => [
+        'channel' => env('BOOKING_LOG_CHANNEL'),
+
+        // The level of the shipped channel, when that is the one named above.
+        // "notice" and not "error": it is the level of the functional audit,
+        // and raising it would make the traceability disappear.
+        'level' => env('BOOKING_LOG_LEVEL', 'notice'),
+
+        // How many days the shipped channel keeps its files.
+        'days' => (int) env('BOOKING_LOG_DAYS', 90),
+    ],
+
+    /*
+    | A client's attachments.
+    |
+    | The disk is private and stays private: these are photographs of people,
+    | and a public path is a link that outlives any check on rights. The
+    | download goes through a route, behind the same guard as the screens.
+    */
+    'attachments' => [
+        'disk' => env('BOOKING_ATTACHMENTS_DISK', 'local'),
+
+        // What a phone photograph weighs today, with room to spare.
+        'max_size_kb' => 8192,
+
+        // Per client, the folder being theirs and spanning as many visits as
+        // they make. High enough never to be met in normal use, low enough to
+        // stop a folder growing without anyone deciding it should.
+        'max_per_client' => 100,
+
+        // What can be picked in the file browser.
+        'extensions' => ['jpg', 'jpeg', 'png', 'webp', 'heic', 'pdf'],
+
+        // And what the file must actually be. An extension is an entry:
+        // renaming a script to .png satisfies it. The type is guessed from the
+        // content, and it is the type that decides, the extension only filtering
+        // the picker window.
+        'mimes' => [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/heic',
+            'image/heif',
+            'application/pdf',
+        ],
+    ],
+
     'admin' => [
         'route_prefix' => 'admin/agenda',
         'route_name' => 'booking.admin.',
@@ -27,6 +85,11 @@ return [
         // registered as Livewire persistent middleware, otherwise it would not
         // apply to component updates.
         'middleware' => ['web', 'auth:admin'],
+
+        // The guard the screens run behind, used to name the actor of a change
+        // in the audit journal. Null falls back to the application's default
+        // guard, which is rarely the right one for a back office.
+        'guard' => 'admin',
 
         // A view of the host the package's screens extend. Null makes the
         // package render the full page itself.
@@ -59,7 +122,27 @@ return [
     */
 
     'assets' => [
+        // The file booking:install declares the package's views to, so the
+        // host's Tailwind build generates the classes they use.
         'admin_css_entrypoint' => 'resources/css/ui-kit.css',
+
+        // What the fallback shell loads when no host layout is configured.
+        // A host that names its own layout brings its own assets and ignores
+        // this entirely, and must load the admin script from that layout.
+        //
+        // The package's own script is NOT listed here by default: naming it
+        // before it has been added to the Vite input would make @vite raise on
+        // a manifest that cannot contain it yet. Add it once both are done,
+        // otherwise the fallback shell renders an agenda with no calendar:
+        //
+        //     'vendor/falcon/booking/resources/js/booking-admin.js',
+        //
+        // booking:install prints the line with the path already resolved, and
+        // booking:check reports it missing from the build.
+        'admin_entrypoints' => [
+            'resources/css/ui-kit.css',
+            'resources/js/ui-kit.js',
+        ],
     ],
 
     /*
@@ -68,8 +151,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // `multi_practitioner` used to live here and drove nothing: the agenda
-    // always picks the first active practitioner. Removed with the package.
+    // `multi_practitioner` used to live here. Nothing read it: the agenda always
+    // picked the first active practitioner, so turning it on promised a
+    // behaviour that did not exist. The schema keeps `practitioner_id`, which is
+    // what makes the capability possible later; the switch comes back the day it
+    // is built. `booking:check` reports a second active practitioner in the
+    // meantime, since one of the two would be invisible.
 
     'campaigns' => [
         'enabled' => true,
@@ -106,6 +193,51 @@ return [
         'enabled_drivers' => [],
         'webhook_prefix' => 'booking/webhooks',
         'currency' => 'eur',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Telephone
+    |--------------------------------------------------------------------------
+    |
+    | Numbers are stored in E.164. What a screen needs on top of that is a way to
+    | pick a dialling code without typing it, and a length to check against.
+    |
+    | A list rather than a library: validating a number properly is a job for
+    | metadata nobody maintains by hand, and this package does not pretend to do
+    | it. What it does is refuse a number that cannot be one, and leave the rest
+    | to whoever dials it.
+    |
+    | `digits` is the national number, dialling code excluded, and a national
+    | trunk zero is dropped before counting. Add a country by adding a line.
+    |
+    */
+
+    'phone' => [
+        'default_country' => env('BOOKING_PHONE_COUNTRY', 'FR'),
+
+        'countries' => [
+            'FR' => ['name' => 'France', 'flag' => '🇫🇷', 'code' => '+33', 'digits' => 9],
+            'BE' => ['name' => 'Belgique', 'flag' => '🇧🇪', 'code' => '+32', 'digits' => 9],
+            'CH' => ['name' => 'Suisse', 'flag' => '🇨🇭', 'code' => '+41', 'digits' => 9],
+            'LU' => ['name' => 'Luxembourg', 'flag' => '🇱🇺', 'code' => '+352', 'digits' => 9],
+            'MC' => ['name' => 'Monaco', 'flag' => '🇲🇨', 'code' => '+377', 'digits' => 8],
+            'DE' => ['name' => 'Allemagne', 'flag' => '🇩🇪', 'code' => '+49', 'digits' => 10],
+            'IT' => ['name' => 'Italie', 'flag' => '🇮🇹', 'code' => '+39', 'digits' => 10],
+            'ES' => ['name' => 'Espagne', 'flag' => '🇪🇸', 'code' => '+34', 'digits' => 9],
+            'PT' => ['name' => 'Portugal', 'flag' => '🇵🇹', 'code' => '+351', 'digits' => 9],
+            'GB' => ['name' => 'Royaume-Uni', 'flag' => '🇬🇧', 'code' => '+44', 'digits' => 10],
+            'NL' => ['name' => 'Pays-Bas', 'flag' => '🇳🇱', 'code' => '+31', 'digits' => 9],
+            'AT' => ['name' => 'Autriche', 'flag' => '🇦🇹', 'code' => '+43', 'digits' => 10],
+            'IE' => ['name' => 'Irlande', 'flag' => '🇮🇪', 'code' => '+353', 'digits' => 9],
+            'PL' => ['name' => 'Pologne', 'flag' => '🇵🇱', 'code' => '+48', 'digits' => 9],
+            'RO' => ['name' => 'Roumanie', 'flag' => '🇷🇴', 'code' => '+40', 'digits' => 9],
+            'MA' => ['name' => 'Maroc', 'flag' => '🇲🇦', 'code' => '+212', 'digits' => 9],
+            'DZ' => ['name' => 'Algérie', 'flag' => '🇩🇿', 'code' => '+213', 'digits' => 9],
+            'TN' => ['name' => 'Tunisie', 'flag' => '🇹🇳', 'code' => '+216', 'digits' => 8],
+            'US' => ['name' => 'États-Unis', 'flag' => '🇺🇸', 'code' => '+1', 'digits' => 10],
+            'CA' => ['name' => 'Canada', 'flag' => '🇨🇦', 'code' => '+1', 'digits' => 10],
+        ],
     ],
 
     /*
@@ -147,13 +279,21 @@ return [
             'city' => null,
             'phone' => null,
             'email' => null,
+
+            // Where the establishment is, which decides the hour an instant is
+            // shown at. A setting and not a configuration key: an establishment
+            // that moves, or a host installing this package for a business in
+            // another region, does not have to redeploy to say so. The seed
+            // value is the `timezone` key at the head of this file, repeated
+            // here because a PHP array cannot quote itself.
+            'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
         ],
 
         // Where the establishment works. A mode may be offered without being
         // bookable online: the funnel then shows it and hands over to the
         // message below rather than pretending it does not exist.
         'locations' => [
-            'salon' => [
+            'on_site' => [
                 'enabled' => true,
                 'bookable_online' => true,
             ],
@@ -214,7 +354,7 @@ return [
             'cancellation_notice_hours' => 24,
 
             // Never longer than the cancellation notice: a client who cannot
-            // move her appointment cancels it instead, and the slot is lost.
+            // move an appointment cancels it instead, and the slot is lost.
             'reschedule_notice_hours' => 24,
             'max_reschedules' => 1,
         ],
@@ -228,8 +368,8 @@ return [
 
         'lifecycle' => [
             // A scheduled appointment left untouched this long after it ended
-            // is considered honoured, so the takings are right without the
-            // administrator having to click through her past week.
+            // is considered honoured, so the takings are right without anyone
+            // having to click through the past week.
             'auto_complete_after_hours' => 12,
         ],
     ],
