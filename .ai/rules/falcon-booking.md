@@ -26,6 +26,8 @@ Pour tout fichier du paquet : lancer `vendor/bin/pint` **depuis `packages/falcon
 
 Même piège pour les tests : la suite du paquet ne se lance pas par `artisan test` de l'hôte, mais par `vendor/bin/phpunit` depuis le paquet.
 
+**Le piège se retend à chaque chantier.** L'audit de sortie a trouvé quatre fichiers dérivés, dont deux imports morts laissés par le découpage des monolithes : ce chantier-là avait lancé Pint sur les *chemins* qu'il modifiait dans `tests/`, jamais sur `src/`, et `--dirty` depuis la racine avait répondu « passed ». **Passer le paquet entier, pas les chemins touchés** : `vendor/bin/pint packages/falcon-booking`. Ni PHPStan niveau 7 ni aucun test ne signale un import mort.
+
 ## L'analyse statique tient le niveau 7, sans baseline
 `composer analyse` depuis le paquet, et depuis la racine pour l'hôte. Les deux sont à **PHPStan niveau 7, zéro erreur, sans baseline ni exclusion de règle**. Un niveau inscrit dans `phpstan.neon` est un niveau réellement atteint : si l'analyse échoue, c'est une régression, pas une dette connue.
 
@@ -117,13 +119,17 @@ Les strings runtime (messages de validation, toasts, exceptions, textes UI) rest
 
 ### État livré, en lignes de commentaire
 
-| | avant | après |
-|---|---|---|
-| `src/` | 5 556 (29 %) | **3 729** (22 %) |
-| `tests/` | 3 097 (16 %) | **2 993** (15 %) |
-| `resources/js/` | 885 (37 %) | **701** (31 %) |
-| `resources/css/` | 202 (28 %) | **186** (27 %) |
-| `resources/views/` | 246 (7 %) | **86** (2 %) |
+| | avant | après | à la sortie |
+|---|---|---|---|
+| `src/` | 5 556 (29 %) | 3 729 (22 %) | **3 792** (22 %) |
+| `tests/` | 3 097 (16 %) | 2 993 (15 %) | **3 062** (15 %) |
+| `resources/js/` | 885 (37 %) | 701 (31 %) | **701** (31 %) |
+| `resources/css/` | 202 (28 %) | 186 (27 %) | **193** (27 %) |
+| `resources/views/` | 246 (7 %) | **86** (2 %) | 86 (2 %) |
+
+La troisième colonne est le relevé de l'audit de sortie. Le découpage du chantier
+des monolithes a rendu quelques dizaines de lignes : chaque fichier né d'une
+découpe porte son propre bloc de tête. Les proportions, elles, n'ont pas bougé.
 
 ### L'invariant à reproduire si le chantier est rejoué
 Comparer avant et après les fichiers **privés de leurs commentaires** : c'est plus fort que les tests, cela prouve que *seuls* des commentaires ont bougé.
@@ -135,7 +141,7 @@ Comparer avant et après les fichiers **privés de leurs commentaires** : c'est 
 **Sonder l'outil avant de le croire.** Un `grep` qui ne trouve rien peut ne rien chercher : `$'—'` ne matche rien dans Git Bash, et `grep -P` y refuse l'UTF-8. Éprouver le motif sur un cas connu-présent avant de conclure à zéro.
 
 ### Trois pièges payés en le faisant
-- Blade compile les directives avant de retirer les commentaires, donc **aucun commentaire ne porte d'arobase** (contrôle : compiler chaque gabarit puis `php -l`).
+- ~~Blade compile les directives avant de retirer les commentaires, donc aucun commentaire ne porte d'arobase.~~ **Faux, mesuré le 2026-08-24 sur Laravel 13.24** : `BladeCompiler::compileString()` retire `{{-- --}}` **avant** de compiler, et `{{-- @unless ($x) --}}`, `{{-- @vite(1) --}}` et une adresse de courriel ne produisent aucun PHP. La règle interdisait sans raison ; le contrôle « compiler chaque gabarit puis `php -l` » reste bon, il ne trouvait simplement jamais rien.
 - **Tailwind lit aussi les commentaires** : retirer un nom de classe cité entre accents graves retire une règle du paquet compilé. Relever les jetons entre accents graves avant et après, et les comparer.
 - **Les docblocs empilés ne lèvent rien.** Trois en ont été trouvés — `SettingsRepository::setMany`, `ServiceWriteService::delete`, `HoldsTheEntryForm::applyRepetition` — où deux blocs se suivaient devant une seule méthode. PHP garde le dernier ; le premier était selon les cas un `@param` orphelin, une description périmée, ou la description de la méthode *suivante*, qui se retrouvait donc sans la sienne. Rien ne les signale : ni PHPStan, ni Pint, ni un test.
 
@@ -147,11 +153,11 @@ Le socle (`structure-fichiers.md`, principe directeur) pose **~400 lignes en rè
 | fichier | lignes | pourquoi il reste entier |
 |---|---|---|
 | `resources/js/admin/calendar/options.js` | 527 | Un seul objet de configuration remis à une seule bibliothèque. Le découper disperse un contrat unique et impose du `.call(this)`. Le paquet n'exécute aucun JS dans ses tests : la seule preuve mécanique disponible est le hachage du paquet compilé, que justement un remaniement détruit. |
-| `src/Data/Appointment/RecurrenceData.php` | 500 | L'arithmétique de calendrier est **un seul algorithme** : quatre générateurs et le raccourci qui doit tomber sur la même date qu'eux. La mise en mots en est déjà sortie (`PutsARecurrenceInWords`). |
+| `src/Data/Appointment/RecurrenceData.php` | 499 | L'arithmétique de calendrier est **un seul algorithme** : quatre générateurs et le raccourci qui doit tomber sur la même date qu'eux. La mise en mots en est déjà sortie (`PutsARecurrenceInWords`). |
 | `src/Livewire/Admin/ScheduleForm.php` | 445 | Un écran, un formulaire. Les cinq aides privées ne sont lues que par `save()`. |
 | `src/Livewire/Admin/ScheduleExceptions.php` | 441 | Idem. La seule couture est `rules()`/`messages()`, quarante-quatre lignes qu'on irait alors chercher dans un autre fichier pour savoir ce qu'un champ refuse. |
 | `tests/Feature/Appointment/SeriesScopeFromTheAgendaTest.php` | 460 | Un écran chacun, ou un invariant chacun. Leurs sujets sont déjà nommés par des marqueurs `// ──`, et à un dixième du seuil la couture coûterait plus qu'elle ne rend. |
-| `tests/Feature/Appointment/AppointmentFormComputedValuesTest.php` | 459 | ″ |
+| `tests/Feature/Appointment/AppointmentFormComputedValuesTest.php` | 457 | ″ |
 | `tests/Feature/Catalogue/CatalogueScreenTest.php` | 448 | ″ |
 | `tests/Feature/Package/FailuresAreToldTest.php` | 447 | ″ |
 | `tests/Feature/Appointment/AppointmentLinesTest.php` | 432 | ″ |
