@@ -109,3 +109,12 @@ Les strings runtime (messages de validation, toasts, exceptions, textes UI) rest
 **L'invariant à reproduire** si le chantier est rejoué : comparer avant et après les fichiers privés de leurs commentaires. En PHP, `token_get_all` sans `T_COMMENT` ni `T_DOC_COMMENT`. En Blade, la même chose sur le **source** et non sur le compilé — Livewire dérive une graine de clé du hachage du source, donc retirer un commentaire change le compilé sans rien changer au rendu. En JS et CSS, le paquet compilé doit garder **le même nom de fichier**, qui porte le hachage de son contenu.
 
 Deux pièges vus en le faisant : Blade compile les directives avant de retirer les commentaires, donc aucun commentaire ne porte d'arobase (contrôle : compiler chaque gabarit puis `php -l`) ; et Tailwind lit aussi les commentaires, donc retirer un nom de classe cité entre accents graves retire une règle du paquet compilé.
+
+## Le journal est celui des rendez-vous, et il le reste
+Décision prise, pas un oubli : modifier un réglage, poser une fermeture ou archiver une prestation ne laisse **aucune entrée** au journal. Ne pas « corriger » cela au prochain audit.
+
+La raison : une table qui enregistre chaque geste devient énorme et se remplit surtout de ce que personne ne relira — le catalogue, les horaires, les allers-retours de réglage. Le jour où quelqu'un cherche vraiment quelque chose, il le cherche dans du bruit.
+
+La contrepartie est connue et acceptée : changer le fuseau horaire déplace l'heure affichée de tous les rendez-vous sans que rien ne dise qui l'a fait. C'est l'écran des réglages qui porte l'avertissement, au moment du geste.
+
+Ce qui va au journal reste ce qui l'y allait : les transitions d'état, l'écriture d'un rendez-vous, l'effacement d'un rendez-vous et celui d'une série. Le `BookingLog` applicatif, lui, garde les refus et les échecs — c'est une trace d'exploitation, pas un journal d'audit, et elle tourne.
