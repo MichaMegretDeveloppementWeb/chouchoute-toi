@@ -182,6 +182,21 @@ Et quatre pièges relevés avant de commencer, tous vérifiés depuis : `reset()
 
 **Le CSS a son propre invariant** : `@import` est inliné par Vite dans l'ordre des imports, et cet ordre **est** la cascade. Le hachage du paquet compilé est donc la preuve que le rendu n'a pas bougé, pas une formalité.
 
+## Le seeder de réglages lit ses valeurs dans la configuration, et n'écrase jamais
+`BookingSettingsSeeder` écrit les **neuf** réglages opérationnels — `slot`, `buffer`, `booking_window`, `client_rules` — et rien d'autre. Il est branché sur `InstallCommand::seedData()`, donc rejoué à chaque installation comme à chaque mise à jour.
+
+**Trois règles, et chacune se paie cher si on l'oublie :**
+
+- **La valeur vient de `config("booking.defaults.{$key}")`, jamais écrite en dur.** Sinon le même nombre existe à deux endroits et ils divergent — un écart qui ne se voit qu'en production.
+- **`isOverridden()` décide, `set()` exécute.** `SettingsRepository::set()` écrase : une boucle qui l'appellerait sans le test remettrait l'installation aux valeurs livrées à chaque mise à jour, ce qui est exactement le défaut que ce seeder existe pour éviter.
+- **Ne pas semer `defaults.business.*`** ni les familles inertes. L'identité ne se devine pas, et un champ vide est ce qui dit à l'écran de la demander ; les familles inertes appartiennent à des lots non construits, les semer figerait leur vocabulaire.
+
+**Le repli sur la configuration reste.** `SettingsRepository::get()` retombe sur `booking.defaults` quand la clé est absente : c'est lui qui empêche une ligne supprimée à la main de faire tomber l'application. Le retirer rendrait le semis obligatoire au lieu d'utile.
+
+**Le piège de l'autoload.** `database/factories/` n'est mappé que dans `autoload-dev`. Un seeder qui tourne en production a donc fallu déclarer `Falcon\Booking\Database\Seeders\` dans le bloc **`autoload`** de `composer.json`. Après ce genre de changement sur un dépôt `path`, l'hôte ne voit rien tant que `composer update falcon/booking` n'a pas rafraîchi son `installed.json` — un `dump-autoload` seul ne suffit pas, il relit le cache.
+
+**`run()` n'est appelé que par `db:seed`.** `$this->command` est une propriété typée que Laravel remplit à ce moment-là ; ailleurs elle n'est pas initialisée. Tout appel programmatique passe par `write()`, qui rend le nombre de clés posées.
+
 ## Le changement d'heure s'éprouve sur plusieurs fuseaux, et deux restent découverts
 Le fuseau de l'établissement est un **réglage**. Un test qui ne joue qu'Europe/Paris ne prouve donc rien de ce que le paquet promet.
 

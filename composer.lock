@@ -800,7 +800,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "7210eaa0b77b9739891ff09c755b4339051608ec"
+                "reference": "d539c93a9b53396a52caf97f727367122680af43"
             },
             "require": {
                 "falcon/ui-kit": "^2.7",
@@ -824,7 +824,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Falcon\\Booking\\": "src/"
+                    "Falcon\\Booking\\": "src/",
+                    "Falcon\\Booking\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "autoload-dev": {
