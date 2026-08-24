@@ -62,7 +62,7 @@ Règle : **ajouter une colonne à la projection en même temps que ce qui la lit
 Le `withCount('lines')` de la même requête relève du même piège, et il est plus discret encore : il ne coûte pas de requête, il voyage dans le `select`. Le retirer ne casse rien, ne ralentit rien et ne lève rien — il fait juste disparaître le « +2 » de toutes les cartes à plusieurs prestations.
 
 ## Deux Actions ne sont pas `final`, et c'est écrit dessus
-`SaveScheduleExceptionAction` et `DeleteScheduleExceptionAction` ont perdu leur `final`. Aucun refus qu'elles portent n'est atteignable depuis l'écran, qui résout la ligne sur son propre agenda avant d'appeler : le seul moyen d'éprouver le `try/catch` du composant est une doublure liée par le conteneur, et un paramètre typé n'accepte qu'un sous-type. Même motif que `AppointmentDeletionPolicy`. Les doublures vivent dans `AgendaScreenTest` et **héritent** désormais, ce qui les oblige à suivre la signature de ce qu'elles remplacent.
+`SaveScheduleExceptionAction` et `DeleteScheduleExceptionAction` ont perdu leur `final`. Aucun refus qu'elles portent n'est atteignable depuis l'écran, qui résout la ligne sur son propre agenda avant d'appeler : le seul moyen d'éprouver le `try/catch` du composant est une doublure liée par le conteneur, et un paramètre typé n'accepte qu'un sous-type. Même motif que `AppointmentDeletionPolicy`. Les doublures vivent dans `AgendaUnavailabilityTest` et **héritent** désormais, ce qui les oblige à suivre la signature de ce qu'elles remplacent.
 
 ## `assertReturned(false)` passe sur une erreur 500
 Piège du harnais Livewire : quand la requête d'update échoue, `SubsequentRender` rend un `ComponentState` aux effets vides plutôt que de lever. `returns.0` vaut alors `null`, et `assertReturned(false)` compare par `assertEquals`, donc passe. Le test échoue plus loin, sur un `assertDispatched` — ce qui fait lire une erreur fatale comme un toast manquant. Devant ce symptôme, vérifier le code de réponse avant de chercher la logique.
@@ -138,6 +138,43 @@ Comparer avant et après les fichiers **privés de leurs commentaires** : c'est 
 - Blade compile les directives avant de retirer les commentaires, donc **aucun commentaire ne porte d'arobase** (contrôle : compiler chaque gabarit puis `php -l`).
 - **Tailwind lit aussi les commentaires** : retirer un nom de classe cité entre accents graves retire une règle du paquet compilé. Relever les jetons entre accents graves avant et après, et les comparer.
 - **Les docblocs empilés ne lèvent rien.** Trois en ont été trouvés — `SettingsRepository::setMany`, `ServiceWriteService::delete`, `HoldsTheEntryForm::applyRepetition` — où deux blocs se suivaient devant une seule méthode. PHP garde le dernier ; le premier était selon les cas un `@param` orphelin, une description périmée, ou la description de la méthode *suivante*, qui se retrouvait donc sans la sienne. Rien ne les signale : ni PHPStan, ni Pint, ni un test.
+
+## Un fichier au-dessus de 400 lignes est nommé ici, ou il se découpe
+Le socle (`structure-fichiers.md`, principe directeur) pose **~400 lignes en règle générale, 1000 en exception justifiée**, et ne connaît pas de frontière de langage : un `.js`, un `.css` ou un `.blade.php` compte comme une classe PHP.
+
+**Aucun fichier du paquet n'est au-dessus de 1000.** Onze restent au-dessus de 400, et les voici avec leur raison. La liste est le contrat : y ajouter un fichier, ou le découper, mais ne pas le laisser dériver en silence.
+
+| fichier | lignes | pourquoi il reste entier |
+|---|---|---|
+| `resources/js/admin/calendar/options.js` | 527 | Un seul objet de configuration remis à une seule bibliothèque. Le découper disperse un contrat unique et impose du `.call(this)`. Le paquet n'exécute aucun JS dans ses tests : la seule preuve mécanique disponible est le hachage du paquet compilé, que justement un remaniement détruit. |
+| `src/Data/Appointment/RecurrenceData.php` | 500 | L'arithmétique de calendrier est **un seul algorithme** : quatre générateurs et le raccourci qui doit tomber sur la même date qu'eux. La mise en mots en est déjà sortie (`PutsARecurrenceInWords`). |
+| `src/Livewire/Admin/ScheduleForm.php` | 445 | Un écran, un formulaire. Les cinq aides privées ne sont lues que par `save()`. |
+| `src/Livewire/Admin/ScheduleExceptions.php` | 441 | Idem. La seule couture est `rules()`/`messages()`, quarante-quatre lignes qu'on irait alors chercher dans un autre fichier pour savoir ce qu'un champ refuse. |
+| `tests/Feature/Appointment/SeriesScopeFromTheAgendaTest.php` | 460 | Un écran chacun, ou un invariant chacun. Leurs sujets sont déjà nommés par des marqueurs `// ──`, et à un dixième du seuil la couture coûterait plus qu'elle ne rend. |
+| `tests/Feature/Appointment/AppointmentFormComputedValuesTest.php` | 459 | ″ |
+| `tests/Feature/Catalogue/CatalogueScreenTest.php` | 448 | ″ |
+| `tests/Feature/Package/FailuresAreToldTest.php` | 447 | ″ |
+| `tests/Feature/Appointment/AppointmentLinesTest.php` | 432 | ″ |
+| `tests/Feature/Schedule/ScheduleScreenTest.php` | 428 | ″ |
+| `tests/Feature/Appointment/RepeatAnAppointmentTest.php` | 404 | ″ |
+
+**On découpe sur une couture, jamais sur un compteur.** Un fichier cohésif coupé pour satisfaire un nombre se lit moins bien, pas mieux.
+
+### L'invariant à reproduire si le chantier est rejoué
+Un chantier qui déplace du code ne peut pas s'appuyer sur le flux de jetons d'un fichier : c'est justement ce qui bouge. Deux mesures, en lecture seule, avant et après **chaque lot** :
+
+- **L'empreinte par méthode.** Pour chaque fonction de `src`, `tests`, `database`, `config`, `routes` : `nom` + md5 de son corps en jetons, privé des commentaires et des blancs, l'ensemble trié. **La classe déclarante est délibérément absente** : une découpe déplace une méthode d'un trait à l'autre, la classe change, le couple (nom, corps) non. C'est ce qui attrape les trois vraies façons de se tromper — un corps modifié « au passage », une méthode perdue, une méthode dupliquée.
+- **La surface publique des composants Livewire.** Par réflexion : toute propriété publique et toute signature de méthode publique. C'est le contrat du navigateur (`wire:model`, `$wire.methode()`), et rien d'autre ne le tient.
+
+### Ce que ces deux mesures ne voient pas
+Elles sont aveugles à ce qui n'est ni un corps ni une surface publique, et les deux cas se sont présentés :
+
+- **La visibilité.** `CountsStatements::statementsOf()` est déclarée `private`. Posé sur une base abstraite, le trait devient invisible aux classes filles : `Call to private method … from scope …`, à l'exécution seulement. Un trait se compose **sur la classe qui l'appelle**, pas sur la base, sauf à élargir sa visibilité.
+- **Le `use` manquant.** `use MonTrait;` dans un corps de classe se résout dans le namespace courant : sans l'import, l'erreur est fatale et aucun test PHP ne la voit autrement qu'en tombant.
+
+Et quatre pièges relevés avant de commencer, tous vérifiés depuis : `reset()` nomme ses propriétés **par chaînes** (`newAppointment` en liste trente-six, désormais réparties sur deux traits — rien ne vérifie que la liste reste complète) ; un `#[Computed]` emporte son `@property-read` sur le trait qui le porte ; une propriété ne peut être déclarée que par **un seul** trait, la répartition est une partition ; les attributs Livewire (`#[Url]`, `#[On]`) voyagent avec ce qu'ils décorent.
+
+**Le CSS a son propre invariant** : `@import` est inliné par Vite dans l'ordre des imports, et cet ordre **est** la cascade. Le hachage du paquet compilé est donc la preuve que le rendu n'a pas bougé, pas une formalité.
 
 ## Le journal est celui des rendez-vous, et il le reste
 Décision prise, pas un oubli : modifier un réglage, poser une fermeture ou archiver une prestation ne laisse **aucune entrée** au journal. Ne pas « corriger » cela au prochain audit.

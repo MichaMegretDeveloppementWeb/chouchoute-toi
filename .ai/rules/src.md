@@ -5,6 +5,9 @@ paths:
 
 # Src
 
+## La taille des fichiers est tenue, et la liste des exceptions est dans `falcon-booking.md`
+Trois fichiers de `src/` restent au-dessus de ~400 lignes, chacun avec sa raison écrite : `RecurrenceData` (500), `ScheduleForm` (445), `ScheduleExceptions` (441). La règle complète — le seuil, les onze exceptions du paquet, l'invariant à reproduire pour déplacer du code sans le casser — est sous « Un fichier au-dessus de 400 lignes est nommé ici, ou il se découpe » dans `.ai/rules/falcon-booking.md`, qui couvre tout le paquet et pas seulement cette couche.
+
 ## Actions et Services se segmentent par espace : Admin, Web, Shared
 `Actions/` et `Services/` portent l'axe Espace en plus du domaine : `Actions/{Admin,Web}/{Domaine}/`, `Services/{Admin,Web,Shared}/{Domaine}/`. Le critère n'est pas le nom mais l'appelant, vérifié un par un. `Shared/` est pour ce que les deux espaces demandent réellement (verrou d'agenda, écriture d'un rendez-vous, calcul des créneaux, battement) — jamais par anticipation.
 
