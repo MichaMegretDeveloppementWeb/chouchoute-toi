@@ -33,10 +33,17 @@ optimize-google-sheet.md
 .mcp.json
 boost.json
 
-# `.ai` n'est pas ignore : les regles qu'il contient sont versionnees et
-# partagees. Ignore alors que ses fichiers etaient suivis, il ne les sortait pas
-# du depot mais refusait tout `git add` sans `-f` : une regle ecrite par
-# quelqu'un restait invisible au commit, sans que rien ne le dise.
+# `.ai` est ignore, et ses fichiers ont ete sortis du depot par
+# `git rm --cached -r .ai` le 2026-08-24. Les deux moities comptent : ignorer
+# un dossier dont les fichiers sont encore suivis ne les sort pas du depot, il
+# refuse seulement tout `git add` sans `-f` — une regle ecrite par quelqu'un
+# reste alors invisible au commit, sans que rien ne le dise. C'est arrive une
+# fois deja.
+#
+# Ce qui vit la : le corpus de regles generales, qui appartient a son auteur et
+# se copie d'un projet a l'autre, et les regles propres a ce projet. Les deux
+# restent sur le disque et continuent d'etre chargees ; aucun ne part au depot.
+.ai
 .claude
 .codex
 .gemini
