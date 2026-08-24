@@ -59,6 +59,8 @@ La forme qui marche : la valeur voyage en `string` sur la méthode publique, qui
 
 Règle : **ajouter une colonne à la projection en même temps que ce qui la lit**, et l'éprouver depuis `eventsBetween()` et non depuis le modèle. Un test qui lit `$appointment->series_id` passe quoi qu'il arrive.
 
+Le `withCount('lines')` de la même requête relève du même piège, et il est plus discret encore : il ne coûte pas de requête, il voyage dans le `select`. Le retirer ne casse rien, ne ralentit rien et ne lève rien — il fait juste disparaître le « +2 » de toutes les cartes à plusieurs prestations.
+
 ## Deux Actions ne sont pas `final`, et c'est écrit dessus
 `SaveScheduleExceptionAction` et `DeleteScheduleExceptionAction` ont perdu leur `final`. Aucun refus qu'elles portent n'est atteignable depuis l'écran, qui résout la ligne sur son propre agenda avant d'appeler : le seul moyen d'éprouver le `try/catch` du composant est une doublure liée par le conteneur, et un paramètre typé n'accepte qu'un sous-type. Même motif que `AppointmentDeletionPolicy`. Les doublures vivent dans `AgendaScreenTest` et **héritent** désormais, ce qui les oblige à suivre la signature de ce qu'elles remplacent.
 
@@ -118,3 +120,13 @@ La raison : une table qui enregistre chaque geste devient énorme et se remplit 
 La contrepartie est connue et acceptée : changer le fuseau horaire déplace l'heure affichée de tous les rendez-vous sans que rien ne dise qui l'a fait. C'est l'écran des réglages qui porte l'avertissement, au moment du geste.
 
 Ce qui va au journal reste ce qui l'y allait : les transitions d'état, l'écriture d'un rendez-vous, l'effacement d'un rendez-vous et celui d'une série. Le `BookingLog` applicatif, lui, garde les refus et les échecs — c'est une trace d'exploitation, pas un journal d'audit, et elle tourne.
+
+## Le middleware persistant n'accueille jamais ce que la route de Livewire porte déjà
+`PersistentMiddlewareResolver` écarte tout ce que le groupe `web` embarque, et cet écart n'est pas une optimisation : la route `/livewire/update` porte déjà ce groupe. Déclarer session, cookies ou CSRF comme persistants les fait tourner une seconde fois, et redémarrer une session déjà démarrée la détruit. L'utilisatrice est déconnectée en pleine action, après une écriture réussie.
+
+Ce qui a sa place dans la configuration est ce que l'hôte a ajouté **par-dessus** `web` — un `auth:admin`, par exemple. Et comme le middleware persistant est global à Livewire, cela vaut pour tous les composants de l'hôte, pas seulement les écrans du paquet.
+
+## L'acompte n'est pas construit, mais son cadre l'est : ne pas le retirer
+`Appointment::holdHasExpired()` n'a aucun appelant, et c'est voulu. Autour d'elle tient tout ce qu'il faut le jour où l'acompte se construit : la colonne `hold_expires_at`, l'index `fb_appointments_hold_idx` qui la couvre, les états `PendingPayment` et `Expired`, et l'Action de transition qui efface déjà le marqueur au passage.
+
+Un audit du code mort trouvera cet ensemble et voudra le supprimer. Ne pas le faire : ce n'est pas un reste, c'est une amorce. Un index posé pour une requête que personne n'a encore écrite dit qui l'écrira.
