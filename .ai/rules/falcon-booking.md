@@ -92,25 +92,52 @@ Attention aux noms de variables de boucle : `$rangee` est une chaîne de classes
 
 `packages/falcon-booking/.gitattributes` porte `* text=auto eol=lf`, comme celui de l'hôte. Ne pas le retirer : sans lui la dérive revient à chaque `git checkout`.
 
-## Commentaires du paquet : régime 2 (doctrine pro), appliqué partout
-Le chantier de nettoyage `commentaires.md` a été passé sur tout falcon-booking, en quatre lots : les assets, les gabarits, le code, les tests. L'état livré est le régime 2, pas le régime 1 : ne pas y revenir en ajoutant du contexte de session.
+## Un commentaire de ce paquet est une aide à la navigation, rien d'autre
+La définition tient dans l'usage qu'on en fait : je cherche quelle partie du code fait une chose précise, je vais à peu près au bon endroit, je regarde les méthodes, je m'aide de leur nom, **puis je lis le commentaire pour savoir si c'est la bonne** — sans avoir à lire le corps de chacune.
 
-Ce qui est interdit dans ce paquet :
-- toute mention d'un client ou d'un cas d'usage particulier (c'est un paquet généraliste, pas un développement sur mesure) ;
-- la narration : historique d'un bug corrigé, « avant, l'écran faisait… », dates de décision, références de lot ou de sprint, renvois au cahier des charges ;
-- les tournures genrées désignant l'utilisatrice (« she », « her »), et les données de jeu d'essai reprenant le nom d'un vrai établissement ;
+Il en découle une règle et une seule : **court, et il dit ce que fait la méthode.** Pas de nombre de phrases imposé, contraindre un compte créant ses propres problèmes. Un bloc court avant chaque classe et chaque méthode ; dans le corps, seulement là où le code est vraiment difficile, et jamais systématiquement.
+
+Ce qui n'a pas sa place dans un commentaire :
+- **les décisions** : « écrit ainsi plutôt qu'autrement parce que… » ;
+- **l'historique** : « avant, l'écran faisait X ; ça ne marchait pas ; donc Y », dates, références de lot, renvois au cahier des charges ;
+- **les mesures et les anecdotes** : « mesuré à 300 ms », « cinq cent une instructions », « trouvé à l'écran » ;
+- **le détail exhaustif** du fonctionnement, que le corps dit déjà ;
+- toute mention d'un client, d'un produit concurrent ou d'un cas d'usage particulier : c'est un paquet généraliste ;
+- les tournures genrées désignant l'utilisatrice (« she », « her »), et les jeux d'essai reprenant le nom d'un vrai établissement ;
 - le tiret cadratin U+2014 (utiliser « : », « , » ou reformuler) ;
-- les `TODO`, `FIXME`, `XXX` : il n'en reste aucun. Ce qui était un vrai périmètre de règle a été reformulé en phrase.
+- les `TODO`, `FIXME`, `XXX` : il n'en reste aucun.
 
-Ce qui est attendu : PHPDoc concis en anglais décrivant ce que fait la méthode, plus le « pourquoi » non évident quand il existe. Rien sur le trivial.
+Ce qui reste : le bloc court, en **anglais**, et les `@param`, `@return`, `@throws` que PHPStan niveau 7 exige.
 
-**Un gabarit et une feuille de style ne narrent pas leur rendu.** C'est le principe de placement de la brique, valable dans les deux régimes : le balisage se lit seul. Les 35 gabarits sont passés de 573 lignes de commentaire à 91, la feuille de l'agenda de 300 à 99. Ce qui subsiste est ce que la déclaration ne peut pas dire : un élément vide qui réserve une place, un `wire:key` sans lequel une modale se referme, un `wire:ignore` que le morph viderait, une mesure sous le pixel, un couplage avec le JS. Une mesure relevée sur la référence, un choix de graisse, la raison d'une colonne : rien de tout cela n'a sa place dans une vue. Ce qui traverse plusieurs fichiers va dans `.ai/rules/views.md`.
+**Où va ce qui est retiré.** Un savoir ne migre vers `.ai/rules` **que si son oubli recréerait un vrai défaut**. Tout relocaliser reviendrait à déplacer l'encombrement, pas à le retirer. Le reste s'en va, et c'est assumé. Six savoirs ont migré ainsi : la comparaison de la date de fin, le middleware persistant, le cadre de l'acompte, l'ordre croissant des verrous, le `withCount` de la projection, et le critère de trace retiré.
 
-Les strings runtime (messages de validation, toasts, exceptions, textes UI) restent en français et ne se touchent pas : des tests les assertent.
+**Un gabarit et une feuille de style ne narrent pas leur rendu.** Le balisage se lit seul. Ce qui subsiste est ce que la déclaration ne peut pas dire : un élément vide qui réserve une place, un `wire:key` sans lequel une modale se referme, un `wire:ignore` que le morph viderait, une mesure sous le pixel, un couplage avec le JS.
 
-**L'invariant à reproduire** si le chantier est rejoué : comparer avant et après les fichiers privés de leurs commentaires. En PHP, `token_get_all` sans `T_COMMENT` ni `T_DOC_COMMENT`. En Blade, la même chose sur le **source** et non sur le compilé — Livewire dérive une graine de clé du hachage du source, donc retirer un commentaire change le compilé sans rien changer au rendu. En JS et CSS, le paquet compilé doit garder **le même nom de fichier**, qui porte le hachage de son contenu.
+Les strings runtime (messages de validation, toasts, exceptions, textes UI) restent en français et ne se touchent pas : des tests les assertent. C'est la seule raison pour laquelle il subsiste un tiret cadratin dans le paquet, dans l'alerte de fuseau de `business.blade.php`.
 
-Deux pièges vus en le faisant : Blade compile les directives avant de retirer les commentaires, donc aucun commentaire ne porte d'arobase (contrôle : compiler chaque gabarit puis `php -l`) ; et Tailwind lit aussi les commentaires, donc retirer un nom de classe cité entre accents graves retire une règle du paquet compilé.
+### État livré, en lignes de commentaire
+
+| | avant | après |
+|---|---|---|
+| `src/` | 5 556 (29 %) | **3 729** (22 %) |
+| `tests/` | 3 097 (16 %) | **2 993** (15 %) |
+| `resources/js/` | 885 (37 %) | **701** (31 %) |
+| `resources/css/` | 202 (28 %) | **186** (27 %) |
+| `resources/views/` | 246 (7 %) | **86** (2 %) |
+
+### L'invariant à reproduire si le chantier est rejoué
+Comparer avant et après les fichiers **privés de leurs commentaires** : c'est plus fort que les tests, cela prouve que *seuls* des commentaires ont bougé.
+
+- **PHP** : `token_get_all` sans `T_COMMENT`, `T_DOC_COMMENT` ni `T_WHITESPACE`, sur `src`, `tests`, `database`, `config`, `routes`. 251 fichiers.
+- **Blade** : la même idée sur le **source** et non sur le compilé, Livewire dérivant une graine de clé du hachage du source. Retirer `{{-- --}}`, les commentaires PHP des blocs `@php`, puis normaliser les blancs. 48 gabarits.
+- **JS et CSS** : le paquet compilé doit garder **le même nom de fichier**, qui porte le hachage de son contenu, et la même taille à l'octet.
+
+**Sonder l'outil avant de le croire.** Un `grep` qui ne trouve rien peut ne rien chercher : `$'—'` ne matche rien dans Git Bash, et `grep -P` y refuse l'UTF-8. Éprouver le motif sur un cas connu-présent avant de conclure à zéro.
+
+### Trois pièges payés en le faisant
+- Blade compile les directives avant de retirer les commentaires, donc **aucun commentaire ne porte d'arobase** (contrôle : compiler chaque gabarit puis `php -l`).
+- **Tailwind lit aussi les commentaires** : retirer un nom de classe cité entre accents graves retire une règle du paquet compilé. Relever les jetons entre accents graves avant et après, et les comparer.
+- **Les docblocs empilés ne lèvent rien.** Trois en ont été trouvés — `SettingsRepository::setMany`, `ServiceWriteService::delete`, `HoldsTheEntryForm::applyRepetition` — où deux blocs se suivaient devant une seule méthode. PHP garde le dernier ; le premier était selon les cas un `@param` orphelin, une description périmée, ou la description de la méthode *suivante*, qui se retrouvait donc sans la sienne. Rien ne les signale : ni PHPStan, ni Pint, ni un test.
 
 ## Le journal est celui des rendez-vous, et il le reste
 Décision prise, pas un oubli : modifier un réglage, poser une fermeture ou archiver une prestation ne laisse **aucune entrée** au journal. Ne pas « corriger » cela au prochain audit.
