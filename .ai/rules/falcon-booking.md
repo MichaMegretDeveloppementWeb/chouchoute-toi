@@ -182,6 +182,31 @@ Et quatre pièges relevés avant de commencer, tous vérifiés depuis : `reset()
 
 **Le CSS a son propre invariant** : `@import` est inliné par Vite dans l'ordre des imports, et cet ordre **est** la cascade. Le hachage du paquet compilé est donc la preuve que le rendu n'a pas bougé, pas une formalité.
 
+## Le changement d'heure s'éprouve sur plusieurs fuseaux, et deux restent découverts
+Le fuseau de l'établissement est un **réglage**. Un test qui ne joue qu'Europe/Paris ne prouve donc rien de ce que le paquet promet.
+
+`DaylightSavingTest` est paramétré sur **Europe/Paris et America/New_York** : deux jeux de règles, des dates différentes, et surtout une heure répétée qui n'est pas à la même heure — 02:30 à Paris, **01:30** à New York. C'est ce qui casse tout ce qui serait écrit en dur sur Paris.
+
+**Le test pose le réglage, jamais `config('booking.timezone')`.** Le code lit `BusinessClock->zone()`, c'est-à-dire `business.timezone` en base. Les deux coïncident par défaut, si bien qu'un test lisant la configuration passe tout en éprouvant une valeur que le code ne consulte pas. C'était le cas jusqu'ici.
+
+**Les assertions de longueur de journée disent « pas vingt-quatre heures », jamais « vingt-trois ».** C'est l'invariant réel, et c'est ce qui laisse entrer un fuseau à décalage fractionnaire sans réécrire quoi que ce soit.
+
+Deux fuseaux ne sont **pas** couverts, et chacun est une ligne de plus dans le fournisseur le jour où le paquet sortira d'Europe et des États-Unis :
+
+| Fuseau | Bascules 2026 | Ce qu'il éprouverait |
+|---|---|---|
+| `Australia/Sydney` | avance le **4 octobre**, recule le **5 avril** | l'hémisphère sud : mars et octobre s'inversent |
+| `Australia/Lord_Howe` | 5 avril et 4 octobre, **d'une demi-heure** | journées de 23,5 h et 24,5 h — de quoi casser tout « 23 ou 25 » |
+
+**Sonder le test avant de le croire.** Un test paramétré qui passe partout peut ne rien éprouver. Le contrôle : rejouer les mêmes assertions sur un fuseau **sans** heure d'été — `Indian/Reunion` donne deux journées de 24 h et une heure saisie qui ne bouge pas, donc `assertNotSame(24.0, …)` et la résolution vers l'avant tombent toutes les deux. Si elles ne tombent pas, le test ne mesure rien.
+
+## La matrice de transitions n'a pas de `default` extérieur, et c'est délibéré
+`AppointmentStatus::actorsAllowedToReach()` est un `match ($this)` portant un `match ($target)`. L'extérieur couvre les six cas **sans `default`**.
+
+Ce n'est pas un oubli : la forme précédente était un `match (true)` de onze bras terminé par `default => []`, qui **avalait en silence** tout statut nouvellement ajouté — il se retrouvait sans aucune transition possible, et rien ne le signalait. Sans `default`, PHP lève `UnhandledMatchError` et l'oubli devient impossible. Ne pas en rajouter un « par prudence ».
+
+Les deux états terminaux y sont nommés explicitement, ce qui les raccorde à `isTerminal()`.
+
 ## Le journal est celui des rendez-vous, et il le reste
 Décision prise, pas un oubli : modifier un réglage, poser une fermeture ou archiver une prestation ne laisse **aucune entrée** au journal. Ne pas « corriger » cela au prochain audit.
 
