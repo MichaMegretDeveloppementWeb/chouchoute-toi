@@ -8,23 +8,25 @@ use Carbon\CarbonImmutable;
 use Falcon\Booking\Actions\Admin\Appointment\BookAppointmentAction;
 use Falcon\Booking\Actions\Admin\Appointment\RepeatAppointmentAction;
 use Falcon\Booking\Actions\Admin\Appointment\TransitionAppointmentAction;
-use Falcon\Booking\Actions\Admin\Schedule\SaveScheduleExceptionAction;
+use Falcon\Booking\Actions\Admin\Schedule\SaveOpeningHourOverrideAction;
+use Falcon\Booking\Actions\Admin\Schedule\SaveUnavailabilityAction;
 use Falcon\Booking\Actions\Admin\Schedule\UpdateWeeklyScheduleAction;
 use Falcon\Booking\Data\Appointment\BookAppointmentData;
 use Falcon\Booking\Data\Appointment\BookedTreatmentData;
 use Falcon\Booking\Data\Appointment\RecurrenceData;
 use Falcon\Booking\Data\Schedule\OpeningHourData;
-use Falcon\Booking\Data\Schedule\ScheduleExceptionData;
+use Falcon\Booking\Data\Schedule\OpeningHourOverrideData;
+use Falcon\Booking\Data\Schedule\UnavailabilityData;
 use Falcon\Booking\Enums\Appointment\AppointmentActor;
 use Falcon\Booking\Enums\Appointment\AppointmentLocation;
 use Falcon\Booking\Enums\Appointment\AppointmentStatus;
 use Falcon\Booking\Enums\Appointment\RecurrenceFrequency;
-use Falcon\Booking\Enums\Schedule\ScheduleExceptionType;
 use Falcon\Booking\Models\Appointment;
 use Falcon\Booking\Models\Client;
+use Falcon\Booking\Models\OpeningHourOverride;
 use Falcon\Booking\Models\Practitioner;
-use Falcon\Booking\Models\ScheduleException;
 use Falcon\Booking\Models\Service;
+use Falcon\Booking\Models\Unavailability;
 use Illuminate\Database\Seeder;
 
 /**
@@ -98,6 +100,7 @@ final class DemoAgendaSeeder extends Seeder
         $this->openingHours($practitioners->all());
         $clients = $this->clients();
         $this->unavailabilities($practitioners->first());
+        $this->exceptionalHours($practitioners->first());
 
         if (Appointment::query()->exists()) {
             $this->command?->info('Des rendez-vous existent déjà : l’agenda est laissé tel quel.');
@@ -190,24 +193,23 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * A closed day, a closed afternoon, and a day opening later than usual.
+     * A closed day and a closed afternoon.
      *
-     * Keyed on the day and the type: replayed, it recognises its own.
+     * Keyed on the day: replayed, it recognises its own.
      */
     private function unavailabilities(Practitioner $practitioner): void
     {
         $monday = CarbonImmutable::now()->startOfWeek()->addWeek();
 
         $periods = [
-            [ScheduleExceptionType::Closure, $monday->addDays(2)->setTime(0, 0), $monday->addDays(3)->setTime(0, 0), 'Congé'],
-            [ScheduleExceptionType::Closure, $monday->addDays(9)->setTime(14, 0), $monday->addDays(9)->setTime(19, 0), 'Formation'],
-            [ScheduleExceptionType::SpecialHours, $monday->addDays(16)->setTime(11, 0), $monday->addDays(16)->setTime(19, 0), 'Ouverture tardive'],
+            [$monday->addDays(2)->setTime(0, 0), $monday->addDays(3)->setTime(0, 0), 'Congé'],
+            [$monday->addDays(9)->setTime(14, 0), $monday->addDays(9)->setTime(19, 0), 'Formation'],
         ];
 
         $created = 0;
 
-        foreach ($periods as [$type, $startsAt, $endsAt, $reason]) {
-            $exists = ScheduleException::query()
+        foreach ($periods as [$startsAt, $endsAt, $reason]) {
+            $exists = Unavailability::query()
                 ->where('practitioner_id', $practitioner->id)
                 ->where('starts_at', $startsAt->utc())
                 ->exists();
@@ -216,15 +218,43 @@ final class DemoAgendaSeeder extends Seeder
                 continue;
             }
 
-            app(SaveScheduleExceptionAction::class)->execute(
+            app(SaveUnavailabilityAction::class)->execute(
                 $practitioner,
-                new ScheduleExceptionData($type, $startsAt, $endsAt, $reason),
+                new UnavailabilityData($startsAt, $endsAt, $reason),
             );
 
             $created++;
         }
 
         $this->command?->info("{$created} indisponibilité(s) créée(s).");
+    }
+
+    /**
+     * A fortnight opening later than usual: one row, where the old shape needed
+     * fourteen.
+     */
+    private function exceptionalHours(Practitioner $practitioner): void
+    {
+        $startsOn = CarbonImmutable::now()->startOfWeek()->addWeeks(3);
+        $endsOn = $startsOn->addDays(13);
+
+        $exists = OpeningHourOverride::query()
+            ->where('practitioner_id', $practitioner->id)
+            ->where('starts_on', $startsOn->toDateString())
+            ->exists();
+
+        if ($exists) {
+            $this->command?->info('0 période d’horaires exceptionnels créée.');
+
+            return;
+        }
+
+        app(SaveOpeningHourOverrideAction::class)->execute(
+            $practitioner,
+            new OpeningHourOverrideData($startsOn, $endsOn, '11:00', '19:00'),
+        );
+
+        $this->command?->info('1 période d’horaires exceptionnels créée.');
     }
 
     /**
