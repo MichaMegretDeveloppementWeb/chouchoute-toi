@@ -156,7 +156,10 @@ final class DemoAgendaSeeder extends Seeder
                     break 2;
                 }
 
-                $address = $index % 9 === 0 ? self::ADDRESSES[$index % count(self::ADDRESSES)] : null;
+                // One in four carries an address, without which a visit at the
+                // client's has nowhere to go and the seed would place almost
+                // none.
+                $address = $index % 4 === 0 ? self::ADDRESSES[$index % count(self::ADDRESSES)] : null;
 
                 $client = Client::query()->firstOrCreate(
                     ['phone' => sprintf('+3360%07d', 1_000_000 + $index)],
@@ -303,7 +306,7 @@ final class DemoAgendaSeeder extends Seeder
             $treatments[] = BookedTreatmentData::of($services[($rank + 5) % count($services)], $second);
         }
 
-        $atHome = $rank % 23 === 7 && $client->address !== null;
+        $atHome = $client->address !== null && $rank % 3 === 1;
 
         return new BookAppointmentData(
             client: $client,
@@ -318,7 +321,18 @@ final class DemoAgendaSeeder extends Seeder
         );
     }
 
-    /** What a past visit ended up being: honoured, missed, or called off. */
+    /**
+     * What a visit ended up being: honoured, missed, or called off.
+     *
+     * Every one of these is the establishment's own gesture, so **none of them
+     * reaches the audit journal** — it records what happens out of sight, and
+     * the counter acts under the eyes of whoever is looking at the screen.
+     *
+     * That the journal comes out empty is right, and deliberate: a database that
+     * has just been rebuilt has no history. Seeding entries into it would invent
+     * a past that never happened, which is the one thing an audit trail must
+     * never contain.
+     */
     private function settle(
         TransitionAppointmentAction $transition,
         Appointment $appointment,
@@ -326,15 +340,21 @@ final class DemoAgendaSeeder extends Seeder
         CarbonImmutable $today,
         int $rank,
     ): void {
-        if ($day->greaterThanOrEqualTo($today)) {
-            return;
-        }
+        $past = $day->lessThan($today);
 
         $outcome = match (true) {
-            $rank % 13 === 4 => AppointmentStatus::NoShow,
-            $rank % 9 === 2 => AppointmentStatus::Cancelled,
-            default => AppointmentStatus::Completed,
+            $past && $rank % 13 === 4 => AppointmentStatus::NoShow,
+            $past && $rank % 7 === 2 => AppointmentStatus::Cancelled,
+            $past => AppointmentStatus::Completed,
+
+            // A handful of visits called off before the day comes.
+            $rank % 19 === 5 => AppointmentStatus::Cancelled,
+            default => null,
         };
+
+        if ($outcome === null) {
+            return;
+        }
 
         $transition->execute(
             $appointment,
