@@ -5,7 +5,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | packages/falcon-booking/src/Actions/** | .ai/rules/actions.md |
-| packages/falcon-booking/src/Data/RecurrenceData.php | .ai/rules/data.md |
+| packages/falcon-booking/src/Data/Appointment/RecurrenceData.php | .ai/rules/data.md |
 | packages/falcon-booking/** | .ai/rules/falcon-booking.md |
 | **/*.blade.php | .ai/rules/general.md |
 | packages/falcon-booking/resources/js/** | .ai/rules/js.md |
