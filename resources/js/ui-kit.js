@@ -104,6 +104,9 @@ document.addEventListener('alpine:init', () => {
         gauche: 0,
         minuterie: null,
 
+        /* Le pointeur du dernier `pointerdown`, que `mener()` lit. */
+        pointeur: '',
+
         /* Le panneau se donne lui-meme : teleporte sous `body`, il ne remonte
            plus jusqu'a la racine qui tient les references. */
         panneau: null,
@@ -132,6 +135,30 @@ document.addEventListener('alpine:init', () => {
             } else {
                 this.ouvrirLeVolet();
             }
+        },
+
+        /*
+         * Le libelle d'une section ou l'on n'est pas mene a sa premiere page.
+         *
+         * Sur le rail, une pression du doigt vaut un survol : elle ouvre le
+         * volet plutot que de mener quelque part, faute de survol sur un ecran
+         * tactile. La souris et le clavier menent.
+         *
+         * `detail` vaut zero sur une activation au clavier, qui ne passe par
+         * aucun pointeur : sans cette garde, le type retenu d'un appui
+         * precedent lui serait applique.
+         */
+        mener(evenement) {
+            if (! this.rail() || evenement.detail === 0) {
+                return;
+            }
+
+            if ((evenement.pointerType || this.pointeur) !== 'touch') {
+                return;
+            }
+
+            evenement.preventDefault();
+            this.ouvrirLeVolet();
         },
 
         viser() {

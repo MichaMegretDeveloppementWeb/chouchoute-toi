@@ -79,10 +79,14 @@
                 Tableau de bord
             </x-ui.sidebar.link>
 
+            {{-- `href` : la première page de la section. Le libellé y mène tant
+                 qu'on n'y est pas, et redevient une simple bascule une fois
+                 dedans. Le chevron ne bascule jamais que l'ouverture. --}}
             <x-ui.sidebar.collapsible
                 name="agenda"
                 label="Agenda"
                 icon="calendar-days"
+                :href="route($booking.'agenda')"
                 :active="request()->routeIs($booking.'*')">
                 <x-ui.sidebar.link
                     :href="route($booking.'agenda')"
@@ -113,6 +117,7 @@
                 <x-ui.sidebar.collapsible
                     name="settings"
                     label="Réglages"
+                    :href="route($booking.'settings')"
                     :active="request()->routeIs($booking.'settings*') || request()->routeIs($booking.'schedule')">
                     <x-ui.sidebar.link
                         :href="route($booking.'settings')"
@@ -150,6 +155,7 @@
                 name="audience"
                 label="Audience"
                 icon="chart-pie"
+                :href="route($analytics.'.overview')"
                 :active="request()->routeIs($analytics.'.*')">
                 <x-ui.sidebar.link
                     :href="route($analytics.'.overview')"
@@ -200,6 +206,7 @@
                 name="marketing"
                 label="Marketing"
                 icon="megaphone"
+                :href="route($marketing.'.dashboard')"
                 :active="request()->routeIs($marketing.'.*')">
                 <x-ui.sidebar.link
                     :href="route($marketing.'.dashboard')"

@@ -1,7 +1,7 @@
 {{--
     A section of the sidebar that folds its links away.
 
-    Publie depuis falcon/ui-kit. Deux choses ont change, et elles se tiennent.
+    Publie depuis falcon/ui-kit. Trois choses ont change, et elles se tiennent.
 
     **Le rail ne se deploie plus au survol.** Il gardait 62 px au repos et
     passait a 260 sous la souris, ce qui faisait apparaitre les sous-menus dans
@@ -11,12 +11,20 @@
     **Une section replie ouvre donc un volet.** Sur le rail, le bouton du kit ne
     faisait rien de visible : il basculait un accordeon dont la liste etait en
     `display: none`. Il ouvre maintenant ses liens dans un panneau ancre a sa
-    hauteur, a droite du rail. C'est ce que font Jira, GitLab et les menus
-    replies d'Ant Design ou d'Element Plus.
+    hauteur, a droite du rail.
 
     Le volet est teleporte vers `body` : la barre est en `overflow-clip`, et il y
     serait rogne. Il ne contient que des liens, donc rien qui ait besoin de
     rester dans la racine Livewire.
+
+    **L'en-tete mene quelque part.** Ouvrir une section ou l'on n'est pas ne
+    menait nulle part : il fallait ensuite viser un second lien. Le libelle est
+    donc un lien vers `href`, la premiere page de la section, tant qu'on n'y est
+    pas ; une fois dedans il redevient une bascule, n'ayant plus rien a mener.
+    Rien n'ouvre la section apres la navigation : y arriver la rend active, et
+    `init()` l'ouvre. Le chevron, lui, ne fait jamais que replier et deplier.
+
+    Sans `href`, le composant se comporte comme celui du kit.
 
     Children carry no icon: the icon belongs to the section, and is what names it
     when the bar is collapsed to its rail.
@@ -24,6 +32,7 @@
 @props([
     'label',
     'icon' => null,
+    'href' => null,
     'active' => false,
     'open' => false,
     'name' => null,
@@ -31,13 +40,17 @@
 ])
 
 @php
-$cle = 'ui-sidebar-'.($name ?: \Illuminate\Support\Str::slug($label));
+$key = 'ui-sidebar-'.($name ?: \Illuminate\Support\Str::slug($label));
 
 // Remembered across navigations, because the links are plain anchors: without
 // this the whole bar would refold on every page.
-$etat = $persist
-    ? '$persist('.($open ? 'true' : 'false').").as('{$cle}')"
+$state = $persist
+    ? '$persist('.($open ? 'true' : 'false').").as('{$key}')"
     : ($open ? 'true' : 'false');
+
+// La section ou l'on se trouve deja n'a plus rien a mener : son en-tete
+// redevient la bascule du kit.
+$leadsSomewhere = $href !== null && ! $active;
 
 // Ces classes decrivent la barre deployee ; la feuille de l'hote les replie
 // par leur nom quand `data-fb-sidebar` vaut « repliee ».
@@ -45,16 +58,21 @@ $labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden 
 
 // Same geometry as a link, down to the max-width: it is what keeps the active
 // pill a 38 pixel square in the rail instead of a shape cut off at 62.
-$boutonBase = 'fb-sidebar-link group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
+$rowBase = 'fb-sidebar-link group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 
 // La pastille dit ou l'on est quand l'enfant actif est cache, c'est-a-dire sur
 // le rail. Ecrite en PHP plutot qu'en empilant des variantes, pour ne rien
 // devoir a l'ordre dans lequel Tailwind les trie.
-$boutonEtat = $active
+$rowState = $active
     ? 'fb-sidebar-badge text-primary'
     : 'text-secondary hover:bg-elevated hover:text-primary';
 
-$iconeEtat = $active
+// `fb-sidebar-gap` : la feuille annule cette gouttiere sur le rail, comme elle
+// le fait pour la rangee. Sans lui, les douze pixels subsistent devant un
+// libelle de largeur nulle et la pastille deborde des trente-huit.
+$labelPart = 'fb-sidebar-gap flex min-w-0 flex-1 items-center gap-x-3 text-left';
+
+$iconState = $active
     ? 'fb-sidebar-badge-icon text-primary'
     : 'text-muted group-hover:text-secondary';
 @endphp
@@ -62,37 +80,57 @@ $iconeEtat = $active
 {{-- x-id is not optional: without a root declaring the name, $id() caches per
      element and hands the button and the panel two different numbers. Its
      counter being global is also what makes the two renderings of the bar,
-     mobile and desktop, come out with distinct ids. --}}
-<li x-data="barreSection({{ $etat }}, {{ $active ? 'true' : 'false' }})"
+     mobile and desktop, come out with distinct ids.
+
+     `pointerdown` sert de repli a `mener()` : `click` n'est pas partout un
+     `PointerEvent`, et il faut savoir si le geste vient du doigt. --}}
+<li x-data="barreSection({{ $state }}, {{ $active ? 'true' : 'false' }})"
     x-id="['ui-sidebar-sous-menu']"
     x-on:mouseenter="viser()"
     x-on:mouseleave="quitter()"
+    x-on:pointerdown="pointeur = $event.pointerType"
     class="relative">
 
-    <button type="button"
-        x-ref="declencheur"
-        x-on:click="basculer()"
-        x-on:keydown.escape="fermerLeVolet()"
-        :aria-expanded="rail() ? volet : ouvert"
-        :aria-controls="$id('ui-sidebar-sous-menu')"
-        {{ $attributes->merge(['class' => "$boutonBase $boutonEtat"]) }}>
-
-        @if($icon)
-            <x-ui.icon :name="$icon" class="h-[18px] w-[18px] shrink-0 {{ $iconeEtat }}" aria-hidden="true" />
+    {{-- La rangee porte la pastille ; les deux commandes vivent dedans. Un
+         `<button>` ne peut pas tenir dans un `<a>`, ce sont donc des freres. --}}
+    <div x-ref="declencheur" {{ $attributes->merge(['class' => "$rowBase $rowState"]) }}>
+        @if ($leadsSomewhere)
+            <a href="{{ $href }}" x-on:click="mener($event)" class="{{ $labelPart }}">
+        @else
+            <button type="button" x-on:click="basculer()" class="{{ $labelPart }}">
         @endif
 
-        <span class="flex-1 text-left {{ $labelClass }}">{{ $label }}</span>
+            @if($icon)
+                <x-ui.icon :name="$icon" class="h-[18px] w-[18px] shrink-0 {{ $iconState }}" aria-hidden="true" />
+            @endif
 
-        {{-- Wrapped, so the chevron folds away with the label instead of
-             sticking out of the rail, and so its rotation does not share a
-             transition with the label's own. --}}
-        <span class="shrink-0 {{ $labelClass }}">
+            <span class="{{ $labelClass }}">{{ $label }}</span>
+
+        @if ($leadsSomewhere)
+            </a>
+        @else
+            </button>
+        @endif
+
+        {{-- Le chevron ne fait que replier et deplier, et c'est lui qui annonce
+             l'etat. Il se replie avec le libelle plutot que de depasser du rail,
+             et sa rotation ne partage pas la transition de celui-ci.
+
+             `-my-3` sous 640 : la cible fait quarante-quatre pixels de cote sans
+             que la rangee grandisse pour autant. --}}
+        <button type="button"
+            x-on:click="basculer()"
+            x-on:keydown.escape="fermerLeVolet()"
+            :aria-expanded="rail() ? volet : ouvert"
+            :aria-controls="$id('ui-sidebar-sous-menu')"
+            aria-label="Sous-menu {{ $label }}"
+            class="flex shrink-0 items-center justify-center max-sm:-my-3 max-sm:h-11 max-sm:w-11 {{ $labelClass }}">
             <x-ui.icon name="chevron-down"
                 class="h-4 w-4 transition-transform duration-200"
                 ::class="ouvert ? 'rotate-180' : ''"
                 aria-hidden="true" />
-        </span>
-    </button>
+        </button>
+    </div>
 
     {{-- L'accordeon, quand la barre est deployee. --}}
     <div x-show="ouvert" x-collapse x-cloak :id="$id('ui-sidebar-sous-menu')">

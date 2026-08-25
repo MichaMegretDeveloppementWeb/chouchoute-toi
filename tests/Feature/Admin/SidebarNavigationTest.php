@@ -29,7 +29,7 @@ final class SidebarNavigationTest extends TestCase
             ->getContent();
     }
 
-    public function test_each_section_is_a_button_that_says_whether_it_is_open(): void
+    public function test_each_section_says_whether_it_is_open(): void
     {
         $shell = $this->shell();
 
@@ -37,9 +37,108 @@ final class SidebarNavigationTest extends TestCase
             $this->assertStringContainsString($section, $shell);
         }
 
-        // Repliee, la barre ouvre un volet plutot que l'accordeon : le bouton
+        // Repliee, la barre ouvre un volet plutot que l'accordeon : le chevron
         // annonce celui des deux qui s'applique.
         $this->assertStringContainsString(':aria-expanded="rail() ? volet : ouvert"', $shell);
+    }
+
+    // ── L'en-tete mene, le chevron replie ─────────────────────────────────
+
+    /** Le motif d'un en-tete de section rendu comme un lien vers `$url`. */
+    private function headerLinkedTo(string $url): string
+    {
+        return '/<a href="'.preg_quote($url, '/').'"[^>]*x-on:click="mener\(\$event\)"/';
+    }
+
+    /**
+     * Le motif d'un en-tete de section rendu comme une bascule.
+     *
+     * Les deux attributs, et dans cet ordre : le chevron porte aussi
+     * `basculer()` mais pas cette classe, et le menu utilisateur porte cette
+     * classe mais pas `basculer()`.
+     */
+    private const HEADER_THAT_ONLY_FOLDS = '/<button[^>]*x-on:click="basculer\(\)"[^>]*class="fb-sidebar-gap/';
+
+    /**
+     * Ouvrir une section ou l'on n'est pas ne menait nulle part : il fallait
+     * ensuite viser un second lien. Son libelle mene desormais a sa premiere
+     * page, deux fois, la barre etant rendue une fois par point de rupture.
+     */
+    public function test_a_section_one_is_not_in_leads_to_its_first_page(): void
+    {
+        $shell = $this->shell();
+        $booking = config('booking.admin.route_name');
+
+        $this->assertSame(2, preg_match_all(
+            $this->headerLinkedTo(route($booking.'agenda')),
+            $shell,
+        ));
+
+        // Aucune section n'est active sur le tableau de bord : les quatre menent.
+        $this->assertSame(0, preg_match_all(self::HEADER_THAT_ONLY_FOLDS, $shell));
+    }
+
+    /** Une fois dedans, l'en-tete n'a plus rien a mener : il ne fait que replier. */
+    public function test_the_section_one_is_in_only_folds(): void
+    {
+        $booking = config('booking.admin.route_name');
+        $shell = $this->shell($booking.'agenda');
+
+        $this->assertSame(0, preg_match_all(
+            $this->headerLinkedTo(route($booking.'agenda')),
+            $shell,
+        ));
+
+        // Agenda seule est active, et elle est rendue une fois par point de
+        // rupture.
+        $this->assertSame(2, preg_match_all(self::HEADER_THAT_ONLY_FOLDS, $shell));
+
+        // Reglages, qui est dedans, mene toujours. Quatre fois : Agenda rend
+        // ses enfants une fois dans son accordeon et une fois dans son volet.
+        $this->assertSame(4, preg_match_all(
+            $this->headerLinkedTo(route($booking.'settings')),
+            $shell,
+        ));
+    }
+
+    /**
+     * Le chevron est une commande a part, et il ne mene jamais nulle part.
+     *
+     * C'est aussi lui qui annonce l'etat : deux commandes cote a cote, une qui
+     * mene et une qui replie, et une seule des deux gouverne le panneau.
+     */
+    public function test_the_chevron_is_a_control_of_its_own(): void
+    {
+        preg_match_all(
+            '/<button[^>]*aria-label="Sous-menu [^"]*"[^>]*>/',
+            $this->shell(),
+            $chevrons,
+        );
+
+        $this->assertCount(10, $chevrons[0], 'Cinq sections, deux rendus de la barre.');
+
+        foreach ($chevrons[0] as $chevron) {
+            $this->assertStringNotContainsString('href', $chevron);
+            $this->assertStringContainsString(':aria-expanded=', $chevron);
+        }
+    }
+
+    /**
+     * Le tiroir du telephone n'est jamais un rail.
+     *
+     * L'attribut est pose sur `<html>` des que la fenetre fait moins de 1500 px,
+     * donc toujours sur telephone, et il hérite jusque dans le tiroir. Toucher
+     * une section y ouvrait un volet flottant au lieu de derouler l'accordeon.
+     *
+     * Asserte sur la feuille, qui est ce qui decide : Alpine ne fait que lire
+     * `--fb-rail`.
+     */
+    public function test_the_phone_drawer_is_never_a_rail(): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/#mobile-sidebar\s*\{[^}]*--fb-rail:\s*0/',
+            (string) file_get_contents(resource_path('css/ui-kit.css')),
+        );
     }
 
     /**

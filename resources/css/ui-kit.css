@@ -158,6 +158,22 @@ html[data-fb-sidebar='collapsed'] {
     --fb-rail: 1;
 }
 
+/*
+ * Le tiroir du telephone n'est jamais un rail.
+ *
+ * L'attribut est pose sur `<html>` des que la fenetre fait moins de 1500 px,
+ * donc toujours sur telephone, et il herite jusqu'ici. Toutes les autres regles
+ * de repli sont scopees a `.fb-sidebar`, que le tiroir ne porte pas ; celle-la
+ * ne peut pas l'etre, Alpine la lisant depuis la section. Elle se remet donc a
+ * zero ici, comme le fait deja le volet.
+ *
+ * Sans quoi toucher une section y ouvrait un volet flottant au lieu de derouler
+ * l'accordeon.
+ */
+#mobile-sidebar {
+    --fb-rail: 0;
+}
+
 html[data-fb-sidebar='collapsed'] .fb-sidebar {
     width: 62px;
 }
