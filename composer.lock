@@ -800,10 +800,10 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "61c498e6a833e800e827351a8830e3d7797d1788"
+                "reference": "784321c85fe8c0b83e1dbf18a250057d555655eb"
             },
             "require": {
-                "falcon/ui-kit": "^2.7",
+                "falcon/ui-kit": "^2.8",
                 "laravel/framework": "^13.0",
                 "livewire/livewire": "^4.2",
                 "php": "^8.5"

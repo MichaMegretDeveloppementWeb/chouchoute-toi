@@ -67,59 +67,14 @@
  * Le vert est celui qui se voit : #48bb78 rendait 2,43 contre le blanc, quand
  * un indicateur de focus en demande 3. Meme famille, un cran plus fonce.
  */
+/*
+ * Les jetons semantiques du formulaire (encre, filets, cases grises, etats
+ * passes) vivaient ici et appartenaient a falcon/booking, qui seul les lisait.
+ * Ils sont partis dans sa palette, sur `.fb-booking` : le paquet doit etre
+ * complet la ou on l'installe.
+ */
 :root {
     --fb-focus: #38a169;
-
-    /*
-     * Les deux etats qu'un rendez-vous garde une fois passe.
-     *
-     * Le bleu est releve sur la reference, sur son bouton « Venu » allume. Le
-     * rouge est son voisin de rang dans la meme palette : elle n'avait pas de
-     * visite manquee a montrer, et une teinte inventee aurait jure a cote.
-     *
-     * Assez sombres pour porter du blanc dans les deux themes, donc pas de
-     * variante sombre.
-     */
-    --fb-completed: #2c5282;
-    --fb-completed-dark: #24456d;
-    --fb-no-show: #9b2c2c;
-    --fb-no-show-dark: #822525;
-
-    /*
-     * La palette du formulaire, relevee sur la reference.
-     *
-     * Elle est vert-gris la ou les gris de Tailwind sont bleu-gris. Sur un
-     * champ la difference ne se voit pas ; sur un formulaire entier c'est la
-     * temperature qui change. Cinq valeurs, nommees une fois :
-     *
-     *   encre        ce qu'on lit, valeurs et gestes
-     *   encre-2      le secondaire, titres et liants
-     *   muet         libelles, invites, ce qui est calcule
-     *   trait        le filet d'un champ ou d'une rangee au repos
-     *   trait-fort   un filet qui doit se voir, comme celui d'un bouton
-     *   case-grise   le fond d'une valeur qu'on ne saisit pas
-     *   fond-modale  le gris sur lequel se detachent les groupes d'un ecran
-     *                plein, sur telephone
-     */
-    --fb-text: #34423e;
-    --fb-text-soft: #5f706a;
-    --fb-text-muted: #7f8c88;
-    --fb-border: #eceeed;
-    --fb-border-strong: #98a29f;
-    --fb-surface-sunken: #eceeed;
-    --fb-cell: #f9f9f9;
-    --fb-modal-ground: #f6f7f8;
-}
-
-.dark {
-    --fb-text: var(--color-gray-100);
-    --fb-text-soft: var(--color-gray-300);
-    --fb-text-muted: var(--color-gray-400);
-    --fb-border: var(--color-gray-800);
-    --fb-border-strong: var(--color-gray-600);
-    --fb-surface-sunken: var(--color-gray-800);
-    --fb-cell: var(--color-gray-800);
-    --fb-modal-ground: var(--color-gray-950);
 }
 
 /*
