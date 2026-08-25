@@ -28,6 +28,7 @@ use Falcon\Booking\Models\OpeningHourOverride;
 use Falcon\Booking\Models\Practitioner;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\Unavailability;
+use Falcon\Booking\Services\Shared\Time\BusinessClock;
 use Illuminate\Database\Seeder;
 
 /**
@@ -65,6 +66,17 @@ final class DemoAgendaSeeder extends Seeder
 
     private const AFTERNOON = ['14:00', '19:00'];
 
+    /**
+     * Les heures où l'on pose une visite : celles des deux plages ci-dessus, la
+     * pause du midi sautée.
+     *
+     * Une table et non `9 + $slot`, qui posait des visites à midi et midi et
+     * demi — donc dans la bande hachurée. Le décalage de deux heures le
+     * masquait : les créneaux tombaient alors de 11 h à 16 h, et personne ne
+     * voyait le défaut tant que l'heure elle-même était fausse.
+     */
+    private const SLOT_HOURS = [9, 10, 11, 14, 15, 16];
+
     /** @var list<array{0: string, 1: string}> */
     private const NAMES = [
         ['Camille', 'Berthier'], ['Léa', 'Nguyen'], ['Sofia', 'Marchetti'], ['Inès', 'Fauvel'],
@@ -85,8 +97,23 @@ final class DemoAgendaSeeder extends Seeder
         ['7 place du Marché', '74300', 'Cluses'],
     ];
 
+    /**
+     * Aujourd'hui à minuit, **à l'heure de l'établissement**.
+     *
+     * Tout ce que ce seeder pose en dérive. `CarbonImmutable::now()` répondrait
+     * dans le fuseau de l'application — UTC —, où `setTime(9, 0)` signifie neuf
+     * heures UTC, soit onze heures à Paris : la démonstration plaçait ainsi ses
+     * visites deux heures après l'ouverture, et son congé de 02:00 à 02:00.
+     *
+     * Le fuseau de l'établissement se lit par `BusinessClock`, jamais par
+     * `now()` ni par `config()`. Voir .ai/rules/src.md.
+     */
+    private CarbonImmutable $today;
+
     public function run(): void
     {
+        $this->today = app(BusinessClock::class)->today();
+
         $practitioners = Practitioner::query()->orderBy('id')->get();
         $services = Service::query()->whereNull('archived_at')->orderBy('id')->get();
 
@@ -201,10 +228,10 @@ final class DemoAgendaSeeder extends Seeder
      */
     private function unavailabilities(Practitioner $practitioner): void
     {
-        $monday = CarbonImmutable::now()->startOfWeek()->addWeek();
+        $monday = $this->today->startOfWeek()->addWeek();
 
         $periods = [
-            [$monday->addDays(2)->setTime(0, 0), $monday->addDays(3)->setTime(0, 0), 'Congé'],
+            [$monday->addDays(2), $monday->addDays(3), 'Congé'],
             [$monday->addDays(9)->setTime(14, 0), $monday->addDays(9)->setTime(19, 0), 'Formation'],
         ];
 
@@ -241,7 +268,7 @@ final class DemoAgendaSeeder extends Seeder
      */
     private function exceptionalHours(Practitioner $practitioner): void
     {
-        $lateOpening = CarbonImmutable::now()->startOfWeek()->addWeeks(3);
+        $lateOpening = $this->today->startOfWeek()->addWeeks(3);
         $holidays = $lateOpening->addWeeks(3);
 
         $exists = OpeningHourOverride::query()
@@ -283,7 +310,7 @@ final class DemoAgendaSeeder extends Seeder
      */
     private function appointments(array $practitioners, array $clients, array $services): void
     {
-        $today = CarbonImmutable::now()->startOfDay();
+        $today = $this->today;
         $day = $today->subWeeks(self::WEEKS_BACK)->startOfWeek();
         $last = $today->addWeeks(self::WEEKS_AHEAD)->endOfWeek();
 
@@ -336,11 +363,6 @@ final class DemoAgendaSeeder extends Seeder
         array $clients,
         array $services,
     ): BookAppointmentData {
-        // Two visits on the same hour every eleventh: an establishment doubles
-        // its agenda on purpose, and the screens have to draw it.
-        $hour = $rank % 11 === 10 && $slot > 0 ? 9 + $slot - 1 : 9 + $slot;
-        $startsAt = $day->setTime(min($hour, 17), $rank % 2 === 0 ? 0 : 30);
-
         $lead = $practitioners[$rank % count($practitioners)];
         $client = $clients[$rank % count($clients)];
 
@@ -352,6 +374,15 @@ final class DemoAgendaSeeder extends Seeder
             $second = $rank % 14 === 3 ? $practitioners[($rank + 1) % count($practitioners)] : $lead;
             $treatments[] = BookedTreatmentData::of($services[($rank + 5) % count($services)], $second);
         }
+
+        // Two visits on the same hour every eleventh: an establishment doubles
+        // its agenda on purpose, and the screens have to draw it. It steps back
+        // one rank in the table rather than one hour, so the pair really shares
+        // an hour even across the midday break.
+        $index = $rank % 11 === 10 && $slot > 0 ? $slot - 1 : $slot;
+        $index = min($index, count(self::SLOT_HOURS) - 1);
+
+        $startsAt = $day->setTime(self::SLOT_HOURS[$this->slotThatHolds($index, $treatments)], $rank % 2 === 0 ? 0 : 30);
 
         $atHome = $client->address !== null && $rank % 3 === 1;
 
@@ -369,16 +400,52 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
+     * Le rang du créneau où la visite **tient** avant la fermeture, en reculant
+     * depuis celui qu'elle visait.
+     *
+     * Un institut ne commence pas un forfait de quatre heures à seize heures.
+     * Sans cette marche arrière, deux visites sur près de trois cents finissaient
+     * après la fermeture — dont une à 21 h 30, soit deux heures et demie de carte
+     * posée en pleine bande hachurée, ce qui se lit comme un défaut de l'écran
+     * plutôt que comme une donnée.
+     *
+     * Le premier créneau tient toujours : la plus longue paire possible fait huit
+     * heures, et neuf heures plus huit tombe avant dix-neuf heures.
+     *
+     * @param  list<BookedTreatmentData>  $treatments
+     */
+    private function slotThatHolds(int $index, array $treatments): int
+    {
+        $minutes = array_sum(array_map(
+            static fn (BookedTreatmentData $treatment): int => $treatment->durationMinutes,
+            $treatments,
+        ));
+
+        $closesAt = (int) substr(self::AFTERNOON[1], 0, 2) * 60;
+
+        while ($index > 0 && self::SLOT_HOURS[$index] * 60 + $minutes > $closesAt) {
+            $index--;
+        }
+
+        return $index;
+    }
+
+    /**
      * What a visit ended up being: honoured, missed, or called off.
      *
-     * Every one of these is the establishment's own gesture, so **none of them
-     * reaches the audit journal** — it records what happens out of sight, and
-     * the counter acts under the eyes of whoever is looking at the screen.
+     * Marking a visit honoured or missed is done under the eyes of whoever is
+     * looking at the screen, so **it reaches no journal** — the journal records
+     * what the agenda does not already show.
      *
-     * That the journal comes out empty is right, and deliberate: a database that
-     * has just been rebuilt has no history. Seeding entries into it would invent
-     * a past that never happened, which is the one thing an audit trail must
-     * never contain.
+     * **Une annulation, si.** Elle est, avec la suppression, l'un des deux
+     * gestes de l'établissement qui laissent une trace : elle retire au client
+     * un rendez-vous qu'il tenait. Le journal de la démonstration n'est donc
+     * plus vide, et il ne doit pas l'être — ces annulations-là ont bien eu lieu
+     * dans l'histoire que le seeder raconte, au même titre que les visites.
+     *
+     * Ce qui reste interdit est d'écrire des entrées **à la main**, pour un
+     * passé que rien n'a joué. Elles ne viennent ici que du chemin ordinaire,
+     * celui qui les écrirait en production.
      */
     private function settle(
         TransitionAppointmentAction $transition,
@@ -419,7 +486,7 @@ final class DemoAgendaSeeder extends Seeder
      */
     private function series(Practitioner $practitioner, Client $client, Service $service): void
     {
-        $first = CarbonImmutable::now()->startOfWeek()->addWeeks(2)->addDays(1)->setTime(15, 0);
+        $first = $this->today->startOfWeek()->addWeeks(2)->addDays(1)->setTime(15, 0);
 
         app(RepeatAppointmentAction::class)->execute(
             new BookAppointmentData(
@@ -443,7 +510,7 @@ final class DemoAgendaSeeder extends Seeder
      */
     private function repeatedUnavailability(Practitioner $practitioner): void
     {
-        $first = CarbonImmutable::now()->startOfWeek()->addWeeks(2)->addDays(1)->setTime(12, 30);
+        $first = $this->today->startOfWeek()->addWeeks(2)->addDays(1)->setTime(12, 30);
 
         app(RepeatUnavailabilityAction::class)->execute(
             $practitioner,
