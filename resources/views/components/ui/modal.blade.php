@@ -105,8 +105,18 @@ $placement = 'items-center justify-center p-4';
                      deux boutons carres de 39 px. Mesures : 52 de haut, retrait
                      6 28 5, titre 15/700 dans l'encre secondaire. --}}
                 <div class="fb-modal-header flex shrink-0 items-center gap-x-3 bg-white pb-[5px] pl-7 pr-7 pt-1.5 dark:bg-gray-900">
+                    {{-- Le titre et son badge dans un meme bloc, et le `flex-1`
+                         sur le bloc plutot que sur le titre : porte par le titre,
+                         il poussait le badge contre les boutons alors qu'il
+                         qualifie le titre. Ici il se pose juste apres lui. --}}
                     @if($title)
-                        <h3 class="min-w-0 flex-1 truncate text-[15px] font-bold leading-6 text-[var(--fb-text-soft)]">{{ $title }}</h3>
+                        <div class="flex min-w-0 flex-1 items-center gap-x-2">
+                            <h3 class="min-w-0 truncate text-[15px] font-bold leading-6 text-[var(--fb-text-soft)]">{{ $title }}</h3>
+
+                            @isset($headerBadge)
+                                <span class="shrink-0">{{ $headerBadge }}</span>
+                            @endisset
+                        </div>
                     @endif
 
                     <button type="button" @click="fermer()"
