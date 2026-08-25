@@ -230,17 +230,21 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * A fortnight opening later than usual: one row, where the old shape needed
-     * fourteen.
+     * The two shapes an exceptional period takes.
+     *
+     * A fortnight opening later than usual — one row where the old shape needed
+     * fourteen — and a week of holidays, which is the same row with its hours
+     * left out. They are laid days apart on purpose: a closed period shares no
+     * day with anything else, and the seeder has to obey the same law.
      */
     private function exceptionalHours(Practitioner $practitioner): void
     {
-        $startsOn = CarbonImmutable::now()->startOfWeek()->addWeeks(3);
-        $endsOn = $startsOn->addDays(13);
+        $lateOpening = CarbonImmutable::now()->startOfWeek()->addWeeks(3);
+        $holidays = $lateOpening->addWeeks(3);
 
         $exists = OpeningHourOverride::query()
             ->where('practitioner_id', $practitioner->id)
-            ->where('starts_on', $startsOn->toDateString())
+            ->where('starts_on', $lateOpening->toDateString())
             ->exists();
 
         if ($exists) {
@@ -249,12 +253,23 @@ final class DemoAgendaSeeder extends Seeder
             return;
         }
 
-        app(SaveOpeningHourOverrideAction::class)->execute(
-            $practitioner,
-            new OpeningHourOverrideData($startsOn, $endsOn, '11:00', '19:00'),
-        );
+        $save = app(SaveOpeningHourOverrideAction::class);
 
-        $this->command?->info('1 période d’horaires exceptionnels créée.');
+        $save->execute($practitioner, new OpeningHourOverrideData(
+            startsOn: $lateOpening,
+            endsOn: $lateOpening->addDays(13),
+            opensAt: '11:00',
+            closesAt: '19:00',
+            label: 'Ouverture tardive',
+        ));
+
+        $save->execute($practitioner, new OpeningHourOverrideData(
+            startsOn: $holidays,
+            endsOn: $holidays->addDays(6),
+            label: 'Congés',
+        ));
+
+        $this->command?->info('2 période(s) d’horaires exceptionnels créée(s), dont une semaine de congés.');
     }
 
     /**
