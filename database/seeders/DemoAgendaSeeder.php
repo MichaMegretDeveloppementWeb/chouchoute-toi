@@ -8,6 +8,7 @@ use Carbon\CarbonImmutable;
 use Falcon\Booking\Actions\Admin\Appointment\BookAppointmentAction;
 use Falcon\Booking\Actions\Admin\Appointment\RepeatAppointmentAction;
 use Falcon\Booking\Actions\Admin\Appointment\TransitionAppointmentAction;
+use Falcon\Booking\Actions\Admin\Schedule\RepeatUnavailabilityAction;
 use Falcon\Booking\Actions\Admin\Schedule\SaveOpeningHourOverrideAction;
 use Falcon\Booking\Actions\Admin\Schedule\SaveUnavailabilityAction;
 use Falcon\Booking\Actions\Admin\Schedule\UpdateWeeklyScheduleAction;
@@ -110,6 +111,7 @@ final class DemoAgendaSeeder extends Seeder
 
         $this->appointments($practitioners->all(), $clients, $services->all());
         $this->series($practitioners->first(), $clients[0], $services->first());
+        $this->repeatedUnavailability($practitioners->first());
     }
 
     /**
@@ -430,5 +432,25 @@ final class DemoAgendaSeeder extends Seeder
         );
 
         $this->command?->info('Une série hebdomadaire de six occurrences posée.');
+    }
+
+    /**
+     * « Manger tous les mardis avec X » — l'exemple d'origine, posé tel quel.
+     *
+     * Une indisponibilité qui se répète, pour que l'agenda en montre une : le
+     * `⟳` sur la carte, la portée demandée au déplacement, la règle relisible
+     * dans le panneau.
+     */
+    private function repeatedUnavailability(Practitioner $practitioner): void
+    {
+        $first = CarbonImmutable::now()->startOfWeek()->addWeeks(2)->addDays(1)->setTime(12, 30);
+
+        app(RepeatUnavailabilityAction::class)->execute(
+            $practitioner,
+            new UnavailabilityData($first, $first->addMinutes(90), 'Déjeuner avec Sophie'),
+            new RecurrenceData(RecurrenceFrequency::Weeks, 1, repeatCycles: 7),
+        );
+
+        $this->command?->info('Un déjeuner hebdomadaire de huit occurrences posé.');
     }
 }
