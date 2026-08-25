@@ -800,7 +800,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "784321c85fe8c0b83e1dbf18a250057d555655eb"
+                "reference": "6061aeb8a8f0eff858d261d3e3e54ddc60802e25"
             },
             "require": {
                 "falcon/ui-kit": "^2.8",
