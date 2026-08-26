@@ -1,2 +1,2 @@
-/* Page Avis — point d'entree JS */
+/* Page Avis : point d'entree JS */
 import './temoignages.js';

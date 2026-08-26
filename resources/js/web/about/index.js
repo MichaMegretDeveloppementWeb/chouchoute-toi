@@ -1,1 +1,1 @@
-/* Page A propos — point d'entree JS */
+/* Page A propos : point d'entree JS */

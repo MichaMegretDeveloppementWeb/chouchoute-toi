@@ -1,1 +1,1 @@
-/* Page Mentions legales — point d'entree JS */
+/* Page Mentions legales : point d'entree JS */

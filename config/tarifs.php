@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Grille tarifaire — Chouchoute toi
+    | Grille tarifaire · Chouchoute toi
     |--------------------------------------------------------------------------
     |
     | Accessible via config('tarifs.categories'), config('tarifs.depose'), etc.

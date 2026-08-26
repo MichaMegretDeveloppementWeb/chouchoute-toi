@@ -1,5 +1,5 @@
 /**
- * Header — sticky scroll effect + mobile menu toggle
+ * Header : sticky scroll effect + mobile menu toggle
  */
 
 document.addEventListener('DOMContentLoaded', () => {

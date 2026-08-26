@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /*
 |--------------------------------------------------------------------------
-| Messages de validation — le filet, pas la règle
+| Messages de validation : le filet, pas la règle
 |--------------------------------------------------------------------------
 |
 | Le projet écrit lui-même le message de chaque règle qu'il déclare, dans le
@@ -20,7 +20,7 @@ declare(strict_types=1);
 |    ne peut l'atteindre. Sans la ligne `max.file` ci-dessous, l'écran affichait
 |    « validation.max.file » à qui déposait une photo trop lourde.
 |
-| 2. Ce qu'on aurait oublié malgré le test — une règle ajoutée ailleurs que dans
+| 2. Ce qu'on aurait oublié malgré le test : une règle ajoutée ailleurs que dans
 |    un composant Livewire, une validation de contrôleur, un paquet tiers.
 |
 | L'application tourne en `fr` avec `fr` en repli : sans ce fichier, aucune clé

@@ -1,4 +1,4 @@
-/* Page Accueil — point d'entrée JS */
+/* Page Accueil : point d'entrée JS */
 /* Les animations scroll sont gérées globalement via footer.js */
 
 import './avant-apres.js';

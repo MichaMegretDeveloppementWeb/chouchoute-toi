@@ -1,4 +1,4 @@
-/* Section Avant / Après — Slider interactif */
+/* Section Avant / Après : slider interactif */
 
 document.addEventListener('DOMContentLoaded', () => {
     const slider = document.querySelector('[data-avant-apres-slider]');

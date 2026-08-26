@@ -1,1 +1,1 @@
-/* Galerie avant/apres — lightbox ou slider (a implementer) */
+/* Galerie avant/apres : lightbox ou slider (a implementer) */

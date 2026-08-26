@@ -1,2 +1,2 @@
-/* Page Prestations — point d'entree JS */
+/* Page Prestations : point d'entree JS */
 import './galerie.js';

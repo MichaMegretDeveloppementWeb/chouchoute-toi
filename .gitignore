@@ -36,7 +36,7 @@ boost.json
 # `.ai` est ignore, et ses fichiers ont ete sortis du depot par
 # `git rm --cached -r .ai` le 2026-08-24. Les deux moities comptent : ignorer
 # un dossier dont les fichiers sont encore suivis ne les sort pas du depot, il
-# refuse seulement tout `git add` sans `-f` — une regle ecrite par quelqu'un
+# refuse seulement tout `git add` sans `-f`, une regle ecrite par quelqu'un
 # reste alors invisible au commit, sans que rien ne le dise. C'est arrive une
 # fois deja.
 #

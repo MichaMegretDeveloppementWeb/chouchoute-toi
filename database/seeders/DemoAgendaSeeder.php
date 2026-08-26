@@ -42,8 +42,8 @@ use Illuminate\Database\Seeder;
  * **Written through the Actions, never through the factories.** A visit written
  * the real way carries its treatment lines, and the agenda reads their count to
  * put « +2 » on a card: rows built by hand would draw cards that lie. The
- * factories are also dev-only autoload, and the `Admin\` space refuses nothing —
- * neither closed hours nor an overlap — so nothing can be turned away mid-seed.
+ * factories are also dev-only autoload, and the `Admin\` space refuses nothing,
+ * neither closed hours nor an overlap, so nothing can be turned away mid-seed.
  *
  * Anchored on today so the demo never goes stale, and deterministic: everything
  * is derived from a rank, so two runs place the same visits and no two clients
@@ -71,7 +71,7 @@ final class DemoAgendaSeeder extends Seeder
      * pause du midi sautée.
      *
      * Une table et non `9 + $slot`, qui posait des visites à midi et midi et
-     * demi — donc dans la bande hachurée. Le décalage de deux heures le
+     * demi, donc dans la bande hachurée. Le décalage de deux heures le
      * masquait : les créneaux tombaient alors de 11 h à 16 h, et personne ne
      * voyait le défaut tant que l'heure elle-même était fausse.
      */
@@ -101,7 +101,7 @@ final class DemoAgendaSeeder extends Seeder
      * Aujourd'hui à minuit, **à l'heure de l'établissement**.
      *
      * Tout ce que ce seeder pose en dérive. `CarbonImmutable::now()` répondrait
-     * dans le fuseau de l'application — UTC —, où `setTime(9, 0)` signifie neuf
+     * dans le fuseau de l'application, UTC, où `setTime(9, 0)` signifie neuf
      * heures UTC, soit onze heures à Paris : la démonstration plaçait ainsi ses
      * visites deux heures après l'ouverture, et son congé de 02:00 à 02:00.
      *
@@ -261,8 +261,8 @@ final class DemoAgendaSeeder extends Seeder
     /**
      * The two shapes an exceptional period takes.
      *
-     * A fortnight opening later than usual — one row where the old shape needed
-     * fourteen — and a week of holidays, which is the same row with its hours
+     * A fortnight opening later than usual, one row where the old shape needed
+     * fourteen, and a week of holidays, which is the same row with its hours
      * left out. They are laid days apart on purpose: a closed period shares no
      * day with anything else, and the seeder has to obey the same law.
      */
@@ -405,7 +405,7 @@ final class DemoAgendaSeeder extends Seeder
      *
      * Un institut ne commence pas un forfait de quatre heures à seize heures.
      * Sans cette marche arrière, deux visites sur près de trois cents finissaient
-     * après la fermeture — dont une à 21 h 30, soit deux heures et demie de carte
+     * après la fermeture, dont une à 21 h 30, soit deux heures et demie de carte
      * posée en pleine bande hachurée, ce qui se lit comme un défaut de l'écran
      * plutôt que comme une donnée.
      *
@@ -434,13 +434,13 @@ final class DemoAgendaSeeder extends Seeder
      * What a visit ended up being: honoured, missed, or called off.
      *
      * Marking a visit honoured or missed is done under the eyes of whoever is
-     * looking at the screen, so **it reaches no journal** — the journal records
+     * looking at the screen, so **it reaches no journal**: the journal records
      * what the agenda does not already show.
      *
      * **Une annulation, si.** Elle est, avec la suppression, l'un des deux
      * gestes de l'établissement qui laissent une trace : elle retire au client
      * un rendez-vous qu'il tenait. Le journal de la démonstration n'est donc
-     * plus vide, et il ne doit pas l'être — ces annulations-là ont bien eu lieu
+     * plus vide, et il ne doit pas l'être : ces annulations-là ont bien eu lieu
      * dans l'histoire que le seeder raconte, au même titre que les visites.
      *
      * Ce qui reste interdit est d'écrire des entrées **à la main**, pour un
@@ -502,7 +502,7 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * « Manger tous les mardis avec X » — l'exemple d'origine, posé tel quel.
+     * « Manger tous les mardis avec X », l'exemple d'origine, posé tel quel.
      *
      * Une indisponibilité qui se répète, pour que l'agenda en montre une : le
      * `⟳` sur la carte, la portée demandée au déplacement, la règle relisible

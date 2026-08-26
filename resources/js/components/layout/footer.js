@@ -1,5 +1,5 @@
 /**
- * Animations d'entrée au scroll — IntersectionObserver
+ * Animations d'entrée au scroll : IntersectionObserver
  * Chargé globalement via le layout pour toutes les pages.
  */
 

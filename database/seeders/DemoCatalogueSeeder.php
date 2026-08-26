@@ -29,7 +29,7 @@ final class DemoCatalogueSeeder extends Seeder
      * Ten ranges, five to ten treatments each.
      *
      * The names are those of a real salon rather than filler: a picker is judged
-     * on the lengths it actually has to carry. Some are long on purpose — that
+     * on the lengths it actually has to carry. Some are long on purpose, which
      * is what shows whether a column truncates where the meaning starts.
      *
      * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int}>}>

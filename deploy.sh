@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# deploy.sh — Deploiement Chouchoute-toi (Hostinger Shared Hosting)
+# deploy.sh : deploiement Chouchoute-toi (Hostinger Shared Hosting)
 #
 # Usage :
 #   ./deploy.sh           Deploiement standard
@@ -51,7 +51,7 @@ step() {
 # Remettre le site en ligne en cas d'erreur
 cleanup() {
     if [ -f "${APP_DIR}/storage/framework/down" ]; then
-        warn "Erreur detectee — remise en ligne du site..."
+        warn "Erreur detectee, remise en ligne du site..."
         $PHP_BIN artisan up 2>/dev/null || true
     fi
 }
@@ -123,13 +123,13 @@ fi
 
 # -- 1. Mode maintenance ------------------------------------------------------
 
-step "1/6 — Mode maintenance"
+step "1/6 · Mode maintenance"
 $PHP_BIN artisan down --secret="deploy-$(date +%Y%m%d)" --retry=60 2>/dev/null || true
 success "Site en maintenance"
 
 # -- 2. Git pull ---------------------------------------------------------------
 
-step "2/6 — Mise a jour du code"
+step "2/6 · Mise a jour du code"
 
 git fetch origin "$BRANCH"
 
@@ -175,7 +175,7 @@ success "Assets compiles coherents"
 
 # -- 3. Composer ---------------------------------------------------------------
 
-step "3/6 — Dependances PHP"
+step "3/6 · Dependances PHP"
 
 COMPOSER_BIN=$(command -v composer 2>/dev/null || echo "")
 
@@ -208,7 +208,7 @@ success "Dependances installees"
 
 # -- 4. Migrations + Storage ---------------------------------------------------
 
-step "4/6 — Base de donnees"
+step "4/6 · Base de donnees"
 
 if [ "$FRESH" = true ]; then
     info "Mode --fresh : migration complete + storage link"
@@ -222,7 +222,7 @@ success "Migrations executees"
 
 # -- 5. Cache et optimisation --------------------------------------------------
 
-step "5/6 — Optimisation"
+step "5/6 · Optimisation"
 
 $PHP_BIN artisan optimize:clear
 $PHP_BIN artisan optimize
@@ -232,7 +232,7 @@ success "Caches regeneres"
 
 # -- 6. Permissions ------------------------------------------------------------
 
-step "6/6 — Permissions"
+step "6/6 · Permissions"
 
 chmod -R 755 storage bootstrap/cache 2>/dev/null || true
 chmod -R 775 storage/logs storage/framework 2>/dev/null || true

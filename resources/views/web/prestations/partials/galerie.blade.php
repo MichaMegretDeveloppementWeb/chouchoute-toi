@@ -10,21 +10,21 @@
         </h2>
 
         <div class="galerie-bento grid grid-cols-2 gap-5 max-md:grid-cols-1">
-            {{-- Image 1 — grande à gauche --}}
+            {{-- Image 1 : grande à gauche --}}
             <div class="galerie-bento__large row-span-2 max-md:row-span-1">
                 <div class="flex h-full min-h-[400px] w-full items-center justify-center rounded-xl bg-sand" aria-hidden="true">
                     <img src="{{ asset('images/prestations/galerie-avant-apres.webp') }}" alt="Avant après extensions de cils naturelles - Chouchoute-toi" class="h-full w-full rounded-xl object-cover" width="660" height="660" loading="lazy">
                 </div>
             </div>
 
-            {{-- Image 2 — petite droite haut --}}
+            {{-- Image 2 : petite droite haut --}}
             <div class="galerie-bento__small">
                 <div class="flex h-full min-h-[190px] w-full items-center justify-center rounded-xl bg-sand" aria-hidden="true">
                     <img src="{{ asset('images/prestations/galerie-portrait.webp') }}" alt="Extensions de cils volume russe - Chouchoute-toi" class="h-full w-full rounded-xl object-cover" width="660" height="320" loading="lazy">
                 </div>
             </div>
 
-            {{-- Image 3 — petite droite bas --}}
+            {{-- Image 3 : petite droite bas --}}
             <div class="galerie-bento__small">
                 <div class="flex h-full min-h-[190px] w-full items-center justify-center rounded-xl bg-sand" aria-hidden="true">
                     <img src="{{ asset('images/prestations/galerie-gros-plan.webp') }}" alt="Gros plan extensions de cils posées - Chouchoute-toi" class="h-full w-full rounded-xl object-cover" width="660" height="320" loading="lazy">

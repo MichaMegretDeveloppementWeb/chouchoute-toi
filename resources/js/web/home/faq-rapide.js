@@ -1,5 +1,5 @@
 /**
- * Accordéon FAQ rapide — Page d'accueil
+ * Accordéon FAQ rapide : page d'accueil
  */
 
 document.addEventListener('DOMContentLoaded', () => {

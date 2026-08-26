@@ -1,5 +1,5 @@
 /*
- * Falcon UI Kit — Entrypoint JS
+ * Falcon UI Kit : entrypoint JS
  *
  * Ce fichier est le point d'entree JS pour le back-office.
  * Il charge les utilitaires du kit (theme, sidebar, toast, modal)

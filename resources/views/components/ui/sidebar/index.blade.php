@@ -32,7 +32,7 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
 <!-- Mobile sidebar overlay -->
 <div id="mobile-sidebar-backdrop" class="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden opacity-0 pointer-events-none dark:bg-black/60" onclick="closeMobileSidebar()"></div>
 
-<!-- Mobile sidebar (< lg: 1024px) — off-canvas, slides in from left -->
+<!-- Mobile sidebar (< lg: 1024px) : off-canvas, slides in from left -->
 <aside id="mobile-sidebar" class="fixed inset-y-0 left-0 z-50 w-[280px] -translate-x-full transform bg-white transition-transform duration-300 ease-in-out lg:hidden dark:bg-gray-900">
     <div class="flex h-full flex-col">
         <!-- Brand + close button -->
@@ -69,7 +69,7 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
     </div>
 </aside>
 
-<!-- Desktop sidebar (>= lg) — fixed, collapsible between lg and wide, always open on wide+ -->
+<!-- Desktop sidebar (>= lg) : fixed, collapsible between lg and wide, always open on wide+ -->
 <aside x-data="barreInfobulle()"
     x-on:mouseover="viser($event)"
     x-on:mouseout="quitter($event)"

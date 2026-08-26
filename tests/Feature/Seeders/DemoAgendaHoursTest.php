@@ -10,7 +10,7 @@ use Tests\TestCase;
  * Le seeder de démonstration écrit à l'heure de l'établissement.
  *
  * Il a longtemps composé ses heures avec `CarbonImmutable::now()`, qui répond
- * dans le fuseau de l'application — UTC. Un `setTime(9, 0)` y signifiait neuf
+ * dans le fuseau de l'application, UTC. Un `setTime(9, 0)` y signifiait neuf
  * heures UTC, soit onze à Paris : la démonstration plaçait ses visites deux
  * heures après l'ouverture, et son congé de 02:00 à 02:00.
  *

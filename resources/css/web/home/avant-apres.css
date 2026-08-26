@@ -37,7 +37,7 @@
     clip-path: inset(0 0 0 var(--split-position, 50%));
 }
 
-/* Handle — vertical divider line */
+/* Handle : vertical divider line */
 
 .avant-apres__handle {
     position: absolute;
@@ -69,7 +69,7 @@
     flex-shrink: 0;
 }
 
-/* Labels — Avant / Après */
+/* Labels : Avant / Après */
 
 .avant-apres__label {
     position: absolute;
@@ -94,7 +94,7 @@
     right: 16px;
 }
 
-/* Navigation — arrows + dots + label */
+/* Navigation : arrows + dots + label */
 
 .avant-apres__nav {
     display: flex;
