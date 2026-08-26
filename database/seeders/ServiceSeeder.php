@@ -24,9 +24,9 @@ use Illuminate\Support\Str;
 final class ServiceSeeder extends Seeder
 {
     /**
-     * One colour per volume, so the agenda reads at a glance: the terracotta
-     * family from its lightest shade to its deepest, and the neutral one for
-     * what is not a volume.
+     * One colour per volume, so the agenda reads at a glance: the blue family
+     * from its lightest shade to its deepest, and the neutral one for what is
+     * not a volume.
      *
      * Every value is a shade of `Falcon\Booking\Support\Palette`, and
      * `TheSeededColoursComeFromThePaletteTest` holds it: a treatment seeded on
@@ -34,11 +34,11 @@ final class ServiceSeeder extends Seeder
      * form, for no reason anyone could name.
      */
     private const COLORS = [
-        'naturelle' => '#C6948B',
-        'volume-leger' => '#B7786C',
-        'volume-mixte' => '#9D5A4D',
-        'volume-intense' => '#60372F',
-        'depose' => '#757575',
+        'naturelle' => '#63B3ED',
+        'volume-leger' => '#4299E1',
+        'volume-mixte' => '#3A8BD6',
+        'volume-intense' => '#2B6CB0',
+        'depose' => '#7A8899',
     ];
 
     public function run(): void
