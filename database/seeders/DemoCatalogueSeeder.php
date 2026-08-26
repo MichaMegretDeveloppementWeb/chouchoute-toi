@@ -36,7 +36,7 @@ final class DemoCatalogueSeeder extends Seeder
      */
     private const RANGES = [
         'Extensions de cils' => [
-            'color' => '#2B6CB0',
+            'color' => '#66B1EB',
             'services' => [
                 ['Pose complète cil à cil', 120, 6500],
                 ['Pose complète volume russe', 150, 8500],
@@ -47,7 +47,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Rehaussement de cils' => [
-            'color' => '#4299E1',
+            'color' => '#95C8F1',
             'services' => [
                 ['Rehaussement simple', 60, 5000],
                 ['Rehaussement avec teinture', 75, 6000],
@@ -57,7 +57,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Sourcils' => [
-            'color' => '#805AD5',
+            'color' => '#AF9FEE',
             'services' => [
                 ['Épilation à la cire', 20, 1200],
                 ['Épilation au fil', 25, 1500],
@@ -69,7 +69,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Épilation visage' => [
-            'color' => '#48BB78',
+            'color' => '#8AD39D',
             'services' => [
                 ['Lèvre supérieure', 10, 800],
                 ['Menton', 10, 800],
@@ -79,7 +79,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Épilation corps' => [
-            'color' => '#2F855A',
+            'color' => '#55BF71',
             'services' => [
                 ['Demi-jambes', 25, 1800],
                 ['Jambes complètes', 45, 3000],
@@ -92,7 +92,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Soins du visage' => [
-            'color' => '#DD6B20',
+            'color' => '#F3A753',
             'services' => [
                 ['Nettoyage de peau en profondeur', 60, 5500],
                 ['Soin hydratant éclat', 45, 4500],
@@ -103,7 +103,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Manucure' => [
-            'color' => '#DE5599',
+            'color' => '#EC8CB6',
             'services' => [
                 ['Manucure simple', 30, 2500],
                 ['Pose de vernis semi-permanent', 60, 3500],
@@ -114,7 +114,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Beauté des pieds' => [
-            'color' => '#F687B3',
+            'color' => '#F5C0D6',
             'services' => [
                 ['Pédicure complète', 60, 4000],
                 ['Vernis semi-permanent pieds', 45, 3000],
@@ -124,7 +124,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Maquillage' => [
-            'color' => '#EA5252',
+            'color' => '#F08E8B',
             'services' => [
                 ['Maquillage jour', 30, 3000],
                 ['Maquillage soirée', 45, 4500],
@@ -134,7 +134,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Forfaits et cures' => [
-            'color' => '#4A5568',
+            'color' => '#BE9A12',
             'services' => [
                 ['Forfait cils et sourcils', 150, 9500],
                 ['Forfait mains et pieds', 120, 6500],

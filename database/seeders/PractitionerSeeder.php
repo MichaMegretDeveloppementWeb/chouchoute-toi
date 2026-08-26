@@ -35,8 +35,8 @@ final class PractitionerSeeder extends Seeder
         // praticien et un soin ne se confondent nulle part, et deux nuanciers
         // pour un seul espace de travail se seraient contredits.
         ['name' => 'Amandine', 'position' => 0, 'color' => Palette::DEFAULT_HUE],
-        ['name' => 'Camille', 'position' => 1, 'color' => '#2F855A'],
-        ['name' => 'Sarah', 'position' => 2, 'color' => '#C05621'],
+        ['name' => 'Camille', 'position' => 1, 'color' => '#55BF71'],
+        ['name' => 'Sarah', 'position' => 2, 'color' => '#F1942E'],
     ];
 
     public function run(): void
