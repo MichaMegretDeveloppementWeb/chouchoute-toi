@@ -25,20 +25,19 @@ final class ServiceSeeder extends Seeder
 {
     /**
      * One colour per volume, so the agenda reads at a glance: the blue family
-     * from its lightest shade to its deepest, and a violet for what is not a
+     * from its lightest shade to its deepest, and a lilac for what is not a
      * volume.
      *
-     * Every value is a shade of `Falcon\Booking\Support\Palette`, and
-     * `TheSeededColoursComeFromThePaletteTest` holds it: a treatment seeded on
-     * a colour the grid does not offer would show a swatch of its own in the
-     * form, for no reason anyone could name.
+     * Every value is a shade of `Falcon\Booking\Support\Palette`, which
+     * `TheSeededColoursComeFromThePaletteTest` holds: a treatment seeded on a
+     * colour the grid does not offer shows a swatch of its own in the form.
      */
     private const COLORS = [
-        'naturelle' => '#AAD3F4',
-        'volume-leger' => '#95C8F1',
-        'volume-mixte' => '#7EBDEE',
-        'volume-intense' => '#66B1EB',
-        'depose' => '#D2C9F5',
+        'naturelle' => '#B4CBEB',
+        'volume-leger' => '#9FBBE6',
+        'volume-mixte' => '#8BAEE0',
+        'volume-intense' => '#779FDB',
+        'depose' => '#CDC3F0',
     ];
 
     public function run(): void
