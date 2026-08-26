@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
+use Falcon\Booking\Support\Palette;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -22,13 +23,22 @@ use Illuminate\Support\Str;
  */
 final class ServiceSeeder extends Seeder
 {
-    /** One colour per volume, so the agenda reads at a glance. */
+    /**
+     * One colour per volume, so the agenda reads at a glance: the terracotta
+     * family from its lightest shade to its deepest, and the neutral one for
+     * what is not a volume.
+     *
+     * Every value is a shade of `Falcon\Booking\Support\Palette`, and
+     * `TheSeededColoursComeFromThePaletteTest` holds it: a treatment seeded on
+     * a colour the grid does not offer would show a swatch of its own in the
+     * form, for no reason anyone could name.
+     */
     private const COLORS = [
-        'naturelle' => '#D4A89A',
-        'volume-leger' => '#C48B7C',
-        'volume-mixte' => '#8A5A4E',
-        'volume-intense' => '#512731',
-        'depose' => '#7A7A7A',
+        'naturelle' => '#C6948B',
+        'volume-leger' => '#B7786C',
+        'volume-mixte' => '#9D5A4D',
+        'volume-intense' => '#60372F',
+        'depose' => '#757575',
     ];
 
     public function run(): void
@@ -55,7 +65,7 @@ final class ServiceSeeder extends Seeder
                 description: $category['description'],
                 duration: $this->durationToMinutes($category['pose']['duree']),
                 priceCents: $category['pose']['prix'] * 100,
-                color: self::COLORS[$slug] ?? '#512731',
+                color: self::COLORS[$slug] ?? Palette::DEFAULT_HUE,
                 position: $position++,
                 categoryId: $range->id,
             );
@@ -67,7 +77,7 @@ final class ServiceSeeder extends Seeder
                     description: $refill['description'],
                     duration: $this->durationToMinutes($refill['duree']),
                     priceCents: $refill['prix'] * 100,
-                    color: self::COLORS[$slug] ?? '#512731',
+                    color: self::COLORS[$slug] ?? Palette::DEFAULT_HUE,
                     position: $position++,
                     categoryId: $range->id,
                 );

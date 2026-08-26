@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Falcon\Booking\Models\Practitioner;
+use Falcon\Booking\Support\Palette;
 use Illuminate\Database\Seeder;
 
 /**
@@ -30,9 +31,12 @@ final class PractitionerSeeder extends Seeder
 {
     /** @var list<array{name: string, position: int, color: string}> */
     private const EQUIPE = [
-        ['name' => 'Amandine', 'position' => 0, 'color' => '#512731'],
-        ['name' => 'Camille', 'position' => 1, 'color' => '#3f6d63'],
-        ['name' => 'Sarah', 'position' => 2, 'color' => '#8a5a2b'],
+        // Trois familles distinctes de la même palette que les prestations : un
+        // praticien et un soin ne se confondent nulle part, et deux nuanciers
+        // pour un seul espace de travail se seraient contredits.
+        ['name' => 'Amandine', 'position' => 0, 'color' => Palette::DEFAULT_HUE],
+        ['name' => 'Camille', 'position' => 1, 'color' => '#4D6F57'],
+        ['name' => 'Sarah', 'position' => 2, 'color' => '#866D37'],
     ];
 
     public function run(): void
