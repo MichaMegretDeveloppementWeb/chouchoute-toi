@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="prestation-card__label">
-                        {{ $categorie['nom'] }} — dès {{ $categorie['pose']['prix'] }}€
+                        {{ $categorie['nom'] }} · dès {{ $categorie['pose']['prix'] }}€
                     </div>
                 </a>
             @endforeach

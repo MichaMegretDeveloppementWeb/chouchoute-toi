@@ -1,7 +1,7 @@
 @extends('layouts.web')
 
 @section('title', 'Mentions légales')
-@section('meta_description', 'Mentions légales, conditions générales de vente et politique de confidentialité du site Chouchoute-toi by Amande — Extensions de cils à domicile.')
+@section('meta_description', 'Mentions légales, conditions générales de vente et politique de confidentialité du site Chouchoute-toi by Amande · Extensions de cils à domicile.')
 
 @section('assets')
     @vite([
@@ -28,10 +28,10 @@
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
                     <p><span class="font-medium text-dark">Nom :</span> Amandine David-Cruz</p>
                     <p><span class="font-medium text-dark">Nom commercial :</span> Chouchoute-toi by Amande</p>
-                    <p><span class="font-medium text-dark">Activité :</span> Soins de beauté — Extensions de cils à domicile</p>
+                    <p><span class="font-medium text-dark">Activité :</span> Soins de beauté, extensions de cils à domicile</p>
                     <p><span class="font-medium text-dark">Statut :</span> Auto-entrepreneur (micro-entreprise)</p>
                     <p><span class="font-medium text-dark">SIRET :</span> 497 879 700 00035</p>
-                    <p><span class="font-medium text-dark">Code APE :</span> 9602B — Soins de beauté</p>
+                    <p><span class="font-medium text-dark">Code APE :</span> 9602B · Soins de beauté</p>
                     <p><span class="font-medium text-dark">Adresse :</span> 261 rue des Tattes, 74500 Publier</p>
                     <p><span class="font-medium text-dark">Téléphone :</span> <a data-track-event="contact.phone.click" data-track-section="mentions-legales" href="tel:+33671637666" class="transition-colors hover:text-wine">06 71 63 76 66</a></p>
                     <p><span class="font-medium text-dark">Email :</span> <a href="mailto:dc.amandine@gmail.com" class="transition-colors hover:text-wine">dc.amandine@gmail.com</a></p>
@@ -53,7 +53,7 @@
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Conception et réalisation</h2>
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
-                    <p><span class="font-medium text-dark">Développeur :</span> Micha Megret — Développement Web</p>
+                    <p><span class="font-medium text-dark">Développeur :</span> Micha Megret · Développement Web</p>
                 </div>
             </div>
 
@@ -125,7 +125,7 @@
             <div class="space-y-12">
                 {{-- Article 1 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 1 — Objet</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 1 · Objet</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         Les présentes conditions générales de vente (CGV) régissent les prestations de services
                         proposées par Amandine David-Cruz, exerçant sous le nom commercial Chouchoute-toi by Amande,
@@ -136,7 +136,7 @@
 
                 {{-- Article 2 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 2 — Prestations</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 2 · Prestations</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
                         <p>
                             Les prestations proposées comprennent la pose complète d'extensions de cils (pose par pose,
@@ -153,7 +153,7 @@
 
                 {{-- Article 3 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 3 — Tarifs et paiement</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 3 · Tarifs et paiement</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
                         <p>
                             Les prix indiqués sur le site sont en euros TTC (TVA non applicable, article 293 B du CGI).
@@ -169,7 +169,7 @@
 
                 {{-- Article 4 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 4 — Prise de rendez-vous</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 4 · Prise de rendez-vous</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         Les rendez-vous sont pris par téléphone, via le formulaire de contact du site ou par
                         messagerie sur les réseaux sociaux. Un rendez-vous est considéré comme confirmé après
@@ -179,7 +179,7 @@
 
                 {{-- Article 5 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 5 — Déroulement de la prestation</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 5 · Déroulement de la prestation</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
                         <p>
                             La cliente s'engage à fournir un espace de travail adapté (position allongée, éclairage
@@ -196,7 +196,7 @@
 
                 {{-- Article 6 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 6 — Contre-indications</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 6 · Contre-indications</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         La prestation est déconseillée en cas d'allergie connue à la colle pour extensions de cils,
                         de conjonctivite, d'infection oculaire en cours, ou de traitement médical affectant les yeux.
@@ -207,7 +207,7 @@
 
                 {{-- Article 7 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 7 — Responsabilité</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 7 · Responsabilité</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         Chouchoute-toi by Amande met en œuvre tout son savoir-faire pour garantir un résultat
                         de qualité. Toutefois, la tenue des extensions dépend également du respect des conseils
@@ -218,7 +218,7 @@
 
                 {{-- Article 8 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 8 — Droit applicable</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 8 · Droit applicable</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         Les présentes CGV sont soumises au droit français. En cas de litige, une solution amiable
                         sera recherchée avant toute action judiciaire. À défaut, les tribunaux compétents seront
@@ -228,7 +228,7 @@
 
                 {{-- Article 9 --}}
                 <div>
-                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 9 — Médiation</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-dark">Article 9 · Médiation</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
                         Conformément aux articles L.616-1 et R.616-1 du Code de la consommation, en cas de litige
                         non résolu, la cliente peut recourir gratuitement au service de médiation de la consommation.

@@ -33,7 +33,7 @@
 
             <div>
                 <div class="flex aspect-[5/3] w-full items-center justify-center rounded-xl bg-sand" aria-hidden="true">
-                    <img src="{{ asset('images/home/zone-intervention.webp') }}" alt="Zone d'intervention — bassin lémanique" class="w-full rounded-xl" width="800" height="600" loading="lazy">
+                    <img src="{{ asset('images/home/zone-intervention.webp') }}" alt="Zone d'intervention : bassin lémanique" class="w-full rounded-xl" width="800" height="600" loading="lazy">
                 </div>
             </div>
         </div>

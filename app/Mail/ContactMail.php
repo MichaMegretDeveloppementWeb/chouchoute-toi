@@ -19,7 +19,7 @@ class ContactMail extends Mailable
         return new Envelope(
             from: new Address('amandine@chouchoute-toi.com', 'Chouchoute-toi'),
             replyTo: [new Address($this->data['email'], $this->data['name'])],
-            subject: 'Nouvelle demande — '.$this->data['name'],
+            subject: 'Nouvelle demande de '.$this->data['name'],
         );
     }
 

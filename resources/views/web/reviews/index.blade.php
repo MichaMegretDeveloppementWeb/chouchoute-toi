@@ -1,6 +1,6 @@
 @extends('layouts.web')
 
-@section('title', 'Avis clients — Extensions de cils à domicile')
+@section('title', 'Avis clients · Extensions de cils à domicile')
 @section('meta_description', 'Avis Google de nos clientes sur leurs extensions de cils à domicile. Pose cil à cil, volume russe, remplissage sur Évian et Thonon-les-Bains.')
 
 @section('assets')

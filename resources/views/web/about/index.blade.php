@@ -1,6 +1,6 @@
 @extends('layouts.web')
 
-@section('title', 'À propos — Technicienne certifiée')
+@section('title', 'À propos · Technicienne certifiée')
 @section('meta_description', 'Technicienne certifiée en extensions de cils à domicile. Découvrez l\'histoire et les valeurs de Chouchoute-toi sur Évian et Thonon-les-Bains.')
 
 @section('assets')

@@ -1,6 +1,6 @@
 @extends('layouts.web')
 
-@section('title', 'Extensions de cils à domicile — Évian, Thonon')
+@section('title', 'Extensions de cils à domicile · Évian, Thonon')
 @section('meta_description', 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.')
 
 @section('assets')
@@ -118,7 +118,7 @@
         "name" => "Chouchoute-toi",
         "alternateName" => "Chouchoute-toi by Amande",
         "url" => url('/'),
-        "description" => "Extensions de cils à domicile sur le bassin lémanique — Évian-les-Bains, Thonon-les-Bains et alentours.",
+        "description" => "Extensions de cils à domicile sur le bassin lémanique : Évian-les-Bains, Thonon-les-Bains et alentours.",
         "inLanguage" => "fr-FR",
         "publisher" => [
             "@type" => "Organization",

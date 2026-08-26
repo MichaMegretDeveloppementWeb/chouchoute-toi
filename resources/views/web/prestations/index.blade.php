@@ -1,6 +1,6 @@
 @extends('layouts.web')
 
-@section('title', 'Prestations et tarifs — Extensions de cils')
+@section('title', 'Prestations et tarifs · Extensions de cils')
 @section('meta_description', 'Extensions de cils à domicile : pose complète dès 65 €, remplissage, volume russe, dépose. Tarifs et prestations sur Évian et Thonon-les-Bains.')
 
 @section('assets')

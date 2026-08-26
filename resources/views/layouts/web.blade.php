@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
-    <title>@yield('title', 'Accueil') — {{ config('app.name') }}</title>
+    <title>@yield('title', 'Accueil') · {{ config('app.name') }}</title>
     <meta name="description" content="@yield('meta_description', 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.')">
 
     {{-- Favicon --}}
@@ -20,14 +20,14 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:site_name" content="{{ config('app.name') }}">
-    <meta property="og:title" content="@yield('title', 'Accueil') — {{ config('app.name') }}">
+    <meta property="og:title" content="@yield('title', 'Accueil') · {{ config('app.name') }}">
     <meta property="og:description" content="@yield('meta_description', 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.')">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('title', 'Accueil') — {{ config('app.name') }}">
+    <meta name="twitter:title" content="@yield('title', 'Accueil') · {{ config('app.name') }}">
     <meta name="twitter:description" content="@yield('meta_description', 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.')">
     <meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}">
 
@@ -62,7 +62,7 @@
             "@context" => "https://schema.org",
             "@type" => "BeautySalon",
             "name" => "Chouchoute-toi by Amande",
-            "description" => "Extensions de cils à domicile — pose cil à cil, volume russe et remplissage sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique.",
+            "description" => "Extensions de cils à domicile : pose cil à cil, volume russe et remplissage sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique.",
             "url" => url('/'),
             "telephone" => "+33671637666",
             "email" => "dc.amandine@gmail.com",
