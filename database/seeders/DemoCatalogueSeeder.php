@@ -151,9 +151,10 @@ final class DemoCatalogueSeeder extends Seeder
                 // « sur devis », et c'est sur cette base qu'on les regarde.
                 ['Cure de trois soins du visage', 180, 15000, PricingMode::From, 20000],
 
-                // Et la seule qui se voie en ligne sans se réserver : un devis
-                // se discute, donc la cliente appelle. Sans elle, le troisième
-                // état de visibilité ne paraît nulle part sur la base de dev.
+                // La seule qui s'affiche en ligne sans pouvoir être réservée :
+                // un devis se discute, donc le client appelle. Sans elle, le
+                // troisième état de visibilité ne se verrait nulle part sur la
+                // base de développement.
                 ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote, null, Visibility::Shown],
 
                 ['Carte cadeau découverte', 60, 5000],
