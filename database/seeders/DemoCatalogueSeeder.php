@@ -157,7 +157,7 @@ final class DemoCatalogueSeeder extends Seeder
 
             $categorie = ServiceCategory::query()->firstOrCreate(
                 ['slug' => $slug],
-                ['name' => $nom, 'position' => $rangGamme++],
+                ['name' => $nom, 'color' => $gamme['color'], 'position' => $rangGamme++],
             );
 
             $gammes += $categorie->wasRecentlyCreated ? 1 : 0;

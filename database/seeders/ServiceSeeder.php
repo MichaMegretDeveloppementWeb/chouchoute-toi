@@ -28,8 +28,13 @@ final class ServiceSeeder extends Seeder
      * from its lightest shade to its deepest, and a lilac for what is not a
      * volume.
      *
+     * Read twice, by the range and by the treatments filed under it: the
+     * heading of a section and the rows beneath it then say the same family.
+     * `depose` is the exception and belongs to a treatment alone, which is
+     * filed under no category at all.
+     *
      * Every value is a shade of `Falcon\Booking\Support\Palette`, which
-     * `TheSeededColoursComeFromThePaletteTest` holds: a treatment seeded on a
+     * `SeededColoursComeFromThePaletteTest` holds: a treatment seeded on a
      * colour the grid does not offer shows a swatch of its own in the form.
      */
     private const COLORS = [
@@ -47,9 +52,16 @@ final class ServiceSeeder extends Seeder
         $rank = 0;
 
         foreach (config('tarifs.categories') as $slug => $category) {
+            // La gamme porte la couleur de ses prestations : une famille se lit
+            // comme une famille, du titre de section jusqu'aux rangees.
             $range = ServiceCategory::query()->firstOrCreate(
                 ['slug' => $slug],
-                ['name' => $category['nom'], 'description' => $category['description'], 'position' => $rank++],
+                [
+                    'name' => $category['nom'],
+                    'description' => $category['description'],
+                    'color' => self::COLORS[$slug] ?? Palette::DEFAULT_HUE,
+                    'position' => $rank++,
+                ],
             );
 
             $categories += $range->wasRecentlyCreated ? 1 : 0;
