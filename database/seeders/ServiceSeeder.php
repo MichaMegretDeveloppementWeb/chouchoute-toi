@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use Falcon\Booking\Enums\Catalogue\Visibility;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
 use Falcon\Booking\Support\Palette;
@@ -137,7 +138,7 @@ final class ServiceSeeder extends Seeder
                 'duration_minutes' => $duration,
                 'price_cents' => $priceCents,
                 'color' => $color,
-                'is_bookable_online' => true,
+                'visibility' => Visibility::Bookable,
                 'position' => $position,
             ],
         );

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Falcon\Booking\Enums\Catalogue\PricingMode;
+use Falcon\Booking\Enums\Catalogue\Visibility;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
 use Falcon\Booking\Support\Palette;
@@ -38,7 +39,7 @@ final class DemoCatalogueSeeder extends Seeder
      * spread over the wheel is the point, and a hexadecimal copied here falls
      * out of the grid the day the palette moves.
      *
-     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int, 3?: PricingMode, 4?: int}>}>
+     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int, 3?: PricingMode, 4?: int|null, 5?: Visibility}>}>
      */
     private const RANGES = [
         'Extensions de cils' => [
@@ -149,7 +150,11 @@ final class DemoCatalogueSeeder extends Seeder
                 // elles, rien à l'écran ne montre les tarifs « à partir de » et
                 // « sur devis », et c'est sur cette base qu'on les regarde.
                 ['Cure de trois soins du visage', 180, 15000, PricingMode::From, 20000],
-                ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote],
+
+                // Et la seule qui se voie en ligne sans se réserver : un devis
+                // se discute, donc la cliente appelle. Sans elle, le troisième
+                // état de visibilité ne paraît nulle part sur la base de dev.
+                ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote, null, Visibility::Shown],
 
                 ['Carte cadeau découverte', 60, 5000],
                 ['Bilan beauté et conseil personnalisé', 45, 0],
@@ -183,6 +188,7 @@ final class DemoCatalogueSeeder extends Seeder
                 // lignes n'ont pas à porter ce qu'elles n'utilisent pas.
                 $mode = $ligne[3] ?? PricingMode::Fixed;
                 $plafond = $ligne[4] ?? null;
+                $visibilite = $ligne[5] ?? Visibility::Bookable;
 
                 $prestation = Service::query()->firstOrCreate(
                     ['slug' => $slug.'-'.Str::slug($nomPrestation)],
@@ -194,7 +200,7 @@ final class DemoCatalogueSeeder extends Seeder
                         'price_cents' => $centimes,
                         'price_max_cents' => $plafond,
                         'color' => $gamme['color'],
-                        'is_bookable_online' => true,
+                        'visibility' => $visibilite,
                         'position' => $rangPrestation++,
                     ],
                 );
