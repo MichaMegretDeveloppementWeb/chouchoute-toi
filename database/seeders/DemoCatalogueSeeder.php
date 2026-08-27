@@ -39,7 +39,7 @@ final class DemoCatalogueSeeder extends Seeder
      * spread over the wheel is the point, and a hexadecimal copied here falls
      * out of the grid the day the palette moves.
      *
-     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int, 3?: PricingMode, 4?: int|null, 5?: Visibility}>}>
+     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int, 3?: PricingMode, 4?: int|null, 5?: Visibility, 6?: string}>}>
      */
     private const RANGES = [
         'Extensions de cils' => [
@@ -50,7 +50,7 @@ final class DemoCatalogueSeeder extends Seeder
                 ['Remplissage 2 semaines', 60, 3500],
                 ['Remplissage 3 semaines', 75, 4500],
                 ['Remplissage 4 semaines', 90, 5500],
-                ['Dépose complète avec soin réparateur', 30, 2000],
+                ['Dépose complète avec soin réparateur', 30, 2000, PricingMode::Fixed, null, Visibility::Bookable, 'Dépose + soin'],
             ],
         ],
         'Rehaussement de cils' => [
@@ -155,7 +155,10 @@ final class DemoCatalogueSeeder extends Seeder
                 // un devis se discute, donc le client appelle. Sans elle, le
                 // troisième état de visibilité ne se verrait nulle part sur la
                 // base de développement.
-                ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote, null, Visibility::Shown],
+                //
+                // C'est aussi le nom le plus long du catalogue, donc celui qui
+                // a le plus besoin d'une abréviation sur une carte.
+                ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote, null, Visibility::Shown, 'Forfait mariée'],
 
                 ['Carte cadeau découverte', 60, 5000],
                 ['Bilan beauté et conseil personnalisé', 45, 0],
@@ -190,12 +193,14 @@ final class DemoCatalogueSeeder extends Seeder
                 $mode = $ligne[3] ?? PricingMode::Fixed;
                 $plafond = $ligne[4] ?? null;
                 $visibilite = $ligne[5] ?? Visibility::Bookable;
+                $abreviation = $ligne[6] ?? null;
 
                 $prestation = Service::query()->firstOrCreate(
                     ['slug' => $slug.'-'.Str::slug($nomPrestation)],
                     [
                         'service_category_id' => $categorie->id,
                         'name' => $nomPrestation,
+                        'abbreviation' => $abreviation,
                         'duration_minutes' => $minutes,
                         'pricing' => $mode,
                         'price_cents' => $centimes,
