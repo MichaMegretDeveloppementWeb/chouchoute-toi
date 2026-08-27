@@ -33,16 +33,19 @@ final class ServiceSeeder extends Seeder
      * `depose` is the exception and belongs to a treatment alone, which is
      * filed under no category at all.
      *
-     * Every value is a shade of `Falcon\Booking\Support\Palette`, which
-     * `SeededColoursComeFromThePaletteTest` holds: a treatment seeded on a
-     * colour the grid does not offer shows a swatch of its own in the form.
+     * **Une famille et un rang, jamais un hexadécimal.** Ce qui compte ici est
+     * la place dans l'échelle — la naturelle la plus claire, l'intense la plus
+     * soutenue — et non la couleur elle-même. Écrite en clair, elle sort de la
+     * grille le jour où la palette bouge, et le formulaire affiche alors une
+     * pastille isolée là où il devrait cocher une case.
+     * `SeededColoursComeFromThePaletteTest` tient la règle.
      */
     private const COLORS = [
-        'naturelle' => '#B4CBEB',
-        'volume-leger' => '#9FBBE6',
-        'volume-mixte' => '#8BAEE0',
-        'volume-intense' => '#779FDB',
-        'depose' => '#CDC3F0',
+        'naturelle' => Palette::FAMILIES['blue'][0],
+        'volume-leger' => Palette::FAMILIES['blue'][1],
+        'volume-mixte' => Palette::FAMILIES['blue'][2],
+        'volume-intense' => Palette::FAMILIES['blue'][3],
+        'depose' => Palette::FAMILIES['lilac'][0],
     ];
 
     public function run(): void

@@ -34,9 +34,12 @@ final class PractitionerSeeder extends Seeder
         // Trois familles distinctes de la même palette que les prestations : un
         // praticien et un soin ne se confondent nulle part, et deux nuanciers
         // pour un seul espace de travail se seraient contredits.
+        //
+        // Nommées par famille et par rang, jamais en hexadécimal : la palette
+        // bouge, ces trois-là suivent.
         ['name' => 'Amandine', 'position' => 0, 'color' => Palette::DEFAULT_HUE],
-        ['name' => 'Camille', 'position' => 1, 'color' => '#3BB35D'],
-        ['name' => 'Sarah', 'position' => 2, 'color' => '#DA8D2B'],
+        ['name' => 'Camille', 'position' => 1, 'color' => Palette::FAMILIES['sage'][3]],
+        ['name' => 'Sarah', 'position' => 2, 'color' => Palette::FAMILIES['amber'][3]],
     ];
 
     public function run(): void

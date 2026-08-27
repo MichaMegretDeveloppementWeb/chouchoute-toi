@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
+use Falcon\Booking\Support\Palette;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -32,11 +33,15 @@ final class DemoCatalogueSeeder extends Seeder
      * on the lengths it actually has to carry. Some are long on purpose, which
      * is what shows whether a column truncates where the meaning starts.
      *
+     * Colours are named by family and rank rather than written out: ten ranges
+     * spread over the wheel is the point, and a hexadecimal copied here falls
+     * out of the grid the day the palette moves.
+     *
      * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int}>}>
      */
     private const RANGES = [
         'Extensions de cils' => [
-            'color' => '#779FDB',
+            'color' => Palette::FAMILIES['blue'][3],
             'services' => [
                 ['Pose complète cil à cil', 120, 6500],
                 ['Pose complète volume russe', 150, 8500],
@@ -47,7 +52,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Rehaussement de cils' => [
-            'color' => '#9FBBE6',
+            'color' => Palette::FAMILIES['blue'][1],
             'services' => [
                 ['Rehaussement simple', 60, 5000],
                 ['Rehaussement avec teinture', 75, 6000],
@@ -57,7 +62,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Sourcils' => [
-            'color' => '#A591E3',
+            'color' => Palette::FAMILIES['lilac'][3],
             'services' => [
                 ['Épilation à la cire', 20, 1200],
                 ['Épilation au fil', 25, 1500],
@@ -69,7 +74,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Épilation visage' => [
-            'color' => '#6BCE87',
+            'color' => Palette::FAMILIES['sage'][1],
             'services' => [
                 ['Lèvre supérieure', 10, 800],
                 ['Menton', 10, 800],
@@ -79,7 +84,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Épilation corps' => [
-            'color' => '#3BB35D',
+            'color' => Palette::FAMILIES['sage'][3],
             'services' => [
                 ['Demi-jambes', 25, 1800],
                 ['Jambes complètes', 45, 3000],
@@ -92,7 +97,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Soins du visage' => [
-            'color' => '#E09F4C',
+            'color' => Palette::FAMILIES['amber'][2],
             'services' => [
                 ['Nettoyage de peau en profondeur', 60, 5500],
                 ['Soin hydratant éclat', 45, 4500],
@@ -103,7 +108,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Manucure' => [
-            'color' => '#DE81AA',
+            'color' => Palette::FAMILIES['rose'][3],
             'services' => [
                 ['Manucure simple', 30, 2500],
                 ['Pose de vernis semi-permanent', 60, 3500],
@@ -114,7 +119,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Beauté des pieds' => [
-            'color' => '#EDBAD1',
+            'color' => Palette::FAMILIES['rose'][0],
             'services' => [
                 ['Pédicure complète', 60, 4000],
                 ['Vernis semi-permanent pieds', 45, 3000],
@@ -124,7 +129,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Maquillage' => [
-            'color' => '#E88361',
+            'color' => Palette::FAMILIES['coral'][3],
             'services' => [
                 ['Maquillage jour', 30, 3000],
                 ['Maquillage soirée', 45, 4500],
@@ -134,7 +139,7 @@ final class DemoCatalogueSeeder extends Seeder
             ],
         ],
         'Forfaits et cures' => [
-            'color' => '#C9A930',
+            'color' => Palette::FAMILIES['ochre'][2],
             'services' => [
                 ['Forfait cils et sourcils', 150, 9500],
                 ['Forfait mains et pieds', 120, 6500],
