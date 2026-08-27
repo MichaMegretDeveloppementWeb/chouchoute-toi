@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use Falcon\Booking\Enums\Catalogue\PricingMode;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
 use Falcon\Booking\Support\Palette;
@@ -37,7 +38,7 @@ final class DemoCatalogueSeeder extends Seeder
      * spread over the wheel is the point, and a hexadecimal copied here falls
      * out of the grid the day the palette moves.
      *
-     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int}>}>
+     * @var array<string, array{color: string, services: list<array{0: string, 1: int, 2: int, 3?: PricingMode, 4?: int}>}>
      */
     private const RANGES = [
         'Extensions de cils' => [
@@ -143,8 +144,13 @@ final class DemoCatalogueSeeder extends Seeder
             'services' => [
                 ['Forfait cils et sourcils', 150, 9500],
                 ['Forfait mains et pieds', 120, 6500],
-                ['Cure de trois soins du visage', 180, 15000],
-                ['Forfait mariée complet, cheveux non inclus', 240, 22000],
+
+                // Les deux seules du catalogue à ne pas coûter un nombre : sans
+                // elles, rien à l'écran ne montre les tarifs « à partir de » et
+                // « sur devis », et c'est sur cette base qu'on les regarde.
+                ['Cure de trois soins du visage', 180, 15000, PricingMode::From, 20000],
+                ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote],
+
                 ['Carte cadeau découverte', 60, 5000],
                 ['Bilan beauté et conseil personnalisé', 45, 0],
             ],
@@ -169,14 +175,24 @@ final class DemoCatalogueSeeder extends Seeder
 
             $rangPrestation = 0;
 
-            foreach ($gamme['services'] as [$nomPrestation, $minutes, $centimes]) {
+            foreach ($gamme['services'] as $ligne) {
+                [$nomPrestation, $minutes, $centimes] = $ligne;
+
+                // Les deux derniers sont facultatifs : une prestation coûte un
+                // nombre sauf mention contraire, et les soixante-dix autres
+                // lignes n'ont pas à porter ce qu'elles n'utilisent pas.
+                $mode = $ligne[3] ?? PricingMode::Fixed;
+                $plafond = $ligne[4] ?? null;
+
                 $prestation = Service::query()->firstOrCreate(
                     ['slug' => $slug.'-'.Str::slug($nomPrestation)],
                     [
                         'service_category_id' => $categorie->id,
                         'name' => $nomPrestation,
                         'duration_minutes' => $minutes,
+                        'pricing' => $mode,
                         'price_cents' => $centimes,
+                        'price_max_cents' => $plafond,
                         'color' => $gamme['color'],
                         'is_bookable_online' => true,
                         'position' => $rangPrestation++,
