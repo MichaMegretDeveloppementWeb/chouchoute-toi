@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use Falcon\Booking\Enums\Catalogue\PricingMode;
 use Falcon\Booking\Enums\Catalogue\Visibility;
+use Falcon\Booking\Models\Practitioner;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
 use Falcon\Booking\Support\Palette;
@@ -210,6 +211,10 @@ final class DemoCatalogueSeeder extends Seeder
                         'position' => $rangPrestation++,
                     ],
                 );
+
+                if ($prestation->wasRecentlyCreated) {
+                    $prestation->practitioners()->sync(Practitioner::query()->pluck('id')->all());
+                }
 
                 $prestations += $prestation->wasRecentlyCreated ? 1 : 0;
             }

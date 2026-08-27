@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Falcon\Booking\Enums\Catalogue\Visibility;
+use Falcon\Booking\Models\Practitioner;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\ServiceCategory;
 use Falcon\Booking\Support\Palette;
@@ -142,6 +143,13 @@ final class ServiceSeeder extends Seeder
                 'position' => $position,
             ],
         );
+
+        if ($service->wasRecentlyCreated) {
+            // Toute l'équipe, comme la migration l'a fait pour l'existant. Sur
+            // une prestation déjà là, on ne touche à rien : une compétence
+            // retirée à la main ne doit pas revenir au prochain rejeu.
+            $service->practitioners()->sync(Practitioner::query()->pluck('id')->all());
+        }
 
         return $service->wasRecentlyCreated ? 1 : 0;
     }
