@@ -16,15 +16,31 @@ use Tests\TestCase;
  * s'installe dessus. C'est ainsi que falcon/analytics a rendu ses trente-neuf
  * boutons et sa confirmation avec un dessin fait pour falcon/booking.
  *
- * Un paquet qui veut modifier un composant déclare sa pile
- * (`UiKit::componentsFor()`) et l'emporte avec lui. L'hôte ne publie que ce
- * dont il est lui-même le consommateur.
+ * D'où la règle : **un paquet qui modifie un composant l'emporte avec lui**, en
+ * déclarant sa pile (`UiKit::componentsFor()`). L'hôte ne publie que ce dont il
+ * est lui-même le consommateur.
+ *
+ * Le **toast** est l'exception, et pour la raison même qui fonde la règle : ce
+ * qu'on lui a fait — centré, plus grand sur desktop, une barre qui dit le temps
+ * qui reste — **n'a rien de propre à la réservation**. L'hôte en est consommateur
+ * de plein droit (l'écran de connexion, la coquille du back-office), et le
+ * tableau de bord de falcon/analytics l'appelle aussi. Il vit donc **des deux
+ * côtés**, identique au caractère près, et le test ci-dessous tient les deux
+ * copies ensemble.
  */
 final class PublishedComponentsTest extends TestCase
 {
+    /** La seule copie qui vaille pour tout le monde, et ce qui la justifie. */
+    private const SHARED = 'toast.blade.php';
+
     private function publishedDirectory(): string
     {
         return resource_path('views/components/ui');
+    }
+
+    private function packageCopy(string $component): string
+    {
+        return base_path('packages/falcon-booking/resources/views/components/ui/'.$component);
     }
 
     /**
@@ -49,12 +65,16 @@ final class PublishedComponentsTest extends TestCase
     }
 
     /**
-     * La barre latérale seule. `button` et `modal` sont partis dans
+     * La barre latérale, et le toast. `button` et `modal` sont partis dans
      * falcon/booking, qui est le seul à porter leurs variantes.
      */
-    public function test_only_the_sidebar_is_published(): void
+    public function test_only_the_sidebar_and_the_toast_are_published(): void
     {
         foreach ($this->published() as $component) {
+            if ($component === self::SHARED) {
+                continue;
+            }
+
             $this->assertStringStartsWith(
                 'sidebar/',
                 $component,
@@ -77,6 +97,111 @@ final class PublishedComponentsTest extends TestCase
                 file_get_contents($upstream),
                 file_get_contents($this->publishedDirectory().'/'.$component),
                 $component.' est identique au kit : le dépublier plutôt que le figer.',
+            );
+        }
+    }
+
+    /**
+     * Le toast vit des deux côtés, et les deux copies ne font qu'un.
+     *
+     * Deux fichiers rédigés séparément dérivent sans que rien ne le montre, un
+     * seul des deux étant à l'écran à la fois : ici c'est le site qu'on voit au
+     * quotidien, et la copie du paquet ne se réveillerait que chez le client
+     * suivant.
+     */
+    public function test_the_toast_is_the_same_on_both_sides(): void
+    {
+        $published = $this->publishedDirectory().'/'.self::SHARED;
+        $package = $this->packageCopy(self::SHARED);
+
+        $this->assertFileExists($package, 'Le paquet doit emporter le toast avec lui.');
+
+        $this->assertSame(
+            file_get_contents($package),
+            file_get_contents($published),
+            'Les deux copies du toast ont divergé.',
+        );
+    }
+
+    /**
+     * Le toast centre, et aucun appelant ne peut le ramener dans un coin.
+     *
+     * Le tableau de bord de falcon/analytics passe `position="top-right"` et vit
+     * dans `vendor/`, hors de portée : lire ce réglage rendrait au back-office
+     * les deux positions qu'on vient de lui retirer. La propriété reste déclarée
+     * — sinon elle atterrirait en attribut HTML — et n'est jamais lue.
+     */
+    public function test_the_toast_centres_and_obeys_no_corner(): void
+    {
+        $toast = (string) file_get_contents($this->publishedDirectory().'/'.self::SHARED);
+
+        // Pleine largeur avec un retrait, et non un centrage par transformation :
+        // `100vw` compte la barre de défilement là où le centrage ne la compte
+        // pas, ce qui décalait la boîte de six pixels sur un écran étroit.
+        $this->assertStringContainsString('inset-x-0 top-4', $toast);
+        $this->assertStringContainsString('items-center', $toast);
+        $this->assertStringNotContainsString('100vw', $toast);
+
+        foreach (['right-4', 'left-4', 'bottom-4', '$position'] as $corner) {
+            $this->assertStringNotContainsString(
+                $corner,
+                $toast,
+                "« {$corner} » remettrait le message dans un coin, ou ferait dépendre sa place de l’appelant.",
+            );
+        }
+    }
+
+    /**
+     * Plus grand sur desktop, et pas sur téléphone, où la place est comptée.
+     *
+     * La paire complète : sans l'assertion positive, la négative passerait sur
+     * un fichier qui ne dit rien de sa hauteur.
+     */
+    public function test_the_toast_grows_on_desktop_alone(): void
+    {
+        $toast = (string) file_get_contents($this->publishedDirectory().'/'.self::SHARED);
+
+        $this->assertMatchesRegularExpression('/sm:min-h-\[\d+px\]/', $toast);
+        $this->assertDoesNotMatchRegularExpression(
+            '/(?<!sm:)min-h-\[\d+px\]/',
+            $toast,
+            'Une hauteur minimale sans palier prendrait la place du téléphone.',
+        );
+    }
+
+    /** La barre porte la couleur de son type, les quatre que l'icône porte déjà. */
+    public function test_the_countdown_bar_carries_the_colour_of_its_type(): void
+    {
+        $toast = (string) file_get_contents($this->publishedDirectory().'/'.self::SHARED);
+
+        foreach (['emerald', 'red', 'amber', 'blue'] as $hue) {
+            $this->assertStringContainsString("bg-{$hue}-500 dark:bg-{$hue}-400", $toast);
+        }
+
+        $this->assertStringContainsString('fb-toast-countdown', $toast);
+    }
+
+    /**
+     * Un seul endroit dit combien de temps un message reste.
+     *
+     * La durée alimente **deux** choses : le minuteur qui retire le message et
+     * l'animation qui vide la barre. Deux littéraux dériveraient, et la barre
+     * annoncerait un temps qui n'est plus celui du minuteur — sans que rien à
+     * l'écran ne le dise.
+     */
+    public function test_the_countdown_and_the_timer_read_the_same_duration(): void
+    {
+        $toast = (string) file_get_contents($this->publishedDirectory().'/'.self::SHARED);
+
+        $this->assertStringContainsString('const life = toast.action ? 10000 : 4000;', $toast);
+        $this->assertStringContainsString('setTimeout(() => this.remove(id), life)', $toast);
+        $this->assertStringContainsString('${toast.life}ms', $toast);
+
+        foreach (['4000', '10000'] as $duration) {
+            $this->assertSame(
+                1,
+                substr_count($toast, $duration),
+                "La durée {$duration} est écrite deux fois : les deux copies finiront par ne plus dire la même chose.",
             );
         }
     }
