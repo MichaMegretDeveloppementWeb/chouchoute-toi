@@ -1,6 +1,6 @@
 {
   "packages/falcon-booking/resources/css/booking-public.css": {
-    "file": "assets/booking-public-BePMS7IK.css",
+    "file": "assets/booking-public-nGJWKqYl.css",
     "src": "packages/falcon-booking/resources/css/booking-public.css",
     "isEntry": true,
     "name": "booking-public",
@@ -9,7 +9,7 @@
     ]
   },
   "packages/falcon-booking/resources/js/booking-admin.js": {
-    "file": "assets/booking-admin-CeeHiq1M.js",
+    "file": "assets/booking-admin-DKhqrmo3.js",
     "name": "booking-admin",
     "src": "packages/falcon-booking/resources/js/booking-admin.js",
     "isEntry": true,
