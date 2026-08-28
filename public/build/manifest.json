@@ -1,4 +1,13 @@
 {
+  "packages/falcon-booking/resources/css/booking-public.css": {
+    "file": "assets/booking-public-DEvogiSK.css",
+    "src": "packages/falcon-booking/resources/css/booking-public.css",
+    "isEntry": true,
+    "name": "booking-public",
+    "names": [
+      "booking-public.css"
+    ]
+  },
   "packages/falcon-booking/resources/js/booking-admin.js": {
     "file": "assets/booking-admin-CeeHiq1M.js",
     "name": "booking-admin",

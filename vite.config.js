@@ -18,6 +18,8 @@ export default defineConfig({
                 'resources/js/ui-kit.js',
                 // Écrans de falcon/booking : liste triable et menus d'actions.
                 'packages/falcon-booking/resources/js/booking-admin.js',
+                // Sa page publique, dont il possède le style de bout en bout.
+                'packages/falcon-booking/resources/css/booking-public.css',
             ],
             refresh: true,
         }),

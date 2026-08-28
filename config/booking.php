@@ -105,7 +105,16 @@ return [
         'route_prefix' => 'reservation',
         'route_name' => 'booking.public.',
         'middleware' => ['web'],
+
+        // Null : le paquet rend la page entière lui-même. Nommer un gabarit du
+        // site l'y ferait entrer — décision à prendre le jour où la page
+        // publique doit ressembler au reste de chouchoute-toi.fr.
         'layout' => null,
+        'layout_section' => 'content',
+
+        // Le paquet enregistre sa route publique. À faux, ce serait à nous de
+        // la monter.
+        'routes' => true,
     ],
 
     /*
@@ -142,6 +151,13 @@ return [
         'admin_entrypoints' => [
             'resources/css/ui-kit.css',
             'resources/js/ui-kit.js',
+        ],
+
+        // La feuille de la page publique, que le paquet possède de bout en
+        // bout. Nommée ici **après** avoir été ajoutée à l'input de Vite, sans
+        // quoi @vite lèverait sur un manifest qui ne peut pas la contenir.
+        'public_entrypoints' => [
+            'packages/falcon-booking/resources/css/booking-public.css',
         ],
     ],
 
