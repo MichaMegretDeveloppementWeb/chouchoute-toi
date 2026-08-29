@@ -323,19 +323,10 @@ return [
             'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
         ],
 
-        // Where the establishment works. A mode may be offered without being
-        // bookable online: the funnel then shows it and hands over to the
-        // message below rather than pretending it does not exist.
-        'locations' => [
-            'on_site' => [
-                'enabled' => true,
-                'bookable_online' => true,
-            ],
-            'home' => [
-                'enabled' => false,
-                'bookable_online' => false,
-            ],
-        ],
+        // Ou l'etablissement travaille est une table depuis P44, plus quatre
+        // cles : un lieu porte un nom, une adresse, une visibilite, et deux
+        // « sur place » differents sont le cas ordinaire. Rien ne lit plus ce
+        // bloc, qui est donc parti.
 
         'messages' => [
             'blocked_client' => null,
