@@ -101,6 +101,24 @@ return [
         'layout_section' => 'content',
     ],
 
+    /*
+    | L'hebergeur, pour les mentions legales.
+    |
+    | En configuration et non en reglage · il decrit le serveur, pas
+    | l'etablissement. La cliente ne sait pas qui heberge son site, et un
+    | changement d'hebergeur se regle ici.
+    |
+    | A remplir dans le `.env` · `booking:check` le reclame tant qu'il manque,
+    | la mention etant obligatoire des qu'une page est publique.
+    */
+    'legal' => [
+        'host' => [
+            'name' => env('BOOKING_LEGAL_HOST_NAME'),
+            'address' => env('BOOKING_LEGAL_HOST_ADDRESS'),
+            'phone' => env('BOOKING_LEGAL_HOST_PHONE'),
+        ],
+    ],
+
     'public' => [
         'route_prefix' => 'reservation',
         'route_name' => 'booking.public.',
