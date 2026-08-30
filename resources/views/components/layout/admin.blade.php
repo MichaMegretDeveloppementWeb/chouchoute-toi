@@ -148,6 +148,12 @@
                         :active="request()->routeIs($booking.'settings.clients')">
                         Clients
                     </x-ui.sidebar.link>
+
+                    <x-ui.sidebar.link
+                        :href="route($booking.'settings.notifications')"
+                        :active="request()->routeIs($booking.'settings.notifications')">
+                        Notifications
+                    </x-ui.sidebar.link>
                 </x-ui.sidebar.collapsible>
             </x-ui.sidebar.collapsible>
 
