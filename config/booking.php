@@ -281,10 +281,20 @@ return [
     */
 
     'seo' => [
-        // When the host already describes its business in JSON-LD, put its @id
-        // here: the package references that entity instead of declaring a
-        // competing one on the same page.
+        /*
+        | Null, et c'est le bon choix ici · le paquet rend `/reservation` dans
+        | sa propre coquille (`public.layout` est nul, plus bas), donc le
+        | BeautySalon que `layouts/web.blade.php` emet sur les pages du site ne
+        | rencontre jamais le graphe du paquet. Il n'y a rien a referencer.
+        |
+        | Le jour ou le tunnel entrera dans le gabarit du site, il faudra donner
+        | un `@id` a ce BeautySalon et l'ecrire ici, sinon deux etablissements
+        | concurrents se retrouveront sur la meme page.
+        */
         'business_entity_id' => null,
+
+        // Un institut de beaute, et non un commerce quelconque.
+        'business_type' => 'BeautySalon',
 
         'title_pattern' => ':page · :business',
     ],
