@@ -7,11 +7,12 @@ namespace Database\Seeders;
 use Carbon\CarbonImmutable;
 use Falcon\Booking\Actions\Admin\Appointment\BookAppointmentAction;
 use Falcon\Booking\Actions\Admin\Appointment\RepeatAppointmentAction;
-use Falcon\Booking\Actions\Admin\Appointment\TransitionAppointmentAction;
+use Falcon\Booking\Actions\Admin\Schedule\AttachPractitionerToLocationAction;
 use Falcon\Booking\Actions\Admin\Schedule\RepeatUnavailabilityAction;
 use Falcon\Booking\Actions\Admin\Schedule\SaveOpeningHourOverrideAction;
 use Falcon\Booking\Actions\Admin\Schedule\SaveUnavailabilityAction;
-use Falcon\Booking\Actions\Admin\Schedule\UpdateWeeklyScheduleAction;
+use Falcon\Booking\Actions\Admin\Schedule\UpdateLocationScheduleAction;
+use Falcon\Booking\Actions\Shared\Appointment\TransitionAppointmentAction;
 use Falcon\Booking\Data\Appointment\BookAppointmentData;
 use Falcon\Booking\Data\Appointment\BookedTreatmentData;
 use Falcon\Booking\Data\Recurrence\RecurrenceData;
@@ -24,6 +25,7 @@ use Falcon\Booking\Enums\Appointment\AppointmentStatus;
 use Falcon\Booking\Enums\Recurrence\RecurrenceFrequency;
 use Falcon\Booking\Models\Appointment;
 use Falcon\Booking\Models\Client;
+use Falcon\Booking\Models\Location;
 use Falcon\Booking\Models\OpeningHourOverride;
 use Falcon\Booking\Models\Practitioner;
 use Falcon\Booking\Models\Service;
@@ -110,6 +112,17 @@ final class DemoAgendaSeeder extends Seeder
      */
     private CarbonImmutable $today;
 
+    /**
+     * Les deux lieux de la démonstration, résolus une fois.
+     *
+     * Chaque visite porte le sien · le genre seul ne suffit plus depuis que les
+     * lieux sont des lignes, et une démonstration dont les rendez-vous ne sont
+     * nulle part ne montre pas ce que les écrans affichent.
+     */
+    private Location $onSitePlace;
+
+    private ?Location $homePlace = null;
+
     public function run(): void
     {
         $this->today = app(BusinessClock::class)->today();
@@ -125,10 +138,21 @@ final class DemoAgendaSeeder extends Seeder
             return;
         }
 
-        $this->openingHours($practitioners->all());
+        $place = Location::query()->onSite()->orderBy('position')->orderBy('id')->first();
+
+        if ($place === null) {
+            $this->command?->warn('Aucun lieu sur place en base : lancez booking:install avant ce seeder.');
+
+            return;
+        }
+
+        $this->onSitePlace = $place;
+        $this->homePlace = Location::query()->where('kind', AppointmentLocation::Home->value)->first();
+
+        $this->openingHours($practitioners->all(), $place);
         $clients = $this->clients();
         $this->unavailabilities($practitioners->first());
-        $this->exceptionalHours($practitioners->first());
+        $this->exceptionalHours($place);
 
         if (Appointment::query()->exists()) {
             $this->command?->info('Des rendez-vous existent déjà : l’agenda est laissé tel quel.');
@@ -142,14 +166,18 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * The week every practitioner works, replaced whole.
+     * The week the place is open, which everyone working there follows.
      *
-     * `UpdateWeeklyScheduleAction` swaps the week rather than pairing rows, so
+     * On the place and not on each practitioner: three people at one address
+     * used to hold three copies of the same week, and the schedule screens now
+     * default to the place's. Attaching is what makes them inherit it.
+     *
+     * `UpdateLocationScheduleAction` swaps the week rather than pairing rows, so
      * running this twice leaves exactly one week behind.
      *
      * @param  list<Practitioner>  $practitioners
      */
-    private function openingHours(array $practitioners): void
+    private function openingHours(array $practitioners, Location $place): void
     {
         $week = [];
 
@@ -158,11 +186,16 @@ final class DemoAgendaSeeder extends Seeder
             $week[] = new OpeningHourData($weekday, self::AFTERNOON[0], self::AFTERNOON[1]);
         }
 
+        app(UpdateLocationScheduleAction::class)->execute((int) $place->getKey(), $week);
+
         foreach ($practitioners as $practitioner) {
-            app(UpdateWeeklyScheduleAction::class)->execute($practitioner, $week);
+            app(AttachPractitionerToLocationAction::class)->attach($practitioner, (int) $place->getKey());
         }
 
-        $this->command?->info(count($practitioners).' semaine(s) d’ouverture posée(s), deux plages par jour.');
+        $this->command?->info(
+            'Semaine d’ouverture posée sur « '.$place->name.' », deux plages par jour, '
+            .count($practitioners).' agenda(s) rattaché(s).'
+        );
     }
 
     /**
@@ -265,14 +298,17 @@ final class DemoAgendaSeeder extends Seeder
      * fourteen, and a week of holidays, which is the same row with its hours
      * left out. They are laid days apart on purpose: a closed period shares no
      * day with anything else, and the seeder has to obey the same law.
+     *
+     * On the place, and naming nobody: a period describes the establishment, so
+     * everyone working there is under it. Naming practitioners would say the
+     * opposite — that they take it whole rather than keep their own hours.
      */
-    private function exceptionalHours(Practitioner $practitioner): void
+    private function exceptionalHours(Location $place): void
     {
         $lateOpening = $this->today->startOfWeek()->addWeeks(3);
         $holidays = $lateOpening->addWeeks(3);
 
         $exists = OpeningHourOverride::query()
-            ->where('practitioner_id', $practitioner->id)
             ->where('starts_on', $lateOpening->toDateString())
             ->exists();
 
@@ -282,19 +318,26 @@ final class DemoAgendaSeeder extends Seeder
             return;
         }
 
+        $lateWeek = [];
+
+        foreach (self::OPEN_WEEKDAYS as $weekday) {
+            $lateWeek[] = new OpeningHourData($weekday, '11:00', '19:00');
+        }
+
         $save = app(SaveOpeningHourOverrideAction::class);
 
-        $save->execute($practitioner, new OpeningHourOverrideData(
+        $save->execute(new OpeningHourOverrideData(
             startsOn: $lateOpening,
             endsOn: $lateOpening->addDays(13),
-            opensAt: '11:00',
-            closesAt: '19:00',
+            week: $lateWeek,
+            locationIds: [(int) $place->getKey()],
             label: 'Ouverture tardive',
         ));
 
-        $save->execute($practitioner, new OpeningHourOverrideData(
+        $save->execute(new OpeningHourOverrideData(
             startsOn: $holidays,
             endsOn: $holidays->addDays(6),
+            locationIds: [(int) $place->getKey()],
             label: 'Congés',
         ));
 
@@ -384,13 +427,16 @@ final class DemoAgendaSeeder extends Seeder
 
         $startsAt = $day->setTime(self::SLOT_HOURS[$this->slotThatHolds($index, $treatments)], $rank % 2 === 0 ? 0 : 30);
 
-        $atHome = $client->address !== null && $rank % 3 === 1;
+        $atHome = $client->address !== null && $rank % 3 === 1 && $this->homePlace !== null;
+        $place = $atHome ? $this->homePlace : $this->onSitePlace;
 
         return new BookAppointmentData(
             client: $client,
             treatments: $treatments,
             startsAt: $startsAt,
             location: $atHome ? AppointmentLocation::Home : AppointmentLocation::OnSite,
+            locationId: $place === null ? null : (int) $place->getKey(),
+            place: $place,
             address: $atHome ? $client->address : null,
             postalCode: $atHome ? $client->postal_code : null,
             city: $atHome ? $client->city : null,
@@ -493,6 +539,8 @@ final class DemoAgendaSeeder extends Seeder
                 client: $client,
                 treatments: [BookedTreatmentData::of($service, $practitioner)],
                 startsAt: $first,
+                locationId: (int) $this->onSitePlace->getKey(),
+                place: $this->onSitePlace,
                 actorReference: 'seeder',
             ),
             new RecurrenceData(RecurrenceFrequency::Weeks, 1, repeatCycles: 5),
