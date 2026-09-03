@@ -58,4 +58,8 @@ AUDIT-*.md
 # Le package falcon/booking est developpe ici mais suit son propre depot git.
 /packages
 
+# Brouillons de travail poses a la racine · ils ne decrivent pas ce projet, et
+# commites ils enverraient le prochain lecteur chercher a quel ecran ils
+# correspondent.
 brief-audit.txt
+prompt.txt
