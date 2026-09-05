@@ -188,12 +188,16 @@ final class PublishedComponentsTest extends TestCase
      * l'animation qui vide la barre. Deux littéraux dériveraient, et la barre
      * annoncerait un temps qui n'est plus celui du minuteur — sans que rien à
      * l'écran ne le dise.
+     *
+     * L'appelant peut donner la sienne, `toast.life`, et c'est ce que demandent
+     * les textes longs. Les deux valeurs ci-dessous restent le défaut, et il
+     * reste écrit une seule fois.
      */
     public function test_the_countdown_and_the_timer_read_the_same_duration(): void
     {
         $toast = (string) file_get_contents($this->publishedDirectory().'/'.self::SHARED);
 
-        $this->assertStringContainsString('const life = toast.action ? 10000 : 4000;', $toast);
+        $this->assertStringContainsString('const life = toast.life ?? (toast.action ? 10000 : 4000);', $toast);
         $this->assertStringContainsString('setTimeout(() => this.remove(id), life)', $toast);
         $this->assertStringContainsString('${toast.life}ms', $toast);
 

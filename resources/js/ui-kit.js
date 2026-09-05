@@ -1,16 +1,15 @@
 /*
- * Falcon UI Kit : entrypoint JS
+ * Ce que ce projet ajoute au kit · sa barre laterale repliable.
  *
- * Ce fichier est le point d'entree JS pour le back-office.
- * Il charge les utilitaires du kit (theme, sidebar, toast, modal)
- * et Chart.js pour le composant <x-ui.chart>.
+ * **Le kit livre son propre script**, pose par `@uiKitScripts` · theme, toast,
+ * modale, et Chart.js charge a la demande par `<x-ui.chart>`. Rien de tout cela
+ * n'est importe ici.
  *
- * Utilisez @vite(['resources/css/ui-kit.css', 'resources/js/ui-kit.js'])
- * dans votre layout back-office.
+ * Ne reste que ce qui n'appartient qu'a nous · le rail, que le kit ne connait
+ * pas. Il vient avec deux composants publies — `ui/sidebar/index.blade.php` et
+ * `ui/sidebar/collapsible.blade.php` — et ses regles dans `css/ui-kit.css`.
  */
-import '../../vendor/falcon/ui-kit/resources/js/ui-kit.js';
-import Chart from 'chart.js/auto';
-window.Chart = Chart;
+
 /*
  * La barre laterale : ouverte ou repliee, et rien entre les deux.
  *

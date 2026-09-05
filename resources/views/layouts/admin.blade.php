@@ -5,6 +5,8 @@
     The chrome itself lives in the <x-layout.admin> component so the package
     pages and the application's own back-office views share one single shell.
 --}}
-<x-layout.admin :title="$title ?? 'Analytics'">
+{{-- `charts` · analytics appelle `new window.Chart(...)` lui-même, et n'a donc
+     personne pour charger la bibliothèque. Voir la prop dans le composant. --}}
+<x-layout.admin :title="$title ?? 'Analytics'" :charts="true">
     {{ $slot }}
 </x-layout.admin>

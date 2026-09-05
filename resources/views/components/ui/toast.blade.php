@@ -81,7 +81,14 @@
             //
             // A toast carrying an action has to be read AND clicked; four seconds is the budget
             // for reading alone.
-            const life = toast.action ? 10000 : 4000;
+            //
+            // **L'appelant peut dire la sienne**, et c'est ce que demandent les
+            // textes longs · quatre secondes suffisent à une soixantaine de
+            // caractères, pas aux cent quatre-vingts d'un titre suivi de sa
+            // description. La valeur se choisit à l'appel, à la main : une durée
+            // calculée ici serait une mécanique de plus pour un réglage qui se
+            // décide mieux en lisant la phrase.
+            const life = toast.life ?? (toast.action ? 10000 : 4000);
             this.toasts.push({ ...toast, id, life, visible: true });
             if (this.toasts.length > 5) this.remove(this.toasts[0].id);
             setTimeout(() => this.remove(id), life);

@@ -15,7 +15,11 @@
     {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
     @uiKitHead
 
-    @vite(['resources/css/ui-kit.css', 'resources/js/ui-kit.js'])
+    {{-- Le kit livre sa feuille déjà compilée. --}}
+    @uiKitStyles
+
+    {{-- Et ce que ce projet compile pour ses propres écrans. --}}
+    @vite(['resources/css/ui-kit.css'])
 
     @livewireStyles
 </head>
@@ -38,6 +42,8 @@
     </div>
 
     <x-ui.toast position="top-right" />
+
+    @uiKitScripts
 
     @livewireScripts
 </body>

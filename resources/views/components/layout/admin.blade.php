@@ -6,7 +6,23 @@
     écran elle laisse près d'un tiers de la largeur vide alors que chaque
     colonne de jour gagne à respirer.
 --}}
-@props(['title' => 'Administration', 'wide' => false])
+{{--
+    `charts` charge Chart.js.
+
+    **Provisoire, et il porte le nom de sa cause** · falcon/analytics dessine ses
+    graphiques avec `new window.Chart(...)` dans ses propres composants, sans
+    passer par `<x-ui.chart>` du kit — qui, lui, charge la bibliothèque tout seul
+    quand un graphique paraît. Personne ne la pose donc pour analytics, et ses
+    écrans resteraient vides.
+
+    Elle est demandée par `layouts/admin.blade.php`, le pont vers ses écrans, et
+    par lui seul · les deux cents kilo-octets ne pèsent pas sur le planning ni
+    sur les prestations, qui n'ont aucun graphique.
+
+    **Cette prop disparaît quand analytics migrera** · il déclarera alors sa
+    dépendance lui-même, comme falcon/booking le fait pour la sienne.
+--}}
+@props(['title' => 'Administration', 'wide' => false, 'charts' => false])
 
 @php
     $analytics = config('analytics.dashboard.route_name', 'analytics');
@@ -51,11 +67,15 @@
         }
     </script>
 
-    @vite([
-        'resources/css/ui-kit.css',
-        'resources/js/ui-kit.js',
-        'packages/falcon-booking/resources/js/booking-admin.js',
-    ])
+    {{-- Le kit et falcon/booking livrent leurs assets deja compiles · leurs
+         directives posent les balises, et rien n'est compilé ici pour eux.
+         `@bookingStyles` entraîne celle du kit, qui ne se pose qu'une fois. --}}
+    @bookingStyles
+
+    {{-- Ce que ce projet compile, et lui seul · les classes de SES écrans
+         d'administration, ses réglages de couleur et de police, et le script
+         de sa barre latérale repliable, que le kit ne connaît pas. --}}
+    @vite(['resources/css/ui-kit.css', 'resources/js/ui-kit.js'])
 
     @livewireStyles
 </head>
@@ -295,6 +315,15 @@
     </div>
 
     <x-ui.toast position="top-right" />
+
+    {{-- En fin de corps · un script chargé dans l'en-tête retarde l'affichage.
+         Entraîne celui du kit, comme la feuille plus haut. --}}
+    @bookingScripts
+
+    {{-- Chart.js, pour les écrans qui le demandent · voir la prop `charts`. --}}
+    @if ($charts)
+        @uiKitCharts
+    @endif
 
     @livewireScripts
 </body>

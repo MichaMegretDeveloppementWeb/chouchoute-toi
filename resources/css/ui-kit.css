@@ -1,23 +1,50 @@
 /*
- * Falcon UI Kit · back-office CSS entrypoint.
+ * Le complément de ce projet, et rien d'autre.
  *
- * Loads Tailwind, the forms plugin, the text face and the kit preset
- * (dark mode, tokens, scrollbars). Pulled in by the back-office layout only:
- * the public site keeps app.css untouched.
+ * **Le kit et falcon/booking livrent leurs feuilles déjà compilées**, chargées
+ * par `@bookingStyles`. Ce fichier ne refabrique rien de ce qu'ils portent : il
+ * ne produit que les classes utilisées par les écrans que CE projet écrit.
+ *
+ * La règle, et elle vaut pour tout le monde · celui qui écrit du HTML fabrique
+ * le CSS de ce HTML. Le kit pour ses composants, chaque paquet pour ses écrans,
+ * nous pour les nôtres.
+ *
+ * `@reference` lit le thème du kit — pour savoir ce que `bg-surface` veut dire
+ * — sans en recopier une ligne. Le dictionnaire de variables, la remise à zéro
+ * de base et les classes des composants sont déjà dans la feuille du kit.
+ *
+ * Ce fichier se charge **après** celle du kit, ce que l'ordre du gabarit
+ * garantit : son bloc `@theme` ci-dessous gagne donc sur les valeurs du kit,
+ * et ses règles hors `@layer` l'emportent sur les utilitaires.
  */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
-@source '../../vendor/falcon/ui-kit/resources/views/**/*.blade.php';
+@import 'tailwindcss/theme.css' theme(reference);
+@import 'tailwindcss/utilities.css';
+@reference '../../vendor/falcon/ui-kit/resources/css/preset.css';
 
-/* Back-office screens: shell, admin views, admin Livewire components. */
+/* Les écrans d'administration de ce projet · connexion, tableau de bord, profil. */
 @source '../views/components/layout/admin*.blade.php';
 @source '../views/layouts/admin.blade.php';
 @source '../views/admin/**/*.blade.php';
 @source '../views/livewire/admin/**/*.blade.php';
 
-/* Analytics and Marketing dashboards, compiled by the host build. */
+/*
+ * Les composants du kit que ce projet réécrit · la barre latérale et le toast.
+ *
+ * **Ce sont nos fichiers, donc nos classes à fabriquer.** Une surcharge gagne
+ * sur l'original du kit au moment du rendu, mais la feuille du kit ne contient
+ * que les classes de SES fichiers à lui : celles que nous ajoutons ici
+ * n'existent nulle part ailleurs.
+ */
+@source '../views/components/ui/**/*.blade.php';
+
+/*
+ * falcon/analytics · toujours compilé ici, parce qu'il n'a pas encore migré.
+ *
+ * **Cette ligne s'en va le jour où il livrera sa feuille**, comme le kit et
+ * falcon/booking l'ont fait. Elle est la dernière de ce fichier à regarder dans
+ * `vendor/`.
+ */
 @source '../../vendor/falcon/analytics/resources/views/**/*.blade.php';
 
 @theme {
@@ -42,9 +69,6 @@
     --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
 }
-
-/* falcon/booking · vues du package, compilees par le build de l’hote. */
-@source '../../vendor/falcon/booking/resources/views/**/*.blade.php';
 
 /*
  * ── Le focus d'un champ ───────────────────────────────────────────────────
