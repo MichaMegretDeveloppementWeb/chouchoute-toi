@@ -140,43 +140,30 @@ return [
     | Assets
     |--------------------------------------------------------------------------
     |
-    | The host compiles; the package only ships sources. Its admin screens are
-    | styled by falcon/ui-kit, so they need no entrypoint of their own: giving
-    | them one would load Tailwind and the kit preset twice on the same page.
-    | What they need is for the host's back-office entrypoint to scan the
-    | package's views, which booking:install declares once.
+    | **Une page, une feuille Tailwind.** Le paquet ne compile pas le CSS de son
+    | back-office : il le déclare dans `booking-admin.css`, que nous importons
+    | dans `resources/css/admin.css` et que notre build fabrique avec le nôtre.
+    |
+    | Trois fichiers sont livrés compilés, parce que rien ne peut les croiser ·
+    | la feuille de FullCalendar, le script du back-office, et la feuille de la
+    | page publique. `vendor:publish --tag=booking-assets --force` les pose, et
+    | les directives `@bookingStyles`, `@bookingScripts` et
+    | `@bookingPublicStyles` écrivent les balises. Aucun chemin à connaître.
+    |
+    | Il n'y a plus de liste de points d'entrée ici : elle disait au paquet ce
+    | que nous compilions pour lui, et ce n'est plus ainsi que ça marche.
     |
     */
 
     'assets' => [
-        // The file booking:install declares the package's views to, so the
-        // host's Tailwind build generates the classes they use.
-        'admin_css_entrypoint' => 'resources/css/ui-kit.css',
-
-        // What the fallback shell loads when no host layout is configured.
-        // A host that names its own layout brings its own assets and ignores
-        // this entirely, and must load the admin script from that layout.
-        //
-        // The package's own script is NOT listed here by default: naming it
-        // before it has been added to the Vite input would make @vite raise on
-        // a manifest that cannot contain it yet. Add it once both are done,
-        // otherwise the fallback shell renders an agenda with no calendar:
-        //
-        //     'vendor/falcon/booking/resources/js/booking-admin.js',
-        //
-        // booking:install prints the line with the path already resolved, and
-        // booking:check reports it missing from the build.
-        'admin_entrypoints' => [
-            'resources/css/ui-kit.css',
-            'resources/js/ui-kit.js',
-        ],
-
-        // La feuille de la page publique, que le paquet possède de bout en
-        // bout. Nommée ici **après** avoir été ajoutée à l'input de Vite, sans
-        // quoi @vite lèverait sur un manifest qui ne peut pas la contenir.
-        'public_entrypoints' => [
-            'packages/falcon-booking/resources/css/booking-public.css',
-        ],
+        /*
+         * Une feuille à nous pour la vitrine, à la place de celle du paquet.
+         *
+         * C'est le levier qui change l'apparence sans toucher à une vue. La
+         * valeur est une adresse, servie telle quelle. Vide, la feuille livrée
+         * est utilisée — c'est notre cas.
+         */
+        'public_stylesheet' => null,
     ],
 
     /*
