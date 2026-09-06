@@ -72,10 +72,6 @@
          compile avec nos écrans. Voir l'en-tête de resources/css/admin.css. --}}
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
-    {{-- La feuille de FullCalendar, du CSS tiers que le paquet livre compilé ·
-         tous ses sélecteurs sont en `.fc-`, rien ne peut le croiser. --}}
-    @bookingStyles
-
     @livewireStyles
 </head>
 <body class="min-h-full antialiased">
