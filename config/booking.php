@@ -140,18 +140,20 @@ return [
     | Assets
     |--------------------------------------------------------------------------
     |
-    | **Une page, une feuille Tailwind.** Le paquet ne compile pas le CSS de son
-    | back-office : il le déclare dans `booking-admin.css`, que nous importons
-    | dans `resources/css/admin.css` et que notre build fabrique avec le nôtre.
+    | **Une page, une feuille Tailwind.** Le paquet ne compile rien pour son
+    | back-office : il déclare ses écrans et ses règles dans `booking-admin.css`,
+    | livre son script compilé, et nous importons les deux dans nos entrées.
+    | C'est notre build qui les fabrique et les sert.
     |
-    | Deux fichiers restent livrés, et ils sont **servis depuis `vendor/`** par
-    | une route · le script du back-office et la feuille de la page publique.
+    | `booking:install` a écrit ces deux lignes et retenu où, ci-dessous.
+    |
+    | **Un seul fichier reste servi depuis `vendor/`** · la feuille de la page
+    | de réservation, que `@bookingPublicStyles` pose. Cette page-là, le paquet
+    | la rend entièrement seul, avec son propre gabarit : notre feuille n'y est
+    | pas, et il n'existe aucune entrée dans laquelle importer ce CSS.
+    |
     | Rien à publier, rien à republier, et le dossier `public/vendor/` n'existe
-    | plus. `@bookingScripts` et `@bookingPublicStyles` écrivent les balises,
-    | et nous n'avons aucun chemin à connaître.
-    |
-    | Il n'y a plus de liste de points d'entrée ici : elle disait au paquet ce
-    | que nous compilions pour lui, et ce n'est plus ainsi que ça marche.
+    | plus.
     |
     */
 

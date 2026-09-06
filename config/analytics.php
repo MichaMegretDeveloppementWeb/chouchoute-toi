@@ -17,6 +17,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Assets
+    |--------------------------------------------------------------------------
+    |
+    | Nos entrées, où les imports du paquet sont écrits.
+    |
+    | Le paquet ne compile rien : ces fichiers sont les nôtres, et c'est notre
+    | `npm run build` qui les lit. Deux lignes seulement — la feuille des
+    | tableaux de bord dans `admin_css`, le collecteur dans `web_js`.
+    |
+    | Le collecteur va dans le script du site public, jamais dans celui du
+    | back-office : on ne mesure pas les visites de l'administratrice.
+    |
+    | `admin_js` et `web_css` sont retenus sans servir : le paquet n'a pas de
+    | script de back-office, et son collecteur n'a pas de feuille.
+    |
+    */
+
+    'assets' => [
+        'admin_css' => 'resources/css/admin.css',
+        'admin_js' => 'resources/js/admin.js',
+        'web_css' => 'resources/css/web.css',
+        'web_js' => 'resources/js/web.js',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Log channel
     |--------------------------------------------------------------------------
     |
@@ -89,7 +115,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | The package resolves the subject, exclusions and consent from these
-    | declarative values, so a host only needs @analyticsScripts and these
+    | declarative values, so a host only needs @analyticsConfig and these
     | settings. For advanced logic, register closures on the Analytics manager
     | from a service provider (they take precedence):
     |
