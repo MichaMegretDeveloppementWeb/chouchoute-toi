@@ -800,7 +800,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "c0ba10a24cb57d266e4d902055f42e7c218fa199"
+                "reference": "c800725151104d3caa33cdf6041d2009876f4d1b"
             },
             "require": {
                 "falcon/ui-kit": "^3.0",
@@ -874,12 +874,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "54c66aa5460d224f91fd44df596f0d783d32fee1"
+                "reference": "7877395a88884704c183b8762474a901cddea008"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/54c66aa5460d224f91fd44df596f0d783d32fee1",
-                "reference": "54c66aa5460d224f91fd44df596f0d783d32fee1",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/7877395a88884704c183b8762474a901cddea008",
+                "reference": "7877395a88884704c183b8762474a901cddea008",
                 "shasum": ""
             },
             "require": {
@@ -927,7 +927,7 @@
                 "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v3.0.0",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-09-06T08:34:27+00:00"
+            "time": "2026-09-06T09:00:57+00:00"
         },
         {
             "name": "fruitcake/php-cors",

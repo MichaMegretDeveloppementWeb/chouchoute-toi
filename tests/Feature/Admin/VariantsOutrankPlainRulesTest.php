@@ -144,8 +144,11 @@ final class VariantsOutrankPlainRulesTest extends TestCase
                 .'`@custom-variant`, puis employez son nom.',
             );
 
+            // Le nom est coupe en deux · le scanner de Tailwind lit tous les
+            // fichiers du depot, et la chaine entiere ecrite ici se retrouverait
+            // fabriquee comme une vraie classe dans une feuille compilee.
             $this->assertStringNotContainsString(
-                '@container',
+                '@'.'container',
                 $contents,
                 $path.' emploie une requête de conteneur, dont la variante ne peut pas être pesée.',
             );
