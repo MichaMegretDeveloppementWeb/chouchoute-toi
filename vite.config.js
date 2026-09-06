@@ -14,12 +14,11 @@ export default defineConfig({
                 'resources/css/components/layout/footer.css',
                 'resources/js/components/layout/header.js',
                 'resources/js/components/layout/footer.js',
-                // Notre complément au kit · les classes de nos écrans
-                // d'administration, et le script de la barre repliable.
-                // falcon/ui-kit et falcon/booking livrent les leurs déjà
-                // compilés : rien de ce qui leur appartient n'entre ici.
-                'resources/css/ui-kit.css',
-                'resources/js/ui-kit.js',
+                // Le back-office · une entrée, une feuille. Elle importe le
+                // kit et falcon/booking, qui déclarent leurs vues et leurs
+                // règles sans rien compiler. Voir l'en-tête du fichier.
+                'resources/css/admin.css',
+                'resources/js/admin.js',
             ],
             refresh: true,
         }),

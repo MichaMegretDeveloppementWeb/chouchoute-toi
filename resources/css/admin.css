@@ -1,49 +1,46 @@
 /*
- * Le complément de ce projet, et rien d'autre.
+ * LA feuille du back-office · une page, une feuille Tailwind.
  *
- * **Le kit et falcon/booking livrent leurs feuilles déjà compilées**, chargées
- * par `@bookingStyles`. Ce fichier ne refabrique rien de ce qu'ils portent : il
- * ne produit que les classes utilisées par les écrans que CE projet écrit.
+ * Le kit et falcon/booking ne compilent rien. Ils **déclarent** — leurs écrans à
+ * lire, leurs couleurs, leurs règles — et c'est ce fichier qui les rassemble.
+ * `npm run build` en produit un seul, où chaque classe n'est écrite qu'une fois.
  *
- * La règle, et elle vaut pour tout le monde · celui qui écrit du HTML fabrique
- * le CSS de ce HTML. Le kit pour ses composants, chaque paquet pour ses écrans,
- * nous pour les nôtres.
+ * **Pourquoi pas une feuille par fournisseur ?** Parce que deux feuilles
+ * Tailwind sur une même page écrivent les mêmes noms de classes, et qu'à poids
+ * égal la dernière chargée gagne. La nôtre arrivait en dernier : son `.bg-white`
+ * tombait après le `dark:bg-gray-800` de booking et l'annulait, sans la moindre
+ * erreur. Mesuré aussi en poids · 223 ko en trois fichiers contre 133 en un.
  *
- * `@reference` lit le thème du kit — pour savoir ce que `bg-surface` veut dire
- * — sans en recopier une ligne. Le dictionnaire de variables, la remise à zéro
- * de base et les classes des composants sont déjà dans la feuille du kit.
- *
- * Ce fichier se charge **après** celle du kit, ce que l'ordre du gabarit
- * garantit : son bloc `@theme` ci-dessous gagne donc sur les valeurs du kit,
- * et ses règles hors `@layer` l'emportent sur les utilitaires.
+ * `source(none)` : ne sont lus que les fichiers nommés ici, ou par un paquet
+ * dans son propre point d'entrée. Rien n'entre par accident.
  */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
-@import 'tailwindcss/theme.css' theme(reference);
-@import 'tailwindcss/utilities.css';
-@reference '../../vendor/falcon/ui-kit/resources/css/preset.css';
-
-/* Les écrans d'administration de ce projet · connexion, tableau de bord, profil. */
-@source '../views/components/layout/admin*.blade.php';
-@source '../views/layouts/admin.blade.php';
-@source '../views/admin/**/*.blade.php';
-@source '../views/livewire/admin/**/*.blade.php';
+@import 'tailwindcss' source(none);
 
 /*
- * Les composants du kit que ce projet réécrit · la barre latérale et le toast.
+ * Une ligne par fournisseur. Chacun déclare ses vues, son thème et ses règles ·
+ * nous ne connaissons ni ses fichiers ni leur nombre.
  *
- * **Ce sont nos fichiers, donc nos classes à fabriquer.** Une surcharge gagne
- * sur l'original du kit au moment du rendu, mais la feuille du kit ne contient
- * que les classes de SES fichiers à lui : celles que nous ajoutons ici
- * n'existent nulle part ailleurs.
+ * L'ordre compte pour leurs règles écrites à la main : le dernier importé passe
+ * par-dessus. Il ne compte pas pour les utilitaires, que Tailwind range selon
+ * son propre ordre, quel que soit celui qui a écrit la classe.
  */
-@source '../views/components/ui/**/*.blade.php';
+@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
+@import '../../vendor/falcon/booking/resources/css/booking-admin.css';
 
 /*
- * falcon/analytics · toujours compilé ici, parce qu'il n'a pas encore migré.
+ * Nos vues à nous · nos écrans, nos surcharges de composants, et les vues de
+ * paquets que nous aurions publiées pour les réécrire.
+ */
+@source '../views/**/*.blade.php';
+
+/*
+ * falcon/analytics · lu directement, parce qu'il n'a pas encore de point
+ * d'entrée à lui.
  *
- * **Cette ligne s'en va le jour où il livrera sa feuille**, comme le kit et
- * falcon/booking l'ont fait. Elle est la dernière de ce fichier à regarder dans
- * `vendor/`.
+ * **Cette ligne devient un `@import` le jour où il en déclarera un**, comme le
+ * kit et falcon/booking. Elle est la dernière de ce fichier à aller chercher les
+ * vues d'un paquet à sa place.
  */
 @source '../../vendor/falcon/analytics/resources/views/**/*.blade.php';
 

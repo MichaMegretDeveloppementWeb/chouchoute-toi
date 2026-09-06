@@ -137,7 +137,7 @@ final class SidebarNavigationTest extends TestCase
     {
         $this->assertMatchesRegularExpression(
             '/#mobile-sidebar\s*\{[^}]*--fb-rail:\s*0/',
-            (string) file_get_contents(resource_path('css/ui-kit.css')),
+            (string) file_get_contents(resource_path('css/admin.css')),
         );
     }
 

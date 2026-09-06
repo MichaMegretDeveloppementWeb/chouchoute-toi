@@ -15,11 +15,8 @@
     {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
     @uiKitHead
 
-    {{-- Le kit livre sa feuille déjà compilée. --}}
-    @uiKitStyles
-
-    {{-- Et ce que ce projet compile pour ses propres écrans. --}}
-    @vite(['resources/css/ui-kit.css'])
+    {{-- LA feuille de cet espace · la même que le back-office. --}}
+    @vite(['resources/css/admin.css'])
 
     @livewireStyles
 </head>
@@ -41,7 +38,7 @@
         </x-ui.card>
     </div>
 
-    <x-ui.toast position="top-right" />
+    <x-app-ui::toast position="top-right" />
 
     @uiKitScripts
 

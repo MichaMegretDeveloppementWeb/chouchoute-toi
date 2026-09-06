@@ -67,15 +67,14 @@
         }
     </script>
 
-    {{-- Le kit et falcon/booking livrent leurs assets deja compiles · leurs
-         directives posent les balises, et rien n'est compilé ici pour eux.
-         `@bookingStyles` entraîne celle du kit, qui ne se pose qu'une fois. --}}
-    @bookingStyles
+    {{-- LA feuille de cet espace · une seule, et elle porte tout. Le kit et
+         falcon/booking y sont importés en une ligne chacun ; le build les
+         compile avec nos écrans. Voir l'en-tête de resources/css/admin.css. --}}
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
-    {{-- Ce que ce projet compile, et lui seul · les classes de SES écrans
-         d'administration, ses réglages de couleur et de police, et le script
-         de sa barre latérale repliable, que le kit ne connaît pas. --}}
-    @vite(['resources/css/ui-kit.css', 'resources/js/ui-kit.js'])
+    {{-- La feuille de FullCalendar, du CSS tiers que le paquet livre compilé ·
+         tous ses sélecteurs sont en `.fc-`, rien ne peut le croiser. --}}
+    @bookingStyles
 
     @livewireStyles
 </head>
@@ -90,169 +89,169 @@
         Console est configuree, donc la section ne peut pas se deduire de ce
         qu'elle contient.
     --}}
-    <x-ui.sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
-        <x-ui.sidebar.group>
-            <x-ui.sidebar.link
+    <x-app-ui::sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
+        <x-app-ui::sidebar.group>
+            <x-app-ui::sidebar.link
                 :href="route('admin.dashboard')"
                 icon="home"
                 :active="request()->routeIs('admin.dashboard')">
                 Tableau de bord
-            </x-ui.sidebar.link>
+            </x-app-ui::sidebar.link>
 
             {{-- `href` : la première page de la section. Le libellé y mène tant
                  qu'on n'y est pas, et redevient une simple bascule une fois
                  dedans. Le chevron ne bascule jamais que l'ouverture. --}}
-            <x-ui.sidebar.collapsible
+            <x-app-ui::sidebar.collapsible
                 name="agenda"
                 label="Agenda"
                 icon="calendar-days"
                 :href="route($booking.'agenda')"
                 :active="request()->routeIs($booking.'*')">
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($booking.'agenda')"
                     :active="request()->routeIs($booking.'agenda')">
                     Planning
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($booking.'catalogue')"
                     :active="request()->routeIs($booking.'catalogue')">
                     Prestations
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($booking.'categories')"
                     :active="request()->routeIs($booking.'categories')">
                     Catégories
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($booking.'journal')"
                     :active="request()->routeIs($booking.'journal')">
                     Journal
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
                 {{-- Un troisième niveau : les réglages sont une section, une page
                      par famille, et les horaires en font partie. --}}
-                <x-ui.sidebar.collapsible
+                <x-app-ui::sidebar.collapsible
                     name="settings"
                     label="Réglages"
                     :href="route($booking.'settings')"
                     :active="request()->routeIs($booking.'settings*') || request()->routeIs($booking.'schedule')">
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'settings')"
                         :active="request()->routeIs($booking.'settings')">
                         Établissement
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
 
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'schedule')"
                         :active="request()->routeIs($booking.'schedule')">
                         Horaires
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
 
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'settings.slots')"
                         :active="request()->routeIs($booking.'settings.slots')">
                         Créneaux
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
 
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'settings.booking-window')"
                         :active="request()->routeIs($booking.'settings.booking-window')">
                         Réservation
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
 
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'settings.clients')"
                         :active="request()->routeIs($booking.'settings.clients')">
                         Clients
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
 
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($booking.'settings.notifications')"
                         :active="request()->routeIs($booking.'settings.notifications')">
                         Notifications
-                    </x-ui.sidebar.link>
-                </x-ui.sidebar.collapsible>
-            </x-ui.sidebar.collapsible>
+                    </x-app-ui::sidebar.link>
+                </x-app-ui::sidebar.collapsible>
+            </x-app-ui::sidebar.collapsible>
 
-            <x-ui.sidebar.collapsible
+            <x-app-ui::sidebar.collapsible
                 name="audience"
                 label="Audience"
                 icon="chart-pie"
                 :href="route($analytics.'.overview')"
                 :active="request()->routeIs($analytics.'.*')">
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.overview')"
                     :active="request()->routeIs($analytics.'.overview')">
                     Vue d'ensemble
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.realtime')"
                     :active="request()->routeIs($analytics.'.realtime')">
                     Temps réel
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.visitors')"
                     :active="request()->routeIs($analytics.'.visitors*')">
                     Visiteurs
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.sessions')"
                     :active="request()->routeIs($analytics.'.sessions*')">
                     Sessions
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.events')"
                     :active="request()->routeIs($analytics.'.events')">
                     Événements
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($analytics.'.funnels')"
                     :active="request()->routeIs($analytics.'.funnels')">
                     Tunnels
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
                 @if (trim((string) config('analytics.search_console.client_id')) !== '')
-                    <x-ui.sidebar.link
+                    <x-app-ui::sidebar.link
                         :href="route($analytics.'.integrations')"
                         :active="request()->routeIs($analytics.'.integrations*')">
                         Intégrations
-                    </x-ui.sidebar.link>
+                    </x-app-ui::sidebar.link>
                 @endif
-            </x-ui.sidebar.collapsible>
+            </x-app-ui::sidebar.collapsible>
 
-            <x-ui.sidebar.collapsible
+            <x-app-ui::sidebar.collapsible
                 name="marketing"
                 label="Marketing"
                 icon="megaphone"
                 :href="route($marketing.'.dashboard')"
                 :active="request()->routeIs($marketing.'.*')">
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($marketing.'.dashboard')"
                     :active="request()->routeIs($marketing.'.dashboard')">
                     Vue d'ensemble
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($marketing.'.campaigns')"
                     :active="request()->routeIs($marketing.'.campaigns*')">
                     Campagnes
-                </x-ui.sidebar.link>
+                </x-app-ui::sidebar.link>
 
-                <x-ui.sidebar.link
+                <x-app-ui::sidebar.link
                     :href="route($marketing.'.ads')"
                     :active="request()->routeIs($marketing.'.ads*')">
                     Publicités
-                </x-ui.sidebar.link>
-            </x-ui.sidebar.collapsible>
-        </x-ui.sidebar.group>
+                </x-app-ui::sidebar.link>
+            </x-app-ui::sidebar.collapsible>
+        </x-app-ui::sidebar.group>
 
         <x-slot:user>
             <x-layout.admin-user-menu
@@ -260,7 +259,7 @@
                 :email="$admin?->email ?? ''"
             />
         </x-slot:user>
-    </x-ui.sidebar>
+    </x-app-ui::sidebar>
 
     <div class="flex min-h-full flex-col lg:pl-[62px] wide:pl-[260px]">
 
@@ -269,7 +268,7 @@
                 {{-- Une hauteur posée plutôt qu'un retrait élargi : le kit
                      dimensionne ce bouton par son `p-1.5`, et deux valeurs du
                      même utilitaire ne s'annulent pas. --}}
-                <x-ui.sidebar.trigger class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
+                <x-app-ui::sidebar.trigger class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
 
                 {{-- Le pendant du declencheur mobile, pour l'autre bout de
                      l'echelle : au-dela de 1500 px la barre est ouverte d'office
@@ -314,7 +313,7 @@
         </main>
     </div>
 
-    <x-ui.toast position="top-right" />
+    <x-app-ui::toast position="top-right" />
 
     {{-- En fin de corps · un script chargé dans l'en-tête retarde l'affichage.
          Entraîne celui du kit, comme la feuille plus haut. --}}
