@@ -157,6 +157,22 @@ return [
 
     'assets' => [
         /*
+         * Nos entrées, où `booking:install` a écrit ses imports.
+         *
+         * Le paquet ne compile rien : ces fichiers sont les nôtres, et c'est
+         * notre `npm run build` qui les lit. `booking:check` les ouvre pour
+         * vérifier que les deux imports y sont toujours.
+         *
+         * À corriger si nous déplaçons ou renommons une de ces entrées.
+         * `web_css` et `web_js` sont retenus sans servir : la page de
+         * réservation porte son propre habillage.
+         */
+        'admin_css' => 'resources/css/admin.css',
+        'admin_js' => 'resources/js/admin.js',
+        'web_css' => 'resources/css/web.css',
+        'web_js' => 'resources/js/web.js',
+
+        /*
          * Une feuille à nous pour la vitrine, à la place de celle du paquet.
          *
          * C'est le levier qui change l'apparence sans toucher à une vue. La

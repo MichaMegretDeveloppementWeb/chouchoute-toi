@@ -1,56 +1,15 @@
-@import 'tailwindcss';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-
 /*
- * Le cache de vues compilees n'est pas une source.
+ * Ce qui est commun aux deux espaces · le site public et le back-office.
  *
- * `storage/framework/views` etait scanne ici, ligne heritee du squelette
- * Laravel. Le contenu de cette feuille dependait donc de ce qui avait ete
- * visite ou mis en cache avant le build : 67 Ko cache vide, 125 Ko cache
- * plein, et un fichier commite different de celui que le build suivant
- * produit. Le site public y gagnait jusqu'a 58 Ko de classes du back-office
- * qu'il n'utilise jamais.
+ * **Ce fichier n'est pas une entree.** Il ne porte pas `@import 'tailwindcss'`
+ * et n'est pas declare dans `vite.config.js` · ce sont `web.css` et `admin.css`
+ * qui l'importent, chacun dans sa compilation.
  *
- * Rien n'est perdu : le gabarit public n'inclut que `x-layout.header` et
- * `x-layout.footer`, tous deux sous `resources/views`, que la ligne
- * ci-dessus couvre deja.
+ * Lui donner Tailwind en ferait une seconde feuille sur chaque page, et deux
+ * feuilles Tailwind ecrivent les memes noms de classes : la derniere chargee
+ * gagne par sa seule position, sans la moindre erreur.
+ *
+ * Il est vide aujourd'hui, et il reste · le jour ou une regle vaut pour les
+ * deux espaces, elle a sa place, et les deux entrees la prennent sans qu'on y
+ * touche.
  */
-
-@theme {
-    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-signature: 'Mrs Saint Delafield', cursive;
-
-    --color-cream: #F9F6F2;
-    --color-sand: #EBE4DE;
-    --color-wine: #512731;
-    --color-charcoal: #333333;
-    --color-dark: #222222;
-    --color-blush: #D4A89A;
-}
-
-/* Scroll animations */
-[data-animate] {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-[data-animate].is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Offset des ancres pour le header fixe (64px mobile / 72px desktop + marge) */
-[id] {
-    scroll-margin-top: 80px;
-}
-
-@media (min-width: 1024px) {
-    [id] {
-        scroll-margin-top: 88px;
-    }
-}

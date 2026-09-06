@@ -132,12 +132,15 @@ final class SidebarNavigationTest extends TestCase
      *
      * Asserte sur la feuille, qui est ce qui decide : Alpine ne fait que lire
      * `--fb-rail`.
+     *
+     * Les regles de la barre vivent dans `css/admin/sidebar.css` depuis le
+     * 2026-09-06 · `admin.css` est une entree, elle importe et ne contient pas.
      */
     public function test_the_phone_drawer_is_never_a_rail(): void
     {
         $this->assertMatchesRegularExpression(
             '/#mobile-sidebar\s*\{[^}]*--fb-rail:\s*0/',
-            (string) file_get_contents(resource_path('css/admin.css')),
+            (string) file_get_contents(resource_path('css/admin/sidebar.css')),
         );
     }
 

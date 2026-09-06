@@ -1,0 +1,26 @@
+/*
+ * Ce qui bouge et ce qui se cale, sur tout le site public.
+ */
+
+/* Scroll animations · la classe est posee par l'observateur de `web.js`. */
+[data-animate] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+[data-animate].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Offset des ancres pour le header fixe (64px mobile / 72px desktop + marge) */
+[id] {
+    scroll-margin-top: 80px;
+}
+
+@media (min-width: 1024px) {
+    [id] {
+        scroll-margin-top: 88px;
+    }
+}

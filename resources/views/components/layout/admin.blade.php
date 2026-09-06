@@ -7,22 +7,15 @@
     colonne de jour gagne à respirer.
 --}}
 {{--
-    `charts` charge Chart.js.
+    Il y avait ici une prop `charts`, qui posait `@uiKitCharts`.
 
-    **Provisoire, et il porte le nom de sa cause** · falcon/analytics dessine ses
-    graphiques avec `new window.Chart(...)` dans ses propres composants, sans
-    passer par `<x-ui.chart>` du kit — qui, lui, charge la bibliothèque tout seul
-    quand un graphique paraît. Personne ne la pose donc pour analytics, et ses
-    écrans resteraient vides.
-
-    Elle est demandée par `layouts/admin.blade.php`, le pont vers ses écrans, et
-    par lui seul · les deux cents kilo-octets ne pèsent pas sur le planning ni
-    sur les prestations, qui n'ont aucun graphique.
-
-    **Cette prop disparaît quand analytics migrera** · il déclarera alors sa
-    dépendance lui-même, comme falcon/booking le fait pour la sienne.
+    Elle existait parce que falcon/analytics dessinait ses graphiques avec
+    `new window.Chart(...)` sans jamais demander la bibliothèque. Il l'attend
+    maintenant lui-même, par `await window.falconCharts()`, et le build découpe
+    Chart.js en un fichier à part que seules les pages qui en affichent
+    téléchargent. Retirée le 2026-09-06 avec la directive.
 --}}
-@props(['title' => 'Administration', 'wide' => false, 'charts' => false])
+@props(['title' => 'Administration', 'wide' => false])
 
 @php
     $analytics = config('analytics.dashboard.route_name', 'analytics');
@@ -34,7 +27,7 @@
     $admin = auth()->guard('admin')->user();
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-page">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-page {{ falcon_theme_class() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,11 +38,12 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
 
-    {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
-    @uiKitHead
+    {{-- L'etat de la barre laterale, pose avant la peinture · lu apres, la
+         barre changerait de largeur sous les yeux.
 
-    {{-- L'etat de la barre laterale, pose avant la peinture pour la meme raison
-         que le theme : lu apres, la barre changerait de largeur sous les yeux.
+         Le theme, lui, n'a plus besoin de script : il est lu cote serveur dans
+         un cookie et rendu sur `<html>` plus haut. C'est ce qui remplace
+         `@uiKitHead`, retire le 2026-09-06.
 
          Rien de retenu : repliee en dessous de 1500 px, ouverte au-dela. C'est
          la ou la barre ouverte coute un sixieme de la largeur a un portable, et
@@ -311,15 +305,8 @@
 
     <x-app-ui::toast position="top-right" />
 
-    {{-- En fin de corps · un script chargé dans l'en-tête retarde l'affichage.
-         Entraîne celui du kit, comme la feuille plus haut. --}}
-    @bookingScripts
-
-    {{-- Chart.js, pour les écrans qui le demandent · voir la prop `charts`. --}}
-    @if ($charts)
-        @uiKitCharts
-    @endif
-
+    {{-- Aucune directive du kit ni des paquets · leurs scripts sont importés
+         dans resources/js/admin.js et compilés avec le nôtre. --}}
     @livewireScripts
 </body>
 </html>

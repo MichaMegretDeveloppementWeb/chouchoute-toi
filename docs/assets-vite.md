@@ -4,16 +4,65 @@
 
 Chaque page possede ses propres fichiers CSS et JS, importes individuellement via Vite. Les assets communs au layout (header, footer) sont importes directement depuis le layout.
 
+## Les trois espaces
+
+Au-dessus du decoupage par page, le projet a **trois espaces**, chacun avec sa
+paire d'entrees.
+
+| Fichier | Ce qu'il porte | Entree Vite ? |
+|---|---|---|
+| `resources/css/web.css` · `resources/js/web.js` | le site public | oui |
+| `resources/css/admin.css` · `resources/js/admin.js` | le back-office | oui |
+| `resources/css/app.css` · `resources/js/app.js` | le commun aux deux | **non** · les deux autres l'importent |
+
+**Une entree importe, elle ne contient pas.** Les regles vont dans un fichier
+dedie sous `admin/` ou `web/`, enchaine depuis l'entree.
+
+```css
+/* resources/css/admin.css */
+@import 'tailwindcss' source(none);
+
+@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
+@import '../../vendor/falcon/booking/resources/css/booking-admin.css';
+@import '../../vendor/falcon/analytics/resources/css/analytics-admin.css';
+
+@source '../views/**/*.blade.php';
+
+@import './app.css';
+@import './admin/theme.css';
+@import './admin/fields.css';
+@import './admin/sidebar.css';
+```
+
+**Une page ne porte qu'une compilation Tailwind.** Deux feuilles ecrivent les
+memes noms de classes, et la derniere chargee gagne par sa seule position, sans
+la moindre erreur. C'est pourquoi `app.css` ne porte pas `@import 'tailwindcss'`
+et n'est pas declare dans `vite.config.js`.
+
+Les fichiers par page decrits plus bas ne portent jamais Tailwind non plus · que
+du CSS ecrit a la main, dont les selecteurs n'appartiennent qu'a nous.
+
+`tests/Feature/Admin/OneStylesheetPerPageTest.php` tient ces invariants.
+
 ## Structure des fichiers
 
 ```
 resources/
 ├── css/
+│   ├── admin.css                 # Entree du back-office
+│   ├── web.css                   # Entree du site public
+│   ├── app.css                   # Le commun · importe par les deux
+│   ├── admin/                    # Les regles du back-office
+│   │   ├── theme.css
+│   │   ├── fields.css
+│   │   └── sidebar.css
 │   ├── components/
 │   │   └── layout/
 │   │       ├── header.css        # Styles du header
 │   │       └── footer.css        # Styles du footer
-│   └── web/
+│   └── web/                      # Les regles du site public, et ses pages
+│       ├── theme.css
+│       ├── animations.css
 │       ├── home/
 │       │   ├── index.css         # Point d'entree CSS de la page d'accueil
 │       │   ├── hero.css          # Styles de la section hero (optionnel)
@@ -23,6 +72,11 @@ resources/
 │       └── contact/
 │           └── index.css
 └── js/
+    ├── admin.js                  # Entree du back-office
+    ├── web.js                    # Entree du site public
+    ├── app.js                    # Le commun · importe par les deux
+    ├── admin/
+    │   └── sidebar.js
     ├── components/
     │   └── layout/
     │       ├── header.js
@@ -36,6 +90,10 @@ resources/
         └── contact/
             └── index.js
 ```
+
+Le glob de `vite.config.js` ne ramasse que `web/{page}/index.css` et
+`web/{page}/index.js` · `web/theme.css` et `web/animations.css` sont importes
+par `web.css`, pas compiles a part.
 
 ## Regles
 

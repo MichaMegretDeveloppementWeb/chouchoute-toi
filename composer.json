@@ -31,7 +31,7 @@
     ],
     "require": {
         "php": "^8.5",
-        "falcon/analytics": "^1.1",
+        "falcon/analytics": "^2.0",
         "falcon/booking": "@dev",
         "falcon/ui-kit": "^3.0",
         "laravel/framework": "^13.0",

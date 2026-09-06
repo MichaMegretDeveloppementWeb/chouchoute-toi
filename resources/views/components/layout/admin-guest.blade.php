@@ -1,7 +1,7 @@
 @props(['title' => 'Connexion'])
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-page">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-page {{ falcon_theme_class() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,11 +12,10 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
 
-    {{-- Dark mode anti-flash script, must run before the stylesheets. --}}
-    @uiKitHead
-
-    {{-- LA feuille de cet espace · la même que le back-office. --}}
-    @vite(['resources/css/admin.css'])
+    {{-- LA feuille et LE script de cet espace · les mêmes que le back-office.
+         Le thème est lu côté serveur et rendu sur `<html>` ci-dessus, donc
+         aucun script d'en-tête n'est nécessaire. --}}
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
     @livewireStyles
 </head>
@@ -39,8 +38,6 @@
     </div>
 
     <x-app-ui::toast position="top-right" />
-
-    @uiKitScripts
 
     @livewireScripts
 </body>

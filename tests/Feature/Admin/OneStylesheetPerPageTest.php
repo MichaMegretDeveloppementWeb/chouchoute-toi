@@ -99,6 +99,7 @@ final class OneStylesheetPerPageTest extends TestCase
         foreach ([
             '../../vendor/falcon/ui-kit/resources/css/preset.css',
             '../../vendor/falcon/booking/resources/css/booking-admin.css',
+            '../../vendor/falcon/analytics/resources/css/analytics-admin.css',
         ] as $provider) {
             $this->assertStringContainsString("@import '{$provider}';", $entry);
         }
@@ -106,19 +107,52 @@ final class OneStylesheetPerPageTest extends TestCase
         preg_match_all('/@source\s+\'([^\']+)\'/', $entry, $matches);
 
         foreach ($matches[1] as $source) {
-            // falcon/analytics n'a pas encore de point d'entrée · la ligne est
-            // nommée ici pour qu'elle se remarque, et pour qu'elle devienne un
-            // `@import` le jour où il en déclarera un.
-            if ($source === '../../vendor/falcon/analytics/resources/views/**/*.blade.php') {
-                continue;
-            }
-
             $this->assertStringStartsWith(
                 '../views/',
                 $source,
                 "« {$source} » va lire les vues d'un paquet à sa place. Importez son point d'entrée.",
             );
         }
+    }
+
+    /**
+     * `app.css` porte le commun, et n'est pas une entrée.
+     *
+     * **Lui donner Tailwind en ferait une seconde feuille sur chaque page.**
+     * `admin.css` et `web.css` l'importent chacun dans sa compilation : ce qui
+     * y est écrit part donc dans les deux, une seule fois dans chacune.
+     *
+     * Le piège est facile · on ajoute `@import 'tailwindcss'` en haut « pour
+     * que l'éditeur comprenne le fichier », et le `.bg-white` du commun tombe
+     * après tout le reste sur toutes les pages.
+     */
+    public function test_the_common_fragment_is_imported_and_carries_no_tailwind(): void
+    {
+        $common = $this->contentsOf('resources/css/app.css');
+
+        // En début de ligne · le fichier a le droit de nommer la directive dans
+        // sa prose pour expliquer pourquoi il ne la porte pas, et une recherche
+        // de sous-chaîne prendrait ce commentaire pour la directive elle-même.
+        $this->assertDoesNotMatchRegularExpression(
+            "/^\s*@import\s+'tailwindcss'/m",
+            $common,
+            "resources/css/app.css est le commun, pas une entrée : il ne compile pas Tailwind.\n"
+            .'Deux feuilles écrivent les mêmes classes, et la dernière chargée gagne.',
+        );
+
+        foreach (['resources/css/admin.css', 'resources/css/web.css'] as $entry) {
+            $this->assertStringContainsString(
+                "@import './app.css';",
+                $this->contentsOf($entry),
+                $entry." n'importe pas le commun : ce qui y sera écrit ne l'atteindra jamais.",
+            );
+        }
+
+        $this->assertStringNotContainsString(
+            "'resources/css/app.css'",
+            (string) file_get_contents(base_path('vite.config.js')),
+            "app.css est déclaré comme entrée Vite alors qu'il est importé : le build en ferait un fichier orphelin.",
+        );
     }
 
     /**

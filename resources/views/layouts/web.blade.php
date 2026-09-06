@@ -35,8 +35,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
 
-    {{-- CSS global (Tailwind + theme tokens) --}}
-    @vite('resources/css/app.css')
+    {{-- LA feuille et LE script de cet espace · une page, une feuille Tailwind --}}
+    @vite(['resources/css/web.css', 'resources/js/web.js'])
 
     {{-- Assets communs du layout --}}
     @vite([
@@ -120,6 +120,9 @@
     @stack('body-scripts')
 
     {{-- First-party audience measurement. Renders nothing while an admin is signed in. --}}
-    @analyticsScripts
+    {{-- La configuration du collecteur · le nom de la route change à chaque
+         page, et le suivi se coupe quand nous sommes connectée. Son code, lui,
+         est dans resources/js/web.js et compilé avec le reste. --}}
+    @analyticsConfig
 </body>
 </html>

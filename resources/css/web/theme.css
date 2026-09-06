@@ -1,0 +1,16 @@
+/*
+ * Les jetons du site public · la police et les six couleurs de la marque.
+ */
+
+@theme {
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-signature: 'Mrs Saint Delafield', cursive;
+
+    --color-cream: #F9F6F2;
+    --color-sand: #EBE4DE;
+    --color-wine: #512731;
+    --color-charcoal: #333333;
+    --color-dark: #222222;
+    --color-blush: #D4A89A;
+}

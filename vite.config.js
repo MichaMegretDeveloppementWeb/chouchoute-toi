@@ -7,18 +7,26 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css',
+                // Un espace, une paire d'entrées. `app.css` et `app.js`
+                // portent le commun aux deux et ne sont pas des entrées :
+                // `web` et `admin` les importent, chacun dans sa compilation.
+                // Deux feuilles Tailwind sur une page écrivent les mêmes noms
+                // de classes, et la dernière chargée gagne par sa position.
+                'resources/css/web.css',
+                'resources/js/web.js',
+                'resources/css/admin.css',
+                'resources/js/admin.js',
+
+                // Le CSS et le JS par page du site public, chargés par un
+                // `@vite` dans leur vue. Ils ne portent jamais Tailwind : que
+                // des règles à nous, dont les sélecteurs n'appartiennent qu'à
+                // nous.
                 ...glob.sync('resources/css/web/*/index.css'),
                 ...glob.sync('resources/js/web/*/index.js'),
                 'resources/css/components/layout/header.css',
                 'resources/css/components/layout/footer.css',
                 'resources/js/components/layout/header.js',
                 'resources/js/components/layout/footer.js',
-                // Le back-office · une entrée, une feuille. Elle importe le
-                // kit et falcon/booking, qui déclarent leurs vues et leurs
-                // règles sans rien compiler. Voir l'en-tête du fichier.
-                'resources/css/admin.css',
-                'resources/js/admin.js',
             ],
             refresh: true,
         }),

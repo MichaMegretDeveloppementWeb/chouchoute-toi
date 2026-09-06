@@ -14,33 +14,57 @@ use Tests\TestCase;
  * Project invariant: every public visit is measured, back-office traffic never
  * is. The exclusion goes through the `admin` guard alone, never through a
  * global switch that would also blind the public site.
+ *
+ * **Ce qu'on asserte a changé le 2026-09-06**, pas l'invariant. Le collecteur
+ * arrivait par une balise `<script src="…__analytics.js">` ; son code est
+ * maintenant dans `resources/js/web.js`, compilé avec le reste, et toujours
+ * chargé. Ce qui décide est sa configuration : `@analyticsConfig` ne la pose
+ * pas quand nous sommes connectée, et le collecteur sort de lui-même faute de
+ * la trouver.
+ *
+ * Asserter sur l'ancienne balise passerait désormais tout seul — elle n'existe
+ * nulle part — et ne dirait plus rien.
  */
 final class TrackingExclusionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_collector_is_rendered_for_an_anonymous_visitor(): void
+    /** Ce que la directive pose, et ce que le collecteur lit pour démarrer. */
+    private const CONFIG = 'window.__falconAnalytics=';
+
+    public function test_collector_is_configured_for_an_anonymous_visitor(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('__analytics.js', escape: false);
+        $response->assertSee(self::CONFIG, escape: false);
     }
 
-    public function test_collector_is_not_rendered_while_an_admin_is_signed_in(): void
+    public function test_collector_is_not_configured_while_an_admin_is_signed_in(): void
     {
         $response = $this->actingAs(Admin::factory()->create(), 'admin')->get(route('home'));
 
         $response->assertOk();
-        $response->assertDontSee('__analytics.js', escape: false);
+        $response->assertDontSee(self::CONFIG, escape: false);
     }
 
-    public function test_collector_is_still_rendered_for_a_client_signed_in_on_the_web_guard(): void
+    public function test_collector_is_still_configured_for_a_client_signed_in_on_the_web_guard(): void
     {
         $response = $this->actingAs(User::factory()->create(), 'web')->get(route('home'));
 
         $response->assertOk();
-        $response->assertSee('__analytics.js', escape: false);
+        $response->assertSee(self::CONFIG, escape: false);
+    }
+
+    /**
+     * Le paquet ne sert plus le collecteur · c'est notre build qui le nomme.
+     *
+     * Si la route revenait, deux exemplaires du même collecteur pourraient se
+     * retrouver sur une page et compter chaque visite deux fois.
+     */
+    public function test_the_collector_script_is_no_longer_served_by_the_package(): void
+    {
+        $this->get('/__analytics.js')->assertNotFound();
     }
 
     public function test_ingestion_stores_an_event_sent_by_a_public_visitor(): void

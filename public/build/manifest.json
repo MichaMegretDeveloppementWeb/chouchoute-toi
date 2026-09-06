@@ -1,20 +1,11 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-CgSBjm37.css",
+    "file": "assets/admin-ht7ZV2H7.css",
     "src": "resources/css/admin.css",
     "isEntry": true,
     "name": "admin",
     "names": [
       "admin.css"
-    ]
-  },
-  "resources/css/app.css": {
-    "file": "assets/app-CStWmUgJ.css",
-    "src": "resources/css/app.css",
-    "isEntry": true,
-    "name": "app",
-    "names": [
-      "app.css"
     ]
   },
   "resources/css/components/layout/footer.css": {
@@ -34,6 +25,15 @@
     "name": "header",
     "names": [
       "header.css"
+    ]
+  },
+  "resources/css/web.css": {
+    "file": "assets/web-CiS3mAZO.css",
+    "src": "resources/css/web.css",
+    "isEntry": true,
+    "name": "web",
+    "names": [
+      "web.css"
     ]
   },
   "resources/css/web/about/index.css": {
@@ -72,10 +72,13 @@
     "src": "resources/css/web/reviews/index.css"
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-kC5r1Ndj.js",
+    "file": "assets/admin-CLxpUA9V.js",
     "name": "admin",
     "src": "resources/js/admin.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "vendor/falcon/ui-kit/dist/ui-kit-charts.js"
+    ]
   },
   "resources/js/components/layout/footer.js": {
     "file": "assets/footer-yYUmirKT.js",
@@ -87,6 +90,12 @@
     "file": "assets/header-D-RkUl_l.js",
     "name": "header",
     "src": "resources/js/components/layout/header.js",
+    "isEntry": true
+  },
+  "resources/js/web.js": {
+    "file": "assets/web-Rf8VW2xV.js",
+    "name": "web",
+    "src": "resources/js/web.js",
     "isEntry": true
   },
   "resources/js/web/about/index.js": {
@@ -124,5 +133,11 @@
     "name": "index",
     "src": "resources/js/web/reviews/index.js",
     "isEntry": true
+  },
+  "vendor/falcon/ui-kit/dist/ui-kit-charts.js": {
+    "file": "assets/ui-kit-charts-B8iktsgt.js",
+    "name": "ui-kit-charts",
+    "src": "vendor/falcon/ui-kit/dist/ui-kit-charts.js",
+    "isDynamicEntry": true
   }
 }
