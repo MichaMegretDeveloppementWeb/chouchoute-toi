@@ -800,10 +800,10 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "bee16ce01ec4c8fbaad94a45eda6c0ccfa6776c5"
+                "reference": "c0ba10a24cb57d266e4d902055f42e7c218fa199"
             },
             "require": {
-                "falcon/ui-kit": "^3.0.1",
+                "falcon/ui-kit": "^3.0",
                 "laravel/framework": "^13.0",
                 "livewire/livewire": "^4.2",
                 "php": "^8.5"
@@ -870,16 +870,16 @@
         },
         {
             "name": "falcon/ui-kit",
-            "version": "3.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "8c69eaeb986ed39b40d221ca4bd6bdc827e98d4d"
+                "reference": "54c66aa5460d224f91fd44df596f0d783d32fee1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/8c69eaeb986ed39b40d221ca4bd6bdc827e98d4d",
-                "reference": "8c69eaeb986ed39b40d221ca4bd6bdc827e98d4d",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/54c66aa5460d224f91fd44df596f0d783d32fee1",
+                "reference": "54c66aa5460d224f91fd44df596f0d783d32fee1",
                 "shasum": ""
             },
             "require": {
@@ -924,10 +924,10 @@
             ],
             "description": "Design system for Laravel admin interfaces — Blade components, tokens, and Claude Code documentation.",
             "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v3.0.2",
+                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v3.0.0",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-09-05T22:13:08+00:00"
+            "time": "2026-09-06T08:34:27+00:00"
         },
         {
             "name": "fruitcake/php-cors",

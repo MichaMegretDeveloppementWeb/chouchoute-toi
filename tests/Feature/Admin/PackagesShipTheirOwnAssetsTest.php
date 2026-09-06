@@ -20,11 +20,8 @@ use Tests\TestCase;
  * quatre-vingt-dix kilo-octets qui ne lui appartiennent pas, périmés dès la
  * prochaine version du paquet. Ces essais tiennent la frontière.
  *
- * Le dernier tient autre chose · **une page porte trois feuilles**, la nôtre en
- * dernier. Une règle sombre doit peser plus qu'une règle claire, sans quoi notre
- * `.bg-white` repeint en blanc ce que les paquets voulaient sombre. C'est ce qui
- * s'est produit le 2026-09-06, et le kit 3.0.1 l'a corrigé en passant de
- * `:where` à `:is`.
+ * Le poids des règles, qui est l'autre moitié de la cohabitation, est tenu à
+ * part par {@see VariantsOutrankPlainRulesTest}.
  */
 final class PackagesShipTheirOwnAssetsTest extends TestCase
 {
@@ -104,19 +101,6 @@ final class PackagesShipTheirOwnAssetsTest extends TestCase
         );
     }
 
-    public function test_our_compiled_stylesheet_lets_dark_rules_win(): void
-    {
-        $css = $this->compiledStylesheet();
-
-        $this->assertStringNotContainsString(
-            ':where(.dark,.dark *)',
-            $css,
-            "Notre feuille écrit encore ses règles sombres en `:where`.\n"
-            .'Chargée en dernier, elle repeindra en clair ce que les paquets voulaient sombre. '
-            .'Mettez falcon/ui-kit à jour (3.0.1 minimum), puis lancez `npm run build`.',
-        );
-    }
-
     /**
      * @return array<string, string>
      */
@@ -131,17 +115,6 @@ final class PackagesShipTheirOwnAssetsTest extends TestCase
         $this->assertNotSame([], $found, 'Aucun gabarit trouvé.');
 
         return $found;
-    }
-
-    /** La feuille que Vite a produite pour nos écrans, nommée par le manifeste. */
-    private function compiledStylesheet(): string
-    {
-        $manifest = json_decode($this->contentsOf('public/build/manifest.json'), true);
-
-        $this->assertIsArray($manifest);
-        $this->assertArrayHasKey('resources/css/ui-kit.css', $manifest, 'Lancez `npm run build`.');
-
-        return $this->contentsOf('public/build/'.$manifest['resources/css/ui-kit.css']['file']);
     }
 
     private function contentsOf(string $path): string
