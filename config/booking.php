@@ -144,11 +144,11 @@ return [
     | back-office : il le déclare dans `booking-admin.css`, que nous importons
     | dans `resources/css/admin.css` et que notre build fabrique avec le nôtre.
     |
-    | Trois fichiers sont livrés compilés, parce que rien ne peut les croiser ·
-    | la feuille de FullCalendar, le script du back-office, et la feuille de la
-    | page publique. `vendor:publish --tag=booking-assets --force` les pose, et
-    | les directives `@bookingStyles`, `@bookingScripts` et
-    | `@bookingPublicStyles` écrivent les balises. Aucun chemin à connaître.
+    | Deux fichiers restent livrés, et ils sont **servis depuis `vendor/`** par
+    | une route · le script du back-office et la feuille de la page publique.
+    | Rien à publier, rien à republier, et le dossier `public/vendor/` n'existe
+    | plus. `@bookingScripts` et `@bookingPublicStyles` écrivent les balises,
+    | et nous n'avons aucun chemin à connaître.
     |
     | Il n'y a plus de liste de points d'entrée ici : elle disait au paquet ce
     | que nous compilions pour lui, et ce n'est plus ainsi que ça marche.
