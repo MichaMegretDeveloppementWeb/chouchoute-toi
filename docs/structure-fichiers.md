@@ -2,9 +2,11 @@
 
 ## Principe
 
-Le projet suit une architecture segmentee : chaque page a son propre dossier de vues, ses propres assets, et son propre controller. Les pages sont decoupees en partials pour la lisibilite, et les elements communs (header, footer) sont de vrais composants Blade inclus dans un layout partage.
+Le projet suit une architecture segmentée : chaque page a son propre dossier de vues, ses propres assets, et son propre controller. Les pages sont découpées en partials pour la lisibilité, et les éléments communs (header, footer) sont de vrais composants Blade inclus dans un layout partagé.
 
-## Arborescence generale
+Cette page décrit le **site public**. Le back-office suit d'autres règles, parce qu'il héberge aussi les écrans de `falcon/booking` et de `falcon/analytics` : voir [Le back-office](back-office.md).
+
+## Arborescence générale
 
 ```
 app/
@@ -70,7 +72,7 @@ routes/
 
 ## Routes
 
-Chaque route appelle un controller dedie.
+Chaque route appelle un controller dédié.
 
 ```php
 // routes/web.php
@@ -107,7 +109,7 @@ class HomeController extends Controller
 
 ## Layout
 
-Le layout `web.blade.php` fournit la structure HTML commune a toutes les pages publiques. Il inclut les composants Blade du header et du footer, et prevoit des sections pour les assets et le contenu de chaque page.
+Le layout `web.blade.php` fournit la structure HTML commune à toutes les pages publiques. Il inclut les composants Blade du header et du footer, et prévoit des sections pour les assets et le contenu de chaque page.
 
 ```blade
 {{-- resources/views/layouts/web.blade.php --}}
@@ -143,7 +145,7 @@ Le layout `web.blade.php` fournit la structure HTML commune a toutes les pages p
 
 ## Composants Blade (header, footer)
 
-Le header et le footer sont de vrais composants Blade, places dans `resources/views/components/layout/`. Ils sont appeles dans le layout via la syntaxe `<x-layout.header />` et `<x-layout.footer />`.
+Le header et le footer sont de vrais composants Blade, placés dans `resources/views/components/layout/`. Ils sont appelés dans le layout via la syntaxe `<x-layout.header />` et `<x-layout.footer />`.
 
 ```blade
 {{-- resources/views/components/layout/header.blade.php --}}
@@ -163,7 +165,7 @@ Le header et le footer sont de vrais composants Blade, places dans `resources/vi
 
 ## Vues de page
 
-Chaque page a une vue principale `index.blade.php` qui etend le layout et importe ses propres assets.
+Chaque page a une vue principale `index.blade.php` qui étend le layout et importe ses propres assets.
 
 ```blade
 {{-- resources/views/web/home/index.blade.php --}}
@@ -186,7 +188,7 @@ Chaque page a une vue principale `index.blade.php` qui etend le layout et import
 
 ## Partials
 
-Les partials sont des fragments de vue specifiques a une page. Ils se trouvent dans le sous-dossier `partials/` de la page correspondante et sont inclus via `@include`.
+Les partials sont des fragments de vue spécifiques à une page. Ils se trouvent dans le sous-dossier `partials/` de la page correspondante et sont inclus via `@include`.
 
 ```blade
 {{-- resources/views/web/home/partials/hero.blade.php --}}
@@ -195,11 +197,11 @@ Les partials sont des fragments de vue specifiques a une page. Ils se trouvent d
 </section>
 ```
 
-Les partials ne sont **pas** des composants Blade (pas de classe PHP associee). Ce sont de simples fichiers Blade inclus pour segmenter une page volumineuse.
+Les partials ne sont **pas** des composants Blade (pas de classe PHP associée). Ce sont de simples fichiers Blade inclus pour segmenter une page volumineuse.
 
-## Resume des conventions
+## Résumé des conventions
 
-| Element | Emplacement | Inclusion |
+| Élément | Emplacement | Inclusion |
 |---|---|---|
 | Layout web | `views/layouts/web.blade.php` | `@extends('layouts.web')` |
 | Composant header | `views/components/layout/header.blade.php` | `<x-layout.header />` |

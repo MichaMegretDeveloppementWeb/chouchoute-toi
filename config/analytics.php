@@ -90,7 +90,8 @@ return [
         'route_prefix' => 'admin/marketing',
         'route_name' => 'marketing',
         'middleware' => ['web', 'auth:admin'],
-        'layout' => 'layouts.admin',
+        'layout' => 'layouts.analytics-admin',
+        'layout_section' => 'content',
     ],
 
     /*
@@ -165,9 +166,16 @@ return [
         // app; override to match the project (e.g. ['web', 'auth:admin']).
         'middleware' => ['web', 'auth:admin'],
 
-        // Blade layout the pages extend. null uses the package's own shell; set a
-        // host layout name (e.g. 'layouts.admin') to nest it in the host chrome.
-        'layout' => 'layouts.admin',
+        // Blade layout the screens extend. null uses the package's own shell; set
+        // a host layout name to nest them in the host chrome. Ours bridges the
+        // package's @extends to our <x-layout.admin> component — see
+        // docs/back-office.md.
+        'layout' => 'layouts.analytics-admin',
+
+        // The section that layout yields. Spelled out rather than left to the
+        // default, because a screen rendered into the wrong section shows up
+        // blank rather than failing. Same key, same value, as booking.
+        'layout_section' => 'content',
     ],
 
     /*
