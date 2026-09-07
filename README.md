@@ -1,59 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Chouchoute-toi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Le site d'Amandine David-Cruz, technicienne en extensions de cils à domicile
+sur le bassin lémanique. Vitrine publique, prise de rendez-vous en ligne et
+back-office.
 
-## About Laravel
+Laravel 13, PHP 8.5, Livewire 4, Tailwind 4, Vite.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Démarrer
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Le site est servi par Herd sur https://chouchoute-toi.test. Il n'y a rien à
+lancer pour l'afficher.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+composer setup     # dépendances, .env, clé, migrations, build
+npm run dev        # rechargement à chaud pendant qu'on travaille
+```
 
-## Learning Laravel
+## Les trois paquets
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+L'essentiel des écrans ne vit pas ici. Le projet assemble trois paquets
+maison, développés en parallèle dans `packages/` et liés par symlink :
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Paquet | Ce qu'il apporte |
+|---|---|
+| `falcon/ui-kit` | le design system : composants Blade, thème clair et sombre |
+| `falcon/booking` | la réservation, l'agenda, le catalogue des prestations |
+| `falcon/analytics` | la mesure d'audience et le module marketing |
 
-## Laravel Sponsors
+Chacun sait dire si son installation tient debout :
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+php artisan booking:check
+php artisan analytics:check
+php artisan ui-kit:check
+```
 
-### Premium Partners
+Ces trois commandes valent d'être lancées après une mise à jour de paquet.
+Presque tout ce qu'elles vérifient échoue en silence : un import oublié laisse
+des écrans sans style, un collecteur non posé ne mesure rien, et rien nulle
+part ne s'en plaint.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Ce qui appartient à l'hôte
 
-## Contributing
+Les six pages publiques (accueil, prestations, à propos, avis, contact,
+mentions légales), le graphe de données structurées du site, la coquille du
+back-office dans laquelle les écrans des paquets viennent se poser, et la
+grille tarifaire dans `config/tarifs.php`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+L'identité de l'entreprise vit dans `config/entreprise.php`, une seule fois.
+Elle était recopiée dans chaque vue, et une correction en oubliait toujours
+une.
 
-## Code of Conduct
+## Travailler dessus
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer test      # la suite
+composer analyse   # PHPStan
+npm run build      # après toute mise à jour de paquet
+```
 
-## Security Vulnerabilities
+Le `npm run build` n'est pas facultatif après un `composer update` d'un
+paquet : votre feuille a été fabriquée en lisant ses vues telles qu'elles
+étaient au dernier build.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Les paquets ont leur propre chaîne, à lancer depuis leur dossier et jamais
+depuis ici, leurs dépendances n'étant pas les nôtres :
 
-## License
+```bash
+cd packages/falcon-booking && composer qa
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Documentation
+
+- [`docs/structure-fichiers.md`](docs/structure-fichiers.md) : où va quoi,
+  contrôleurs, vues, partials
+- [`docs/assets-vite.md`](docs/assets-vite.md) : une page, une feuille, un
+  point d'entrée
+- [`docs/back-office.md`](docs/back-office.md) : la coquille partagée et
+  comment y accrocher un paquet
