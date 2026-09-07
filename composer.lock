@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f00c25ca105da4fca07756a617237c43",
+    "content-hash": "cf94736b4ee09c89210f0b7bf81effa7",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -731,17 +731,11 @@
         },
         {
             "name": "falcon/analytics",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics.git",
-                "reference": "be09952f28ad947f1f5571def6c53e90e671aa3e"
-            },
+            "version": "dev-corrections-audit-externe",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-analytics/zipball/be09952f28ad947f1f5571def6c53e90e671aa3e",
-                "reference": "be09952f28ad947f1f5571def6c53e90e671aa3e",
-                "shasum": ""
+                "type": "path",
+                "url": "packages/falcon-analytics",
+                "reference": "be09952f28ad947f1f5571def6c53e90e671aa3e"
             },
             "require": {
                 "falcon/ui-kit": "^3.0",
@@ -802,11 +796,10 @@
                 }
             ],
             "description": "First-party, privacy-aware web analytics for Laravel admin spaces.",
-            "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics/tree/v2.0.0",
-                "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics/issues"
-            },
-            "time": "2026-09-07T06:09:59+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "falcon/booking",
@@ -885,16 +878,10 @@
         {
             "name": "falcon/ui-kit",
             "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "6e4cfed32be9dfa7b309c65e63f68a33acc4f409"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/6e4cfed32be9dfa7b309c65e63f68a33acc4f409",
-                "reference": "6e4cfed32be9dfa7b309c65e63f68a33acc4f409",
-                "shasum": ""
+                "type": "path",
+                "url": "packages/falcon-ui-kit",
+                "reference": "6e4cfed32be9dfa7b309c65e63f68a33acc4f409"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.6",
@@ -954,11 +941,10 @@
                 "MIT"
             ],
             "description": "Design system for Laravel admin interfaces — Blade components, tokens, and Claude Code documentation.",
-            "support": {
-                "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v3.0.0",
-                "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
-            },
-            "time": "2026-09-07T05:58:29+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "fruitcake/php-cors",
@@ -9935,6 +9921,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "falcon/analytics": 20,
         "falcon/booking": 20
     },
     "prefer-stable": true,

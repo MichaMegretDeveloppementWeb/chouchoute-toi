@@ -17,6 +17,20 @@
             }
         },
         {
+            "type": "path",
+            "url": "packages/falcon-analytics",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/falcon-ui-kit",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/MichaMegretDeveloppementWeb/falcon-booking.git"
         },
@@ -31,7 +45,7 @@
     ],
     "require": {
         "php": "^8.5",
-        "falcon/analytics": "^2.0",
+        "falcon/analytics": "@dev",
         "falcon/booking": "@dev",
         "falcon/ui-kit": "^3.0",
         "laravel/framework": "^13.0",
