@@ -10,49 +10,23 @@
     ])
 @endsection
 
+{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+
+     Presque rien, et c'est le signe que le decoupage tient · le gabarit pose
+     deja la page (en `AboutPage`, dit juste au-dessus) et la fondatrice. Il ne
+     reste qu'a dire que cette page parle d'elle.
+
+     Elle portait une `Person` complete avec son `worksFor`, lui-meme un
+     `BeautySalon` complet · trois recopies pour une phrase. --}}
+@section('schema_page_type', 'AboutPage')
+
 @section('schema')
-    <script type="application/ld+json">
-    @php
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "AboutPage",
-        "name" => "À propos de Chouchoute-toi by Amande",
-        "description" => "Technicienne certifiée en extensions de cils à domicile sur le bassin lémanique. Découvrez l'histoire et les valeurs de Chouchoute-toi.",
-        "url" => route('about'),
-        "mainEntity" => [
-            "@type" => "Person",
-            "name" => "Amandine David-Cruz",
-            "jobTitle" => "Technicienne certifiée en extensions de cils",
-            "description" => "Passionnée par la beauté du regard, Amandine met son savoir-faire au service de ses clientes avec des extensions de cils naturelles et sur-mesure, directement à domicile.",
-            "image" => asset('images/about/portrait-amandine.webp'),
-            "worksFor" => [
-                "@type" => "BeautySalon",
-                "name" => "Chouchoute-toi by Amande",
-                "url" => url('/'),
-                "telephone" => "+33671637666",
-                "address" => [
-                    "@type" => "PostalAddress",
-                    "addressLocality" => "Publier",
-                    "postalCode" => "74500",
-                    "addressRegion" => "Haute-Savoie",
-                    "addressCountry" => "FR",
-                ],
-            ],
-            "knowsAbout" => [
-                "Extensions de cils",
-                "Pose cil à cil",
-                "Volume russe",
-                "Volume mixte",
-                "Remplissage extensions de cils",
-            ],
-            "sameAs" => [
-                "https://www.instagram.com/chouchoutetoibyamande/",
-                "https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/",
-            ],
+    <x-seo.graph :nodes="[
+        [
+            '@id' => url()->current().'#webpage',
+            'mainEntity' => \App\Services\SiteGraphService::ref('founder'),
         ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    @endphp
-    </script>
+    ]" />
 @endsection
 
 @section('content')

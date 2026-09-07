@@ -52,61 +52,31 @@
     {{-- Stack optionnel (Livewire, etc.) --}}
     @stack('head-extra')
 
-    {{-- JSON-LD Schema --}}
-    @hasSection('schema')
-        @yield('schema')
-    @else
-        <script type="application/ld+json">
-        @php
-        echo json_encode([
-            "@context" => "https://schema.org",
-            "@type" => "BeautySalon",
-            "name" => "Chouchoute-toi by Amande",
-            "description" => "Extensions de cils à domicile : pose cil à cil, volume russe et remplissage sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique.",
-            "url" => url('/'),
-            "telephone" => "+33671637666",
-            "email" => "dc.amandine@gmail.com",
-            "image" => asset('images/og-image.jpg'),
-            "address" => [
-                "@type" => "PostalAddress",
-                "streetAddress" => "261 rue des Tattes",
-                "addressLocality" => "Publier",
-                "postalCode" => "74500",
-                "addressRegion" => "Haute-Savoie",
-                "addressCountry" => "FR",
-            ],
-            "geo" => [
-                "@type" => "GeoCoordinates",
-                "latitude" => 46.3925,
-                "longitude" => 6.5456,
-            ],
-            "openingHoursSpecification" => [
-                [
-                    "@type" => "OpeningHoursSpecification",
-                    "dayOfWeek" => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                    "opens" => "09:00",
-                    "closes" => "17:00",
-                ],
-            ],
-            "areaServed" => [
-                ["@type" => "City", "name" => "Évian-les-Bains"],
-                ["@type" => "City", "name" => "Thonon-les-Bains"],
-                ["@type" => "City", "name" => "Publier"],
-                ["@type" => "City", "name" => "Amphion"],
-                ["@type" => "City", "name" => "Maxilly"],
-                ["@type" => "City", "name" => "Neuvecelle"],
-            ],
-            "sameAs" => [
-                "https://www.instagram.com/chouchoutetoibyamande/",
-                "https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/",
-            ],
-            "priceRange" => "€€",
-            "paymentAccepted" => "Espèces, Virement, Paiement mobile",
-            "currenciesAccepted" => "EUR",
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        @endphp
-        </script>
-    @endif
+    {{-- ── Donnees structurees ─────────────────────────────────────────────
+
+         Le gabarit pose **toujours** le graphe du site · l'entreprise, la
+         fondatrice, le site et la page courante. Les pages n'ajoutent que
+         leurs propres nœuds, et designent l'entreprise par son `@id`.
+
+         Ce bloc etait sous `@hasSection('schema')` · une page qui posait la
+         section **remplacait** celui du gabarit, ce qui obligeait chacune a
+         reecrire l'entreprise entiere. Six copies, aucun `@id`, et un moteur
+         qui y lisait six entreprises sans rapport.
+
+         Le titre et la description viennent des memes sections que le `<title>`
+         et la balise `description` · une page se nomme une fois. --}}
+    @php
+        $seoDescription = 'Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose complète, remplissage, volume russe. Réservez votre séance.';
+    @endphp
+
+    <x-seo.graph :nodes="\App\Services\SiteGraphService::siteNodes(
+        $__env->yieldContent('title', 'Accueil').' · '.config('app.name'),
+        $__env->yieldContent('meta_description', $seoDescription),
+        $__env->yieldContent('schema_page_type', 'WebPage'),
+    )" />
+
+    {{-- Ce que la page ajoute · sa FAQ, son catalogue, ses avis. --}}
+    @yield('schema')
 </head>
 <body class="bg-cream text-charcoal font-sans antialiased">
     <x-layout.header />

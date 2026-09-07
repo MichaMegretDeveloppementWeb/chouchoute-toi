@@ -10,70 +10,44 @@
     ])
 @endsection
 
+{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+
+     La note et les avis, ajoutes a l'entreprise que le gabarit declare. Cette
+     page reecrivait un `BeautySalon` complet pour les y accrocher.
+
+     **Rien n'est ecrit quand il n'y a rien** · une note absente vaut mieux
+     qu'une note inventee, et Google refuse un `aggregateRating` sans avis. --}}
 @section('schema')
-    <script type="application/ld+json">
     @php
-    $schema = [
-        "@context" => "https://schema.org",
-        "@type" => "BeautySalon",
-        "name" => "Chouchoute-toi by Amande",
-        "url" => url('/'),
-        "telephone" => "+33671637666",
-        "email" => "dc.amandine@gmail.com",
-        "image" => asset('images/og-image.jpg'),
-        "address" => [
-            "@type" => "PostalAddress",
-            "streetAddress" => "261 rue des Tattes",
-            "addressLocality" => "Publier",
-            "postalCode" => "74500",
-            "addressRegion" => "Haute-Savoie",
-            "addressCountry" => "FR",
-        ],
-        "geo" => [
-            "@type" => "GeoCoordinates",
-            "latitude" => 46.3925,
-            "longitude" => 6.5456,
-        ],
-        "priceRange" => "€€",
-        "sameAs" => [
-            "https://www.instagram.com/chouchoutetoibyamande/",
-            "https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/",
-        ],
-    ];
+        $entreprise = ['@id' => \App\Services\SiteGraphService::id('business')];
 
-    if (! empty($googleRating) && ! empty($googleTotal)) {
-        $schema["aggregateRating"] = [
-            "@type" => "AggregateRating",
-            "ratingValue" => (string) $googleRating,
-            "bestRating" => "5",
-            "worstRating" => "1",
-            "ratingCount" => (string) $googleTotal,
-        ];
-    }
-
-    if (! empty($googleReviews)) {
-        $schema["review"] = [];
-        foreach ($googleReviews as $review) {
-            $schema["review"][] = [
-                "@type" => "Review",
-                "author" => [
-                    "@type" => "Person",
-                    "name" => $review['nom'],
-                ],
-                "reviewRating" => [
-                    "@type" => "Rating",
-                    "ratingValue" => (string) $review['note'],
-                    "bestRating" => "5",
-                    "worstRating" => "1",
-                ],
-                "reviewBody" => $review['texte'],
+        if (! empty($googleRating) && ! empty($googleTotal)) {
+            $entreprise['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (string) $googleRating,
+                'bestRating' => '5',
+                'worstRating' => '1',
+                'ratingCount' => (string) $googleTotal,
             ];
         }
-    }
 
-    echo json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        foreach ($googleReviews ?? [] as $avis) {
+            $entreprise['review'][] = [
+                '@type' => 'Review',
+                'author' => ['@type' => 'Person', 'name' => $avis['nom']],
+                'reviewRating' => [
+                    '@type' => 'Rating',
+                    'ratingValue' => (string) $avis['note'],
+                    'bestRating' => '5',
+                    'worstRating' => '1',
+                ],
+                'reviewBody' => $avis['texte'],
+                'itemReviewed' => ['@id' => \App\Services\SiteGraphService::id('business')],
+            ];
+        }
     @endphp
-    </script>
+
+    <x-seo.graph :nodes="[$entreprise]" />
 @endsection
 
 @section('content')

@@ -10,167 +10,88 @@
     ])
 @endsection
 
+{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+
+     L'entreprise, la fondatrice, le site et la page sont poses par le gabarit,
+     une fois pour tout le site. Cette page n'ajoute que ce qui lui appartient ·
+     son apercu du catalogue, et sa FAQ.
+
+     Le premier nœud ne porte **que** l'`@id` de l'entreprise et la propriete
+     qu'il lui ajoute · un moteur fusionne deux nœuds de meme `@id`, ce qui est
+     la facon correcte de completer une entite declaree ailleurs. --}}
 @section('schema')
-    <script type="application/ld+json">
     @php
-    $categories = config('tarifs.categories');
-    $depose = config('tarifs.depose');
+        $apercuDuCatalogue = [];
 
-    $offers = [];
-    foreach ($categories as $categorie) {
-        $offers[] = [
-            "@type" => "Offer",
-            "itemOffered" => [
-                "@type" => "Service",
-                "name" => $categorie['pose']['nom'],
-                "description" => $categorie['description'],
+        foreach (config('tarifs.categories') as $categorie) {
+            $apercuDuCatalogue[] = [
+                '@type' => 'Offer',
+                'itemOffered' => [
+                    '@type' => 'Service',
+                    'name' => $categorie['pose']['nom'],
+                    'description' => $categorie['description'],
+                ],
+                'price' => (string) $categorie['pose']['prix'],
+                'priceCurrency' => config('entreprise.devise'),
+                'availability' => 'https://schema.org/InStock',
+            ];
+        }
+
+        $depose = config('tarifs.depose');
+
+        $apercuDuCatalogue[] = [
+            '@type' => 'Offer',
+            'itemOffered' => [
+                '@type' => 'Service',
+                'name' => $depose['nom'],
+                'description' => $depose['description'],
             ],
-            "price" => (string) $categorie['pose']['prix'],
-            "priceCurrency" => "EUR",
-            "availability" => "https://schema.org/InStock",
+            'price' => (string) $depose['prix'],
+            'priceCurrency' => config('entreprise.devise'),
+            'availability' => 'https://schema.org/InStock',
         ];
-    }
-    $offers[] = [
-        "@type" => "Offer",
-        "itemOffered" => [
-            "@type" => "Service",
-            "name" => $depose['nom'],
-            "description" => $depose['description'],
-        ],
-        "price" => (string) $depose['prix'],
-        "priceCurrency" => "EUR",
-        "availability" => "https://schema.org/InStock",
-    ];
 
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "BeautySalon",
-        "name" => "Chouchoute-toi by Amande",
-        "alternateName" => "Chouchoute-toi",
-        "description" => "Extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose cil à cil, volume russe, volume mixte et remplissage par technicienne certifiée.",
-        "url" => url('/'),
-        "telephone" => "+33671637666",
-        "email" => "dc.amandine@gmail.com",
-        "image" => asset('images/og-image.jpg'),
-        "slogan" => "Sublimez votre regard, cil après cil",
-        "founder" => [
-            "@type" => "Person",
-            "name" => "Amandine David-Cruz",
-            "jobTitle" => "Technicienne certifiée en extensions de cils",
-        ],
-        "address" => [
-            "@type" => "PostalAddress",
-            "streetAddress" => "261 rue des Tattes",
-            "addressLocality" => "Publier",
-            "postalCode" => "74500",
-            "addressRegion" => "Haute-Savoie",
-            "addressCountry" => "FR",
-        ],
-        "geo" => [
-            "@type" => "GeoCoordinates",
-            "latitude" => 46.3925,
-            "longitude" => 6.5456,
-        ],
-        "openingHoursSpecification" => [
+        $questions = [
             [
-                "@type" => "OpeningHoursSpecification",
-                "dayOfWeek" => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                "opens" => "09:00",
-                "closes" => "17:00",
+                "Combien de temps dure une pose complète d'extensions de cils ?",
+                "Une pose complète dure en moyenne 1h30 à 2h30 selon le résultat souhaité. Vous serez confortablement installée chez vous pendant toute la durée de la prestation.",
             ],
-        ],
-        "areaServed" => [
-            ["@type" => "City", "name" => "Évian-les-Bains"],
-            ["@type" => "City", "name" => "Thonon-les-Bains"],
-            ["@type" => "City", "name" => "Publier"],
-            ["@type" => "City", "name" => "Amphion"],
-            ["@type" => "City", "name" => "Maxilly"],
-            ["@type" => "City", "name" => "Neuvecelle"],
-        ],
-        "sameAs" => [
-            "https://www.instagram.com/chouchoutetoibyamande/",
-            "https://www.facebook.com/p/Chouchoute-Toi-Ongles-Cils-by-Amande-61551795336766/",
-        ],
-        "priceRange" => "€€",
-        "paymentAccepted" => "Espèces, Virement, Paiement mobile",
-        "currenciesAccepted" => "EUR",
-        "knowsAbout" => [
-            "Extensions de cils",
-            "Pose cil à cil",
-            "Volume russe",
-            "Volume mixte",
-            "Remplissage extensions de cils",
-            "Dépose extensions de cils",
-        ],
-        "hasOfferCatalog" => [
-            "@type" => "OfferCatalog",
-            "name" => "Prestations extensions de cils à domicile",
-            "itemListElement" => $offers,
-        ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            [
+                "Les extensions de cils abîment-elles les cils naturels ?",
+                "Non, à condition qu'elles soient posées par une professionnelle. Chouchoute-toi utilise des produits hypoallergéniques et une technique respectueuse du cycle naturel de vos cils. Chaque extension est posée individuellement sur un cil naturel, sans contact avec la paupière.",
+            ],
+            [
+                "À quelle fréquence faut-il faire un remplissage d'extensions de cils ?",
+                "Pour maintenir un regard parfait, un remplissage est recommandé toutes les 2 à 3 semaines selon votre cycle de renouvellement capillaire.",
+            ],
+            [
+                "Comment préparer son rendez-vous pour une pose d'extensions de cils ?",
+                "Venez démaquillée au niveau des yeux et évitez les crèmes huileuses le jour même. Prévoyez un espace confortable pour vous allonger (canapé, lit). La technicienne s'occupe de tout le reste.",
+            ],
+        ];
     @endphp
-    </script>
-    <script type="application/ld+json">
-    @php
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "WebSite",
-        "name" => "Chouchoute-toi",
-        "alternateName" => "Chouchoute-toi by Amande",
-        "url" => url('/'),
-        "description" => "Extensions de cils à domicile sur le bassin lémanique : Évian-les-Bains, Thonon-les-Bains et alentours.",
-        "inLanguage" => "fr-FR",
-        "publisher" => [
-            "@type" => "Organization",
-            "name" => "Chouchoute-toi by Amande",
-            "url" => url('/'),
-            "logo" => asset('images/og-image.jpg'),
-        ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    @endphp
-    </script>
-    <script type="application/ld+json">
-    @php
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "FAQPage",
-        "mainEntity" => [
-            [
-                "@type" => "Question",
-                "name" => "Combien de temps dure une pose complète d'extensions de cils ?",
-                "acceptedAnswer" => [
-                    "@type" => "Answer",
-                    "text" => "Une pose complète dure en moyenne 1h30 à 2h30 selon le résultat souhaité. Vous serez confortablement installée chez vous pendant toute la durée de la prestation.",
-                ],
-            ],
-            [
-                "@type" => "Question",
-                "name" => "Les extensions de cils abîment-elles les cils naturels ?",
-                "acceptedAnswer" => [
-                    "@type" => "Answer",
-                    "text" => "Non, à condition qu'elles soient posées par une professionnelle. Chouchoute-toi utilise des produits hypoallergéniques et une technique respectueuse du cycle naturel de vos cils. Chaque extension est posée individuellement sur un cil naturel, sans contact avec la paupière.",
-                ],
-            ],
-            [
-                "@type" => "Question",
-                "name" => "À quelle fréquence faut-il faire un remplissage d'extensions de cils ?",
-                "acceptedAnswer" => [
-                    "@type" => "Answer",
-                    "text" => "Pour maintenir un regard parfait, un remplissage est recommandé toutes les 2 à 3 semaines selon votre cycle de renouvellement capillaire.",
-                ],
-            ],
-            [
-                "@type" => "Question",
-                "name" => "Comment préparer son rendez-vous pour une pose d'extensions de cils ?",
-                "acceptedAnswer" => [
-                    "@type" => "Answer",
-                    "text" => "Venez démaquillée au niveau des yeux et évitez les crèmes huileuses le jour même. Prévoyez un espace confortable pour vous allonger (canapé, lit). La technicienne s'occupe de tout le reste.",
-                ],
+
+    <x-seo.graph :nodes="[
+        [
+            '@id' => \App\Services\SiteGraphService::id('business'),
+            'hasOfferCatalog' => [
+                '@type' => 'OfferCatalog',
+                '@id' => url()->current().'#catalogue',
+                'name' => 'Prestations extensions de cils à domicile',
+                'itemListElement' => $apercuDuCatalogue,
             ],
         ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    @endphp
-    </script>
+        [
+            '@type' => 'FAQPage',
+            '@id' => url()->current().'#faq',
+            'isPartOf' => ['@id' => url()->current().'#webpage'],
+            'mainEntity' => array_map(fn (array $q) => [
+                '@type' => 'Question',
+                'name' => $q[0],
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $q[1]],
+            ], $questions),
+        ],
+    ]" />
 @endsection
 
 @section('content')

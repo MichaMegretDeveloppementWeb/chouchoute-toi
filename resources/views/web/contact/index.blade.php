@@ -18,56 +18,16 @@
     @livewireScripts
 @endpush
 
+@section('schema_page_type', 'ContactPage')
+
+{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+
+     Le point de contact, et la FAQ. L'entreprise, son adresse, ses coordonnees
+     geographiques et ses horaires viennent du gabarit · cette page les
+     reecrivait en entier, comme les quatre autres. --}}
 @section('schema')
-    <script type="application/ld+json">
     @php
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "BeautySalon",
-        "name" => "Chouchoute-toi by Amande",
-        "url" => url('/'),
-        "telephone" => "+33671637666",
-        "email" => "dc.amandine@gmail.com",
-        "image" => asset('images/og-image.jpg'),
-        "address" => [
-            "@type" => "PostalAddress",
-            "streetAddress" => "261 rue des Tattes",
-            "addressLocality" => "Publier",
-            "postalCode" => "74500",
-            "addressRegion" => "Haute-Savoie",
-            "addressCountry" => "FR",
-        ],
-        "geo" => [
-            "@type" => "GeoCoordinates",
-            "latitude" => 46.3925,
-            "longitude" => 6.5456,
-        ],
-        "contactPoint" => [
-            [
-                "@type" => "ContactPoint",
-                "telephone" => "+33671637666",
-                "contactType" => "customer service",
-                "availableLanguage" => "French",
-                "areaServed" => "FR",
-            ],
-        ],
-        "openingHoursSpecification" => [
-            [
-                "@type" => "OpeningHoursSpecification",
-                "dayOfWeek" => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                "opens" => "09:00",
-                "closes" => "17:00",
-            ],
-        ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    @endphp
-    </script>
-    <script type="application/ld+json">
-    @php
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "FAQPage",
-        "mainEntity" => [
+    $questions = [
             [
                 "@type" => "Question",
                 "name" => "Combien de temps dure une pose complète d'extensions de cils ?",
@@ -116,10 +76,27 @@
                     "text" => "Chouchoute-toi travaille du lundi au samedi, sur rendez-vous. Des créneaux en journée et en soirée sont proposés pour s'adapter à votre emploi du temps. Contactez-nous pour connaître les prochaines disponibilités.",
                 ],
             ],
-        ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    ];
     @endphp
-    </script>
+
+    <x-seo.graph :nodes="[
+        [
+            '@id' => \App\Services\SiteGraphService::id('business'),
+            'contactPoint' => [[
+                '@type' => 'ContactPoint',
+                'telephone' => config('entreprise.telephone'),
+                'contactType' => 'customer service',
+                'availableLanguage' => 'French',
+                'areaServed' => config('entreprise.adresse.pays'),
+            ]],
+        ],
+        [
+            '@type' => 'FAQPage',
+            '@id' => url()->current().'#faq',
+            'isPartOf' => ['@id' => url()->current().'#webpage'],
+            'mainEntity' => $questions,
+        ],
+    ]" />
 @endsection
 
 @section('content')

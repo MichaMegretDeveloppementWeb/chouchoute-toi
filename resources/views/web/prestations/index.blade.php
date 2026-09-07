@@ -10,111 +10,100 @@
     ])
 @endsection
 
+{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+
+     Le catalogue complet, rubrique par rubrique, et la prestation qu'il decrit.
+     L'entreprise vient du gabarit · elle n'est plus recopiee en `provider`,
+     elle y est designee par son `@id`. --}}
 @section('schema')
-    <script type="application/ld+json">
     @php
-    $categories = config('tarifs.categories');
-    $depose = config('tarifs.depose');
+        $rubriques = [];
 
-    $catalogItems = [];
-    foreach ($categories as $slug => $categorie) {
-        $subOffers = [];
-
-        $subOffers[] = [
-            "@type" => "Offer",
-            "itemOffered" => [
-                "@type" => "Service",
-                "name" => $categorie['pose']['nom'],
-                "description" => $categorie['description'],
-                "serviceType" => "Pose complète d'extensions de cils",
-            ],
-            "price" => (string) $categorie['pose']['prix'],
-            "priceCurrency" => "EUR",
-            "availability" => "https://schema.org/InStock",
-        ];
-
-        foreach ($categorie['remplissages'] as $remplissage) {
-            $subOffers[] = [
-                "@type" => "Offer",
-                "itemOffered" => [
-                    "@type" => "Service",
-                    "name" => $remplissage['nom'] . ' ' . $categorie['nom'],
-                    "description" => $remplissage['description'],
-                    "serviceType" => "Remplissage d'extensions de cils",
+        foreach (config('tarifs.categories') as $slug => $categorie) {
+            $offres = [[
+                '@type' => 'Offer',
+                'itemOffered' => [
+                    '@type' => 'Service',
+                    'name' => $categorie['pose']['nom'],
+                    'description' => $categorie['description'],
+                    'serviceType' => "Pose complète d'extensions de cils",
                 ],
-                "price" => (string) $remplissage['prix'],
-                "priceCurrency" => "EUR",
-                "availability" => "https://schema.org/InStock",
+                'price' => (string) $categorie['pose']['prix'],
+                'priceCurrency' => config('entreprise.devise'),
+                'availability' => 'https://schema.org/InStock',
+            ]];
+
+            foreach ($categorie['remplissages'] as $remplissage) {
+                $offres[] = [
+                    '@type' => 'Offer',
+                    'itemOffered' => [
+                        '@type' => 'Service',
+                        'name' => $remplissage['nom'].' '.$categorie['nom'],
+                        'description' => $remplissage['description'],
+                        'serviceType' => "Remplissage d'extensions de cils",
+                    ],
+                    'price' => (string) $remplissage['prix'],
+                    'priceCurrency' => config('entreprise.devise'),
+                    'availability' => 'https://schema.org/InStock',
+                ];
+            }
+
+            $rubriques[] = [
+                '@type' => 'OfferCatalog',
+                '@id' => url()->current().'#catalogue-'.$slug,
+                'name' => $categorie['nom'],
+                'description' => $categorie['description'],
+                'itemListElement' => $offres,
             ];
         }
 
-        $catalogItems[] = [
-            "@type" => "OfferCatalog",
-            "name" => $categorie['nom'],
-            "description" => $categorie['description'],
-            "itemListElement" => $subOffers,
-        ];
-    }
+        $depose = config('tarifs.depose');
 
-    $catalogItems[] = [
-        "@type" => "OfferCatalog",
-        "name" => "Dépose",
-        "itemListElement" => [
-            [
-                "@type" => "Offer",
-                "itemOffered" => [
-                    "@type" => "Service",
-                    "name" => $depose['nom'],
-                    "description" => $depose['description'],
-                    "serviceType" => "Dépose d'extensions de cils",
+        $rubriques[] = [
+            '@type' => 'OfferCatalog',
+            '@id' => url()->current().'#catalogue-depose',
+            'name' => 'Dépose',
+            'itemListElement' => [[
+                '@type' => 'Offer',
+                'itemOffered' => [
+                    '@type' => 'Service',
+                    'name' => $depose['nom'],
+                    'description' => $depose['description'],
+                    'serviceType' => "Dépose d'extensions de cils",
                 ],
-                "price" => (string) $depose['prix'],
-                "priceCurrency" => "EUR",
-                "availability" => "https://schema.org/InStock",
-            ],
-        ],
-    ];
-
-    echo json_encode([
-        "@context" => "https://schema.org",
-        "@type" => "Service",
-        "name" => "Extensions de cils à domicile",
-        "description" => "Pose complète, remplissage et dépose d'extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose cil à cil, volume russe, volume mixte et volume intense par technicienne certifiée.",
-        "url" => route('prestations'),
-        "serviceType" => "Extensions de cils",
-        "termsOfService" => route('legal'),
-        "providerMobility" => "dynamic",
-        "provider" => [
-            "@type" => "BeautySalon",
-            "name" => "Chouchoute-toi by Amande",
-            "url" => url('/'),
-            "telephone" => "+33671637666",
-            "email" => "dc.amandine@gmail.com",
-            "address" => [
-                "@type" => "PostalAddress",
-                "streetAddress" => "261 rue des Tattes",
-                "addressLocality" => "Publier",
-                "postalCode" => "74500",
-                "addressRegion" => "Haute-Savoie",
-                "addressCountry" => "FR",
-            ],
-        ],
-        "areaServed" => [
-            ["@type" => "City", "name" => "Évian-les-Bains"],
-            ["@type" => "City", "name" => "Thonon-les-Bains"],
-            ["@type" => "City", "name" => "Publier"],
-            ["@type" => "City", "name" => "Amphion"],
-            ["@type" => "City", "name" => "Maxilly"],
-            ["@type" => "City", "name" => "Neuvecelle"],
-        ],
-        "hasOfferCatalog" => [
-            "@type" => "OfferCatalog",
-            "name" => "Prestations extensions de cils à domicile",
-            "itemListElement" => $catalogItems,
-        ],
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                'price' => (string) $depose['prix'],
+                'priceCurrency' => config('entreprise.devise'),
+                'availability' => 'https://schema.org/InStock',
+            ]],
+        ];
     @endphp
-    </script>
+
+    <x-seo.graph :nodes="[
+        [
+            '@type' => 'Service',
+            '@id' => url()->current().'#prestation',
+            'name' => 'Extensions de cils à domicile',
+            'description' => 'Pose complète, remplissage et dépose d’extensions de cils à domicile sur Évian-les-Bains, Thonon-les-Bains et le bassin lémanique. Pose cil à cil, volume russe, volume mixte et volume intense par technicienne certifiée.',
+            'url' => route('prestations'),
+            'serviceType' => 'Extensions de cils',
+            'termsOfService' => route('legal'),
+            'providerMobility' => 'dynamic',
+            'provider' => \App\Services\SiteGraphService::ref('business'),
+            'areaServed' => \App\Services\SiteGraphService::areaServed(),
+            'hasOfferCatalog' => [
+                '@type' => 'OfferCatalog',
+                '@id' => url()->current().'#catalogue',
+                'name' => 'Prestations extensions de cils à domicile',
+                'itemListElement' => $rubriques,
+            ],
+        ],
+        {{-- Le catalogue rattache a l'entreprise · la prestation la designe
+             deja par `provider`, et c'est le sens qui compte. --}}
+        [
+            '@id' => \App\Services\SiteGraphService::id('business'),
+            'hasOfferCatalog' => ['@id' => url()->current().'#catalogue'],
+        ],
+    ]" />
 @endsection
 
 @section('content')
