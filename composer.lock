@@ -735,12 +735,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics.git",
-                "reference": "bade979f4132a0fab4a0ef48be6e7badaa874586"
+                "reference": "09d9f56b411c52dfeb12a69d3421944a90cd2cfd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-analytics/zipball/bade979f4132a0fab4a0ef48be6e7badaa874586",
-                "reference": "bade979f4132a0fab4a0ef48be6e7badaa874586",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-analytics/zipball/09d9f56b411c52dfeb12a69d3421944a90cd2cfd",
+                "reference": "09d9f56b411c52dfeb12a69d3421944a90cd2cfd",
                 "shasum": ""
             },
             "require": {
@@ -806,7 +806,7 @@
                 "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics/tree/v2.0.0",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-analytics/issues"
             },
-            "time": "2026-09-06T21:43:27+00:00"
+            "time": "2026-09-07T06:07:08+00:00"
         },
         {
             "name": "falcon/booking",
@@ -814,7 +814,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "5f7d3f57b90a7629a27d16ef45e4fb51f7a9938f"
+                "reference": "59153d057a8c3101adbf1118debfb53278e40f6b"
             },
             "require": {
                 "falcon/ui-kit": "^3.0",
@@ -888,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:MichaMegretDeveloppementWeb/falcon-ui-kit.git",
-                "reference": "3a4e851d4763e020904288cbcdfa0ef46c14ff06"
+                "reference": "6e4cfed32be9dfa7b309c65e63f68a33acc4f409"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/3a4e851d4763e020904288cbcdfa0ef46c14ff06",
-                "reference": "3a4e851d4763e020904288cbcdfa0ef46c14ff06",
+                "url": "https://api.github.com/repos/MichaMegretDeveloppementWeb/falcon-ui-kit/zipball/6e4cfed32be9dfa7b309c65e63f68a33acc4f409",
+                "reference": "6e4cfed32be9dfa7b309c65e63f68a33acc4f409",
                 "shasum": ""
             },
             "require": {
@@ -903,7 +903,10 @@
                 "php": "^8.2"
             },
             "require-dev": {
+                "larastan/larastan": "3.10",
+                "laravel/pint": "^1.30",
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "phpstan/phpstan": "2.2",
                 "phpunit/phpunit": "^10.5|^11.0"
             },
             "suggest": {
@@ -934,6 +937,17 @@
             "scripts": {
                 "test": [
                     "@php vendor/bin/phpunit"
+                ],
+                "format": [
+                    "@php vendor/bin/pint"
+                ],
+                "analyse": [
+                    "@php vendor/bin/phpstan analyse --memory-limit=2G"
+                ],
+                "qa": [
+                    "@php vendor/bin/pint --test",
+                    "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
+                    "@php vendor/bin/phpunit"
                 ]
             },
             "license": [
@@ -944,7 +958,7 @@
                 "source": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/tree/v3.0.0",
                 "issues": "https://github.com/MichaMegretDeveloppementWeb/falcon-ui-kit/issues"
             },
-            "time": "2026-09-06T20:14:27+00:00"
+            "time": "2026-09-07T05:58:29+00:00"
         },
         {
             "name": "fruitcake/php-cors",
