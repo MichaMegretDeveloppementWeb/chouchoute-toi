@@ -11,6 +11,18 @@
 @import 'tailwindcss' source(none);
 
 /*
+ * Une ligne par fournisseur, ecrite par son installateur · le paquet declare
+ * ses vues et ses regles, nous les compilons.
+ *
+ * La page de reservation portait sa propre feuille, compilee par le paquet et
+ * servie depuis `vendor/`, jusqu'au 2026-09-07. Elle est ici parce qu'un hote
+ * peut lui donner son propre gabarit : la notre se chargerait alors sur cette
+ * page, et deux compilations Tailwind s'y disputeraient les memes noms de
+ * classes. Une seule feuille par espace rend la chose impossible.
+ */
+@import '../../vendor/falcon/booking/resources/css/booking-public.css';
+
+/*
  * `source(none)` et les sources nommees, comme `admin.css`.
  *
  * Sans lui, Tailwind lisait tout le depot non ignore par git · `app/`,

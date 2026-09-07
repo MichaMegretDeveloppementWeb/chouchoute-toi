@@ -94,24 +94,47 @@ final class OneStylesheetPerPageTest extends TestCase
      */
     public function test_our_entry_imports_each_provider(): void
     {
-        $entry = $this->contentsOf('resources/css/admin.css');
+        /*
+         * Les deux espaces, et ce que chacun doit porter.
+         *
+         * `web.css` a rejoint cette liste le 2026-09-07 · `booking-public.css`
+         * était compilée par le paquet et servie depuis `vendor/` par une route
+         * à lui. Elle est déclarée comme les autres depuis, et sans cet import
+         * la page de réservation arrive nue, sans la moindre erreur.
+         */
+        $entries = [
+            'resources/css/admin.css' => [
+                '../../vendor/falcon/ui-kit/resources/css/preset.css',
+                '../../vendor/falcon/booking/resources/css/booking-admin.css',
+                '../../vendor/falcon/analytics/resources/css/analytics-admin.css',
+            ],
+            'resources/css/web.css' => [
+                '../../vendor/falcon/booking/resources/css/booking-public.css',
+            ],
+        ];
 
-        foreach ([
-            '../../vendor/falcon/ui-kit/resources/css/preset.css',
-            '../../vendor/falcon/booking/resources/css/booking-admin.css',
-            '../../vendor/falcon/analytics/resources/css/analytics-admin.css',
-        ] as $provider) {
-            $this->assertStringContainsString("@import '{$provider}';", $entry);
-        }
+        foreach ($entries as $path => $providers) {
+            $entry = $this->contentsOf($path);
 
-        preg_match_all('/@source\s+\'([^\']+)\'/', $entry, $matches);
+            foreach ($providers as $provider) {
+                $this->assertStringContainsString("@import '{$provider}';", $entry);
+            }
 
-        foreach ($matches[1] as $source) {
-            $this->assertStringStartsWith(
-                '../views/',
-                $source,
-                "« {$source} » va lire les vues d'un paquet à sa place. Importez son point d'entrée.",
-            );
+            preg_match_all('/@source\s+\'([^\']+)\'/', $entry, $matches);
+
+            foreach ($matches[1] as $source) {
+                // La pagination de Laravel est nommée à la main : elle vit dans
+                // `vendor/`, que git ignore, et aucun point d'entrée ne la
+                // déclare pour nous.
+                if (str_contains($source, 'Illuminate/Pagination')) {
+                    continue;
+                }
+
+                $this->assertTrue(
+                    str_starts_with($source, '../views/') || str_starts_with($source, '../js/'),
+                    "« {$source} » va lire les vues d'un paquet à sa place. Importez son point d'entrée.",
+                );
+            }
         }
     }
 
