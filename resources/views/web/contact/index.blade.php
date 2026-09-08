@@ -20,11 +20,9 @@
 
 @section('schema_page_type', 'ContactPage')
 
-{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
-
-     Le point de contact, et la FAQ. L'entreprise, son adresse, ses coordonnees
-     geographiques et ses horaires viennent du gabarit · cette page les
-     reecrivait en entier, comme les quatre autres. --}}
+{{-- What this page adds to the site's graph: the contact point and the FAQ.
+     The business, its address, its coordinates and its hours come from the
+     layout. --}}
 @section('schema')
     @php
     $questions = [

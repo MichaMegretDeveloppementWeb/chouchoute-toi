@@ -3,8 +3,7 @@
     data-header
 >
     <nav class="relative z-10 mx-auto flex max-w-[1336px] items-center justify-between px-5 py-2.5 lg:grid lg:grid-cols-[1fr_auto_1fr]">
-        {{-- Navigation gauche (desktop) --}}
-        <ul class="hidden items-center gap-5 lg:flex">
+            <ul class="hidden items-center gap-5 lg:flex">
             <li>
                 <a href="{{ route('home') }}" class="header__link text-sm font-normal uppercase tracking-wide text-black transition-opacity hover:opacity-60 {{ request()->routeIs('home') ? 'border-b border-black pb-0.5' : '' }}">
                     Accueil
@@ -22,14 +21,12 @@
             </li>
         </ul>
 
-        {{-- Logo centre --}}
-        <a href="{{ route('home') }}" class="header__logo text-center leading-none">
+            <a href="{{ route('home') }}" class="header__logo text-center leading-none">
             <span class="block text-xl font-bold tracking-widest text-black uppercase">Chouchoute-toi</span>
             <span class="block font-signature text-3xl text-wine/80 text-right">By Amande</span>
         </a>
 
-        {{-- Navigation droite + actions (desktop) --}}
-        <div class="hidden items-center justify-end gap-5 lg:flex">
+            <div class="hidden items-center justify-end gap-5 lg:flex">
             <a href="{{ route('reviews') }}" class="header__link text-sm font-normal uppercase tracking-wide text-black transition-opacity hover:opacity-60 {{ request()->routeIs('reviews') ? 'border-b border-black pb-0.5' : '' }}">
                 Avis
             </a>
@@ -46,8 +43,7 @@
             </a>
         </div>
 
-        {{-- Hamburger mobile --}}
-        <button
+            <button
             class="header__hamburger flex flex-col gap-1.5 lg:hidden"
             aria-label="Ouvrir le menu"
             data-menu-toggle
@@ -58,7 +54,6 @@
         </button>
     </nav>
 
-    {{-- Menu mobile --}}
     <div
         class="header__mobile-menu fixed inset-0 bg-cream lg:hidden"
         data-mobile-menu
@@ -77,5 +72,5 @@
     </div>
 </header>
 
-{{-- Spacer pour compenser le header fixed --}}
+{{-- Spacer making up for the fixed header. --}}
 <div class="h-19 lg:h-[80px]"></div>

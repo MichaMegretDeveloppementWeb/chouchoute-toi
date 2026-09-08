@@ -1,65 +1,20 @@
-/*
- * LA feuille du site public · une page, une feuille Tailwind.
- *
- * **Cette entree importe, elle ne contient pas.** Nos regles vivent dans
- * `web/`, chacune dans son fichier.
- *
- * Elle s'appelait `app.css` jusqu'au 2026-09-06, nom herite du squelette
- * Laravel. `app` designe desormais ce qui est commun aux deux espaces, et
- * chaque espace porte son nom · `web` ici, `admin` pour le back-office.
- */
 @import 'tailwindcss' source(none);
 
-/*
- * Une ligne par fournisseur, ecrite par son installateur · le paquet declare
- * ses vues et ses regles, nous les compilons.
- *
- * La page de reservation portait sa propre feuille, compilee par le paquet et
- * servie depuis `vendor/`, jusqu'au 2026-09-07. Elle est ici parce qu'un hote
- * peut lui donner son propre gabarit : la notre se chargerait alors sur cette
- * page, et deux compilations Tailwind s'y disputeraient les memes noms de
- * classes. Une seule feuille par espace rend la chose impossible.
- */
 @import '../../vendor/falcon/booking/resources/css/booking-public.css';
 
-/*
- * `source(none)` et les sources nommees, comme `admin.css`.
- *
- * Sans lui, Tailwind lisait tout le depot non ignore par git · `app/`,
- * `config/`, `routes/`, `tests/`. Rien ne s'y trouvait, mais une chaine ecrite
- * un jour dans un test serait entree dans la feuille du site.
- *
- * La pagination de Laravel vit dans `vendor/`, que git ignore : elle etait
- * donc deja nommee a la main, et le reste.
- */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../views/**/*.blade.php';
 
-/*
- * Nos scripts, parce qu'ils ecrivent des classes.
- *
- * `web/home/avant-apres.js` pose `hidden` sur les diapositives qu'il masque.
- * La classe existe aussi dans une dizaine de vues, donc elle survivrait sans
- * cette ligne · mais par chance, pas par construction. Le jour ou la derniere
- * vue qui l'ecrit change, le carrousel afficherait ses quatre images
- * empilees, sans la moindre erreur.
- */
+/* The scripts are sources too, because they write class names: avant-apres.js
+   puts `hidden` on the slides it hides, and no view is guaranteed to keep
+   writing that class. */
 @source '../js/**/*.js';
 
-/*
- * Le cache de vues compilees n'est pas une source.
- *
- * `storage/framework/views` etait scanne ici, ligne heritee du squelette
- * Laravel. Le contenu de cette feuille dependait donc de ce qui avait ete
- * visite ou mis en cache avant le build : 67 Ko cache vide, 125 Ko cache
- * plein, et un fichier commite different de celui que le build suivant
- * produit. Le site public y gagnait jusqu'a 58 Ko de classes du back-office
- * qu'il n'utilise jamais.
- */
+/* Never add storage/framework/views as a source. The compiled sheet would then
+   depend on what had been visited before the build, so the committed file and
+   the next build would differ. */
 
-/* Le commun aux deux espaces. Vide aujourd'hui, et c'est sa place. */
 @import './app.css';
 
-/* Nos reglages et nos regles. */
 @import './web/theme.css';
 @import './web/animations.css';

@@ -22,7 +22,6 @@
         </h1>
 
         <div class="max-w-3xl space-y-12">
-            {{-- Éditeur --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Éditeur du site</h2>
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
@@ -39,7 +38,6 @@
                 </div>
             </div>
 
-            {{-- Hébergeur --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Hébergement</h2>
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
@@ -49,7 +47,6 @@
                 </div>
             </div>
 
-            {{-- Conception --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Conception et réalisation</h2>
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
@@ -57,7 +54,6 @@
                 </div>
             </div>
 
-            {{-- Propriété intellectuelle --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Propriété intellectuelle</h2>
                 <p class="text-base leading-[1.7] text-charcoal">
@@ -68,7 +64,6 @@
                 </p>
             </div>
 
-            {{-- Données personnelles --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Données personnelles & RGPD</h2>
                 <div class="space-y-4 text-base leading-[1.7] text-charcoal">
@@ -90,7 +85,6 @@
                 </div>
             </div>
 
-            {{-- Cookies --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Cookies</h2>
                 <p class="text-base leading-[1.7] text-charcoal">
@@ -100,7 +94,6 @@
                 </p>
             </div>
 
-            {{-- Responsabilité --}}
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-dark">Limitation de responsabilité</h2>
                 <p class="text-base leading-[1.7] text-charcoal">
@@ -111,7 +104,6 @@
             </div>
         </div>
 
-        {{-- CGV --}}
         <div class="mt-24 max-w-3xl">
             <p class="mb-3 flex items-center gap-2 text-sm font-normal uppercase tracking-[2px] text-wine">
                 <x-icon.section-marker />
@@ -123,7 +115,6 @@
             </h2>
 
             <div class="space-y-12">
-                {{-- Article 1 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 1 · Objet</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
@@ -134,7 +125,6 @@
                     </p>
                 </div>
 
-                {{-- Article 2 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 2 · Prestations</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
@@ -151,7 +141,6 @@
                     </div>
                 </div>
 
-                {{-- Article 3 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 3 · Tarifs et paiement</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
@@ -167,7 +156,6 @@
                     </div>
                 </div>
 
-                {{-- Article 4 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 4 · Prise de rendez-vous</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
@@ -177,7 +165,6 @@
                     </p>
                 </div>
 
-                {{-- Article 5 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 5 · Déroulement de la prestation</h3>
                     <div class="space-y-3 text-base leading-[1.7] text-charcoal">
@@ -194,7 +181,6 @@
                     </div>
                 </div>
 
-                {{-- Article 6 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 6 · Contre-indications</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
@@ -205,7 +191,6 @@
                     </p>
                 </div>
 
-                {{-- Article 7 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 7 · Responsabilité</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
@@ -216,7 +201,6 @@
                     </p>
                 </div>
 
-                {{-- Article 8 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 8 · Droit applicable</h3>
                     <p class="text-base leading-[1.7] text-charcoal">
@@ -226,7 +210,6 @@
                     </p>
                 </div>
 
-                {{-- Article 9 --}}
                 <div>
                     <h3 class="mb-3 text-lg font-semibold text-dark">Article 9 · Médiation</h3>
                     <p class="text-base leading-[1.7] text-charcoal">

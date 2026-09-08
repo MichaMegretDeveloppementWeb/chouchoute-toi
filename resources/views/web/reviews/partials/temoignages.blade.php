@@ -1,7 +1,7 @@
 @php
     $hasGoogleReviews = ! empty($googleReviews);
 
-    // Fallback : exemples si pas d'avis Google configurés
+    // Fallback shown when no Google reviews are configured.
     $exemples = [
         [
             'nom' => 'Sophie M.',

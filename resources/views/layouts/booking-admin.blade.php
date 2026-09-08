@@ -1,18 +1,18 @@
 {{--
-    Pont entre le back-office et les écrans de falcon/booking.
+    The bridge between the back-office and falcon/booking's screens.
 
-    Le shell du site est un composant Blade (`<x-layout.admin>`), alors que le
-    package attend une vue extensible par `@extends`. Cette vue fait la
-    jonction : elle est nommée dans `booking.admin.layout`, et rend la section
-    du package dans le slot du composant.
+    The site's shell is a Blade component (`<x-layout.admin>`), while the
+    package expects a view extensible by `@extends`. This view joins the two:
+    it is named in `booking.admin.layout`, and renders the package's section
+    into the component's slot.
 
-    Conséquence voulue : les écrans de l'agenda héritent de la barre latérale,
-    du menu utilisateur, du thème sombre et des assets du back-office, au lieu
-    de vivre dans la coquille autonome du package.
+    The intended consequence: the agenda's screens inherit the sidebar, the user
+    menu, dark mode and the back-office's assets instead of living inside the
+    package's own shell.
 --}}
-{{-- Le titre vient de l'écran, pas de la famille de pages : la barre du haut
-     annonce « Planning » ou « Prestations », et non « Agenda » pour les quatre.
-     Le repli couvre un écran du package qui n'en fournirait pas. --}}
+{{-- The title comes from the screen and not from the family of pages: the
+     topbar says « Planning » or « Prestations », not « Agenda » for all four.
+     The fallback covers a package screen that supplies none. --}}
 <x-layout.admin :title="$bookingTitle ?? 'Agenda'" :wide="$bookingWide ?? false">
     @yield('content')
 </x-layout.admin>

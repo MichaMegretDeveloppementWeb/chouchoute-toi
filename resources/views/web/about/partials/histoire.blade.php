@@ -10,7 +10,6 @@
         </h1>
 
         <div class="grid grid-cols-3 items-start gap-16 max-md:grid-cols-1 max-md:gap-10" data-animate>
-            {{-- Texte (2/3) --}}
             <div class="col-span-2 max-md:col-span-1">
                 <p class="mb-8 text-xl font-light leading-relaxed text-dark max-md:text-lg">
                     Passionnée par la beauté du regard, je mets mon savoir-faire au service de votre confiance en vous,
@@ -34,7 +33,6 @@
                 </p>
             </div>
 
-            {{-- Portrait (1/3) --}}
             <div class="col-span-1">
                 <div class="aspect-[4/4] w-full rounded-xl bg-sand flex items-center justify-center" aria-hidden="true">
                     <img src="{{ asset('images/about/portrait-amandine.webp') }}" alt="Amandine, technicienne en extensions de cils - Chouchoute-toi" class="w-full rounded-xl object-cover" width="440" height="580" loading="lazy">

@@ -1,7 +1,6 @@
-/**
- * Animations d'entrée au scroll : IntersectionObserver
- * Chargé globalement via le layout pour toutes les pages.
- */
+/* Despite its name, this file carries the site-wide scroll-in observer that
+   puts `is-visible` on every `[data-animate]`, not footer behaviour. The web
+   layout loads it on every page. */
 
 document.addEventListener('DOMContentLoaded', () => {
     const animatedElements = document.querySelectorAll('[data-animate]');

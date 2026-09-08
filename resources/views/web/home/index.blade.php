@@ -10,15 +10,12 @@
     ])
 @endsection
 
-{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+{{-- What this page adds to the site's graph: its catalogue overview and its
+     FAQ. The business, the founder, the site and the page come from the layout.
 
-     L'entreprise, la fondatrice, le site et la page sont poses par le gabarit,
-     une fois pour tout le site. Cette page n'ajoute que ce qui lui appartient ·
-     son apercu du catalogue, et sa FAQ.
-
-     Le premier nœud ne porte **que** l'`@id` de l'entreprise et la propriete
-     qu'il lui ajoute · un moteur fusionne deux nœuds de meme `@id`, ce qui est
-     la facon correcte de completer une entite declaree ailleurs. --}}
+     The first node carries only the business's `@id` and the property it adds
+     to it: an engine merges two nodes sharing an `@id`, which is the correct
+     way to complete an entity declared elsewhere. --}}
 @section('schema')
     @php
         $apercuDuCatalogue = [];

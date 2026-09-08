@@ -1,1 +1,1 @@
-/* Galerie avant/apres : lightbox ou slider (a implementer) */
+/* TODO: before/after gallery — lightbox or slider, not written yet. */

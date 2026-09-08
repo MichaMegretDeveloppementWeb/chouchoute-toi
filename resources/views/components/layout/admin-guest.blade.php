@@ -12,9 +12,9 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
 
-    {{-- LA feuille et LE script de cet espace · les mêmes que le back-office.
-         Le thème est lu côté serveur et rendu sur `<html>` ci-dessus, donc
-         aucun script d'en-tête n'est nécessaire. --}}
+    {{-- The same sheet and script as the back-office. The theme is read
+         server-side and rendered on `<html>` above, so no head script is
+         needed. --}}
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
     @livewireStyles
@@ -22,8 +22,8 @@
 <body class="flex min-h-full items-center justify-center px-4 py-12 antialiased">
     <div class="w-full max-w-sm">
         <div class="mb-8 flex flex-col items-center gap-y-4">
-            {{-- Le logo est un lettrage sombre sur fond clair : il lui faut son
-                 propre fond blanc pour rester lisible en mode sombre. --}}
+            {{-- The logo is dark lettering on a light ground: it needs a white
+                 backing of its own to stay readable in dark mode. --}}
             <img
                 src="{{ asset('favicon/favicon.svg') }}"
                 alt="{{ config('app.name') }}"

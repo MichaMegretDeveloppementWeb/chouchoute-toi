@@ -1,16 +1,7 @@
 
-/*
- * La barre laterale : ouverte ou repliee, et rien entre les deux.
- *
- * L'etat vit sur `<html>` en `data-fb-sidebar`, pose avant la peinture par le
- * script du layout, et la feuille en tire la largeur de la barre comme celle du
- * contenu. Retenu comme le theme : on ne redemande pas a chaque page ce qui a
- * ete decide une fois.
- *
- * Le survol ne deploie plus rien, a aucune largeur. Il le faisait entre 1024 et
- * 1500 px, et l'entree qu'on visait descendait de 182 px pendant qu'on avancait
- * vers elle.
- */
+/* The state lives on `<html>` in `data-fb-sidebar`, written before paint by the
+   layout script; the stylesheet derives both the sidebar's width and the
+   content's inset from it. */
 window.toggleSidebar = function () {
     const collapsed = document.documentElement.dataset.fbSidebar === 'collapsed';
     const wanted = collapsed ? 'expanded' : 'collapsed';
@@ -20,35 +11,30 @@ window.toggleSidebar = function () {
     try {
         localStorage.setItem('fb-sidebar', wanted);
     } catch (e) {
-        /* Navigation privee : l'etat vaut pour la page, et c'est deja ca. */
+        /* Private browsing: the state holds for the page, which is already
+           something. */
     }
 };
 
-/*
- * Ce que le rail doit rendre lisible : le libelle d'un lien, les enfants d'une
- * section.
- *
- * Les deux se posent en `fixed` et se teleportent vers `body`, la barre etant
- * en `overflow-clip`. Leur position se calcule sur le declencheur au moment ou
- * ils s'ouvrent, et ils se ferment au defilement : un panneau fixe ne suit pas
- * ce qui l'a ouvert.
- */
+/* What the rail has to make readable: a link's label, a section's children.
+   Both are `fixed` and teleported to `body`, the sidebar being `overflow-clip`.
+   Their position is computed from the trigger as they open, and they close on
+   scroll: a fixed panel does not follow what opened it. */
 const ECART_DU_RAIL = 8;
 const DELAI_OUVERTURE = 80;
 const DELAI_FERMETURE = 180;
 
-/** Vrai quand la barre est sur son rail. C'est la feuille qui le dit. */
+/** True when the sidebar is on its rail. The stylesheet is what says so. */
 function surLeRail(element) {
     return getComputedStyle(element).getPropertyValue('--fb-rail').trim() === '1';
 }
 
 /**
- * La hauteur d'un panneau qu'on n'a pas encore montre.
+ * The height of a panel not shown yet.
  *
- * Mesure hors de l'ecran plutot qu'apres l'affichage : place ensuite, le
- * panneau apparaitrait une image au coin superieur gauche avant de rejoindre sa
- * position. `visibility` et non `opacity` : elle sort l'element du rendu sans
- * lui retirer sa boite.
+ * Measured off-screen rather than after display: placed afterwards, the panel
+ * would flash for one frame in the top left corner. `visibility` and not
+ * `opacity`, which takes the element out of the paint without taking its box.
  */
 function hauteurCachee(panneau) {
     const memoire = panneau.style.cssText;
@@ -61,19 +47,18 @@ function hauteurCachee(panneau) {
 }
 
 /**
- * Pose un panneau a droite du rail, a la hauteur de ce qui l'ouvre.
+ * Places a panel right of the rail, level with what opens it.
  *
- * Rabattu vers le haut quand il depasserait le bas de la fenetre, et jamais
- * au-dessus d'elle : une section basse ouvrait sinon un volet dont on ne voyait
- * que la premiere ligne.
+ * Pulled up when it would overflow the bottom of the window, and never above
+ * it: a low section otherwise opened a panel showing only its first line.
  */
 function ancrerAuRail(declencheur, hauteur) {
     const cadre = declencheur.getBoundingClientRect();
     const marge = 8;
 
-    // Le bord du rail, et non celui du bouton : la navigation est en retrait de
-    // ses cotes, et un panneau pose sur le bouton commencait quatre pixels a
-    // l'interieur de la barre.
+    // The rail's edge and not the button's: the navigation is inset from its
+    // sides, so a panel placed on the button started four pixels inside the
+    // sidebar.
     const barre = declencheur.closest('.fb-sidebar');
     const bord = barre ? barre.getBoundingClientRect().right : cadre.right;
 
@@ -84,7 +69,7 @@ function ancrerAuRail(declencheur, hauteur) {
 }
 
 document.addEventListener('alpine:init', () => {
-    /** Une section de la barre : accordeon sur place, volet sur le rail. */
+    /** A section of the sidebar: accordion in place, panel on the rail. */
     Alpine.data('barreSection', (ouvertInitial, actif) => ({
         ouvert: ouvertInitial,
         volet: false,
@@ -92,16 +77,16 @@ document.addEventListener('alpine:init', () => {
         gauche: 0,
         minuterie: null,
 
-        /* Le pointeur du dernier `pointerdown`, que `mener()` lit. */
+        /* The pointer type of the last `pointerdown`, which `mener()` reads. */
         pointeur: '',
 
-        /* Le panneau se donne lui-meme : teleporte sous `body`, il ne remonte
-           plus jusqu'a la racine qui tient les references. */
+        /* The panel hands itself over: teleported under `body`, it no longer
+           climbs back to the root that holds the refs. */
         panneau: null,
 
         init() {
-            // La barre doit dire ou l'on est : la section qui porte la page
-            // l'emporte sur ce qui avait ete retenu.
+            // The sidebar has to say where we are: the section carrying the
+            // current page wins over what had been remembered.
             if (actif) {
                 this.ouvert = true;
             }
@@ -126,15 +111,13 @@ document.addEventListener('alpine:init', () => {
         },
 
         /*
-         * Le libelle d'une section ou l'on n'est pas mene a sa premiere page.
+         * On the rail a finger press stands for a hover: it opens the panel
+         * instead of following the link, a touch screen having no hover. Mouse
+         * and keyboard do follow it.
          *
-         * Sur le rail, une pression du doigt vaut un survol : elle ouvre le
-         * volet plutot que de mener quelque part, faute de survol sur un ecran
-         * tactile. La souris et le clavier menent.
-         *
-         * `detail` vaut zero sur une activation au clavier, qui ne passe par
-         * aucun pointeur : sans cette garde, le type retenu d'un appui
-         * precedent lui serait applique.
+         * `detail` is zero on a keyboard activation, which goes through no
+         * pointer: without this guard the type remembered from an earlier press
+         * would be applied to it.
          */
         mener(evenement) {
             if (! this.rail() || evenement.detail === 0) {
@@ -158,7 +141,7 @@ document.addEventListener('alpine:init', () => {
             this.minuterie = setTimeout(() => this.ouvrirLeVolet(), DELAI_OUVERTURE);
         },
 
-        /* Le temps de traverser les huit pixels qui separent le rail du volet. */
+        /* Time enough to cross the eight pixels between rail and panel. */
         garder() {
             clearTimeout(this.minuterie);
         },
@@ -173,8 +156,8 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            // Place avant de montrer, et non l'inverse : le panneau ne parait
-            // jamais au coin de l'ecran le temps d'une image.
+            // Placed before shown and not the reverse, so the panel never
+            // appears in the corner of the screen for one frame.
             const place = ancrerAuRail(this.$refs.declencheur, hauteurCachee(this.panneau));
 
             this.gauche = place.gauche;
@@ -189,11 +172,11 @@ document.addEventListener('alpine:init', () => {
     }));
 
     /**
-     * Le libelle d'un lien, quand le rail ne montre que son icone.
+     * A link's label, when the rail shows only its icon.
      *
-     * Une seule pour toute la barre, qui ecoute le survol de ses liens : la
-     * poser sur chaque lien en faisait quatre-vingt-quatorze, la barre etant
-     * rendue deux fois et chaque section rendant ses liens deux fois de plus.
+     * One for the whole sidebar, listening to the hover of its links: putting
+     * one on each link made dozens of them, the sidebar being rendered twice
+     * and each section rendering its links twice more.
      */
     Alpine.data('barreInfobulle', () => ({
         ouvert: false,
@@ -212,9 +195,9 @@ document.addEventListener('alpine:init', () => {
             clearTimeout(this.minuterie);
 
             this.minuterie = setTimeout(() => {
-                // Le titre s'ecrit dans l'element plutot que par une liaison :
-                // la boite se dimensionne sur lui, et une liaison ne serait
-                // appliquee qu'au tour suivant, donc apres la mesure.
+                // The title is written into the element rather than bound: the
+                // box is sized on it, and a binding would only be applied on
+                // the next tick, so after the measurement.
                 this.panneau.textContent = lien.dataset.fbTitle;
 
                 const cadre = lien.getBoundingClientRect();
@@ -227,9 +210,9 @@ document.addEventListener('alpine:init', () => {
         },
 
         quitter(evenement) {
-            // `mouseout` part aussi en passant d'un enfant a l'autre du meme
-            // lien : on ne ferme que si le curseur a bien quitte la barre ou
-            // change de lien.
+            // `mouseout` also fires moving from one child of the same link to
+            // another: close only when the cursor really left the sidebar or
+            // changed link.
             if (evenement.relatedTarget && this.$root.contains(evenement.relatedTarget)
                 && evenement.relatedTarget.closest('[data-fb-title]') === evenement.target.closest('[data-fb-title]')) {
                 return;

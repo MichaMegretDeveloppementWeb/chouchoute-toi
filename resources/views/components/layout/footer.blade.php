@@ -1,8 +1,7 @@
 <footer class="bg-black text-white">
     <div class="mx-auto max-w-[1336px] px-5 py-16 lg:py-20">
         <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-            {{-- Col 1 · Marque --}}
-            <div>
+                    <div>
                 <a href="{{ route('home') }}" class="text-lg font-bold tracking-widest uppercase">CHOUCHOUTE-TOI</a>
                 <p class="mt-3 text-sm leading-relaxed text-white/60">
                     Extensions de cils à domicile sur le bassin lémanique.
@@ -12,8 +11,7 @@
                 </p>
             </div>
 
-            {{-- Col 2 · Contact --}}
-            <div>
+                    <div>
                 <h3 class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Contact</h3>
                 <ul class="space-y-3 text-sm">
                     <li>
@@ -37,8 +35,7 @@
                 </ul>
             </div>
 
-            {{-- Col 3 · Navigation --}}
-            <div>
+                    <div>
                 <h3 class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Navigation</h3>
                 <ul class="space-y-3 text-sm">
                     <li>
@@ -64,8 +61,7 @@
                 </ul>
             </div>
 
-            {{-- Col 4 · Informations --}}
-            <div>
+                    <div>
                 <h3 class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Informations</h3>
                 <ul class="space-y-3 text-sm">
                     <li>

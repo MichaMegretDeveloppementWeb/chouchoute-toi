@@ -1,5 +1,3 @@
-/* Composant partagé : CTA Feature banner */
-
 .cta-banner {
     background-color: #ebe4de;
 }
@@ -78,8 +76,6 @@
     height: 58px;
     background-color: rgba(81, 39, 49, 0.15);
 }
-
-/* Responsive */
 
 @media (max-width: 768px) {
     .cta-banner__content {

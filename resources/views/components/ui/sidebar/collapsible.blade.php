@@ -1,30 +1,18 @@
 {{--
-    A section of the sidebar that folds its links away.
+    A section of the sidebar that folds its links away. Published from
+    falcon/ui-kit, with three changes that hold together.
 
-    Publie depuis falcon/ui-kit. Trois choses ont change, et elles se tiennent.
+    The rail never unfolds on hover: the width answers to the topbar button
+    alone, at every screen width.
 
-    **Le rail ne se deploie plus au survol.** Il gardait 62 px au repos et
-    passait a 260 sous la souris, ce qui faisait apparaitre les sous-menus dans
-    le flux : l'entree qu'on visait descendait de 182 px pendant qu'on avancait
-    vers elle. La largeur ne depend plus que du bouton de la barre du haut.
+    A folded section therefore opens a panel, teleported to `body` because the
+    sidebar is `overflow-clip`. It holds links only, so nothing that needs to
+    stay inside the Livewire root.
 
-    **Une section replie ouvre donc un volet.** Sur le rail, le bouton du kit ne
-    faisait rien de visible : il basculait un accordeon dont la liste etait en
-    `display: none`. Il ouvre maintenant ses liens dans un panneau ancre a sa
-    hauteur, a droite du rail.
-
-    Le volet est teleporte vers `body` : la barre est en `overflow-clip`, et il y
-    serait rogne. Il ne contient que des liens, donc rien qui ait besoin de
-    rester dans la racine Livewire.
-
-    **L'en-tete mene quelque part.** Ouvrir une section ou l'on n'est pas ne
-    menait nulle part : il fallait ensuite viser un second lien. Le libelle est
-    donc un lien vers `href`, la premiere page de la section, tant qu'on n'y est
-    pas ; une fois dedans il redevient une bascule, n'ayant plus rien a mener.
-    Rien n'ouvre la section apres la navigation : y arriver la rend active, et
-    `init()` l'ouvre. Le chevron, lui, ne fait jamais que replier et deplier.
-
-    Sans `href`, le composant se comporte comme celui du kit.
+    The header leads somewhere: while we are not in the section, its label is a
+    link to `href`; once inside it becomes the toggle again, having nothing left
+    to lead to. Without `href` the component behaves like the kit's. The chevron
+    only ever folds and unfolds.
 
     Children carry no icon: the icon belongs to the section, and is what names it
     when the bar is collapsed to its rail.
@@ -48,28 +36,26 @@ $state = $persist
     ? '$persist('.($open ? 'true' : 'false').").as('{$key}')"
     : ($open ? 'true' : 'false');
 
-// La section ou l'on se trouve deja n'a plus rien a mener : son en-tete
-// redevient la bascule du kit.
 $leadsSomewhere = $href !== null && ! $active;
 
-// Ces classes decrivent la barre deployee ; la feuille de l'hote les replie
-// par leur nom quand `data-fb-sidebar` vaut « repliee ».
+// These classes describe the sidebar expanded; the host's stylesheet folds each
+// of them by name when `data-fb-sidebar` says so.
 $labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 
 // Same geometry as a link, down to the max-width: it is what keeps the active
 // pill a 38 pixel square in the rail instead of a shape cut off at 62.
 $rowBase = 'fb-sidebar-link group flex w-full items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-medium gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 
-// La pastille dit ou l'on est quand l'enfant actif est cache, c'est-a-dire sur
-// le rail. Ecrite en PHP plutot qu'en empilant des variantes, pour ne rien
-// devoir a l'ordre dans lequel Tailwind les trie.
+// The pill says where we are when the active child is hidden, which is on the
+// rail. Written in PHP rather than stacked variants, so it owes nothing to the
+// order Tailwind sorts them in.
 $rowState = $active
     ? 'fb-sidebar-badge text-primary'
     : 'text-secondary hover:bg-elevated hover:text-primary';
 
-// `fb-sidebar-gap` : la feuille annule cette gouttiere sur le rail, comme elle
-// le fait pour la rangee. Sans lui, les douze pixels subsistent devant un
-// libelle de largeur nulle et la pastille deborde des trente-huit.
+// `fb-sidebar-gap`: the stylesheet cancels this gutter on the rail, as it does
+// for the row. Without it the twelve pixels survive in front of a zero-width
+// label and the pill overflows its thirty-eight.
 $labelPart = 'fb-sidebar-gap flex min-w-0 flex-1 items-center gap-x-3 text-left';
 
 $iconState = $active
@@ -82,8 +68,8 @@ $iconState = $active
      counter being global is also what makes the two renderings of the bar,
      mobile and desktop, come out with distinct ids.
 
-     `pointerdown` sert de repli a `mener()` : `click` n'est pas partout un
-     `PointerEvent`, et il faut savoir si le geste vient du doigt. --}}
+     `pointerdown` is the fallback for `mener()`: `click` is not a
+     `PointerEvent` everywhere, and the gesture's source has to be known. --}}
 <li x-data="barreSection({{ $state }}, {{ $active ? 'true' : 'false' }})"
     x-id="['ui-sidebar-sous-menu']"
     x-on:mouseenter="viser()"
@@ -91,8 +77,8 @@ $iconState = $active
     x-on:pointerdown="pointeur = $event.pointerType"
     class="relative">
 
-    {{-- La rangee porte la pastille ; les deux commandes vivent dedans. Un
-         `<button>` ne peut pas tenir dans un `<a>`, ce sont donc des freres. --}}
+    {{-- The row carries the pill and both controls live inside it. A `<button>`
+         cannot sit inside an `<a>`, so they are siblings. --}}
     <div x-ref="declencheur" {{ $attributes->merge(['class' => "$rowBase $rowState"]) }}>
         @if ($leadsSomewhere)
             <a href="{{ $href }}" x-on:click="mener($event)" class="{{ $labelPart }}">
@@ -112,12 +98,12 @@ $iconState = $active
             </button>
         @endif
 
-        {{-- Le chevron ne fait que replier et deplier, et c'est lui qui annonce
-             l'etat. Il se replie avec le libelle plutot que de depasser du rail,
-             et sa rotation ne partage pas la transition de celui-ci.
+        {{-- The chevron announces the state. It folds away with the label
+             rather than overflow the rail, and its rotation does not share the
+             label's transition.
 
-             `-my-3` sous 640 : la cible fait quarante-quatre pixels de cote sans
-             que la rangee grandisse pour autant. --}}
+             `-my-3` below 640: the target is forty-four pixels a side without
+             the row growing with it. --}}
         <button type="button"
             x-on:click="basculer()"
             x-on:keydown.escape="fermerLeVolet()"
@@ -132,7 +118,7 @@ $iconState = $active
         </button>
     </div>
 
-    {{-- L'accordeon, quand la barre est deployee. --}}
+    {{-- The accordion, when the sidebar is expanded. --}}
     <div x-show="ouvert" x-collapse x-cloak :id="$id('ui-sidebar-sous-menu')">
         {{-- Hidden rather than faded in the rail: display:none also takes the
              links out of the tab order and out of the accessibility tree, which
@@ -146,12 +132,12 @@ $iconState = $active
         </ul>
     </div>
 
-    {{-- Le volet du rail. Teleporte : la barre rognerait un panneau pose a
-         l'interieur, et le sien ne contient que des liens. --}}
+    {{-- The rail's panel, teleported: the sidebar would clip a panel laid
+         inside it, and this one holds links only. --}}
     <template x-teleport="body">
-        {{-- L'element se donne au composant plutot que par `x-ref` : teleporte
-             sous `body`, il ne remonte plus jusqu'a la racine qui tient les
-             references, et `$refs.volet` restait vide. --}}
+        {{-- The element hands itself to the component rather than through an
+             `x-ref`: teleported under `body`, it no longer climbs back to the
+             root that holds the refs, and `$refs.volet` stayed empty. --}}
         <div x-show="volet" x-cloak x-init="panneau = $el"
             x-on:mouseenter="garder()"
             x-on:mouseleave="quitter()"

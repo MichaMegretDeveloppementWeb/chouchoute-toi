@@ -10,13 +10,11 @@
     ])
 @endsection
 
-{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
+{{-- What this page adds to the site's graph: the rating and the reviews,
+     attached to the business the layout declares.
 
-     La note et les avis, ajoutes a l'entreprise que le gabarit declare. Cette
-     page reecrivait un `BeautySalon` complet pour les y accrocher.
-
-     **Rien n'est ecrit quand il n'y a rien** · une note absente vaut mieux
-     qu'une note inventee, et Google refuse un `aggregateRating` sans avis. --}}
+     Nothing is written when there is nothing: a missing rating beats an
+     invented one, and Google refuses an `aggregateRating` without reviews. --}}
 @section('schema')
     @php
         $entreprise = ['@id' => \App\Services\SiteGraphService::id('business')];

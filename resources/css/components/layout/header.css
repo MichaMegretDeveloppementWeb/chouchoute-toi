@@ -1,5 +1,3 @@
-/* Header : sticky avec fond qui se materialise au scroll */
-
 .header {
     background-color: transparent;
 }
@@ -9,7 +7,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Animation hamburger -> croix */
 .header__hamburger.is-active [data-line-1] {
     transform: translateY(8px) rotate(45deg);
 }
@@ -22,7 +19,6 @@
     transform: translateY(-8px) rotate(-45deg);
 }
 
-/* Menu mobile : caché par défaut, glisse depuis la droite */
 .header__mobile-menu {
     transform: translateX(100%);
 }

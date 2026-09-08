@@ -1,7 +1,3 @@
-/*
- * Les jetons du site public · la police et les six couleurs de la marque.
- */
-
 @theme {
     --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

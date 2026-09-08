@@ -10,8 +10,7 @@
         </h1>
 
         <div class="grid grid-cols-2 gap-16 max-md:grid-cols-1 max-md:gap-10">
-            {{-- Informations --}}
-            <div>
+                    <div>
                 <h2 class="mb-2 text-xl font-semibold text-dark">Chouchoute-toi by Amande</h2>
                 <p class="mb-8 text-base text-charcoal">Extensions de cils à domicile</p>
 
@@ -54,8 +53,7 @@
                 </div>
             </div>
 
-            {{-- Formulaire --}}
-            <div>
+                    <div>
                 @if ($sent)
                     <div class="flex flex-col items-center justify-center rounded-xl bg-sand/40 px-8 py-16 text-center">
                         <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-wine/10">

@@ -1,42 +1,18 @@
-/*
- * ── Le focus d'un champ ───────────────────────────────────────────────────
- *
- * Un filet vert d'un pixel, sur toute l'administration.
- *
- * Le kit n'expose aucun jeton de focus : chaque composant ecrit
- * `focus:ring-gray-900` en dur, et `search-input` diverge deja en gray-300. Les
- * recolorer un par un demanderait de publier six composants et de suivre leurs
- * montees de version.
- *
- * Ces regles vivent hors de tout `@layer`, donc elles l'emportent sur les
- * utilitaires de Tailwind quelle que soit la specificite, sans `!important`. La
- * feuille de falcon/booking se sert deja de ce mecanisme pour le contour de la
- * modale.
- *
- * Ce que ca corrige : l'anneau etait noir et epais. Il devient un filet qui
- * change de couleur sans changer de largeur, donc rien ne se decale au focus.
- *
- * Le vert est celui qui se voit : #48bb78 rendait 2,43 contre le blanc, quand
- * un indicateur de focus en demande 3. Meme famille, un cran plus fonce.
- * La couleur elle-meme est posee dans `theme.css`.
- */
+/* Every rule here sits outside any `@layer`, so it beats Tailwind's utilities
+   whatever their specificity and without `!important`. Wrapping them in a layer
+   silently gives the focus ring back to the kit. */
 
-/*
- * Les cases a cocher et les boutons radio ne prennent que la couleur : leur
- * anneau vient du plugin de formulaires, pose a l'exterieur et double d'un
- * lisere blanc. Lui imposer `inset` le ferait disparaitre sous la coche.
- */
+/* Checkboxes and radios take the colour only: their ring comes from the forms
+   plugin, drawn outside and lined with white. Forcing `inset` would hide it
+   under the tick. */
 input[type='checkbox']:focus,
 input[type='radio']:focus {
     --tw-ring-color: var(--fb-focus);
 }
 
-/*
- * `:not([class*='ring-0'])` : un controle qui demande zero anneau n'en recoit
- * pas. Les champs poses nus dans une boite encadree portent `focus:ring-0`
- * justement pour laisser le cadre le dessiner ; leur imposer une largeur ici
- * faisait apparaitre un second filet vert a l'interieur du premier.
- */
+/* `:not([class*='ring-0'])`: a control asking for no ring gets none. Fields
+   laid bare inside a framed box carry `focus:ring-0` so the frame draws it;
+   forcing a width here drew a second green line inside the first. */
 input:not([type='checkbox']):not([type='radio']):not([class*='ring-0']):focus,
 select:not([class*='ring-0']):focus,
 textarea:not([class*='ring-0']):focus,
@@ -45,24 +21,10 @@ textarea:not([class*='ring-0']):focus,
     --tw-ring-shadow: inset 0 0 0 1px var(--fb-focus);
 }
 
-/*
- * ── La taille d'un champ sur telephone ────────────────────────────
- *
- * 15 px, et non les 13 du bureau : au doigt, une valeur de 13 se lit mal a
- * bout de bras. Une taille et non un plancher.
- *
- * Il y en a eu un, a 16 px, contre le zoom que Safari iOS declenche a l'entree
- * dans un champ plus petit. Il tenait toute l'echelle du formulaire en l'air :
- * presque chacune de ses valeurs est un champ. L'appareil vise est un Android,
- * qui ne zoome pas ; le remettre demanderait de reprendre l'echelle avec.
- *
- * Hors de tout `@layer`, comme le reste de ce fichier, donc elle l'emporte sur
- * l'utilitaire sans `!important`. Rien au-dela de 640 : le bureau garde ses
- * 13 px.
- *
- * `range` est exclu comme les cases et les boutons radio : ces controles ne
- * portent pas de texte, et une taille de police y change leur geometrie.
- */
+/* 15px on the phone, a size and not a floor. A 16px floor was here against the
+   zoom Safari iOS triggers below it, and it held the whole form scale up:
+   almost every value in the form is a field. Restoring it means reworking that
+   scale with it. */
 @media (max-width: 639px) {
     input:not([type='checkbox']):not([type='radio']):not([type='range']),
     select,

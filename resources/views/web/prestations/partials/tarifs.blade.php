@@ -45,7 +45,6 @@
             @endforeach
         </div>
 
-        {{-- Dépose card --}}
         <div id="tarif-depose" class="mt-5 rounded-xl bg-cream p-6">
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div>

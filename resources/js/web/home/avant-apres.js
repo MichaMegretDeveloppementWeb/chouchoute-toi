@@ -1,5 +1,3 @@
-/* Section Avant / Après : slider interactif */
-
 document.addEventListener('DOMContentLoaded', () => {
     const slider = document.querySelector('[data-avant-apres-slider]');
 
@@ -18,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
 
     /**
-     * Set the split position on a given slide.
-     *
      * @param {HTMLElement} slide
      * @param {number} percentage 0–100
      */
@@ -29,8 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Calculate the percentage from a pointer X coordinate relative to the slide.
-     *
      * @param {HTMLElement} slide
      * @param {number} clientX
      * @returns {number}
@@ -42,20 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return (x / rect.width) * 100;
     }
 
-    /**
-     * Start dragging.
-     */
     function onPointerDown() {
         isDragging = true;
         document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
     }
 
-    /**
-     * Handle pointer movement while dragging.
-     *
-     * @param {number} clientX
-     */
+    /** @param {number} clientX */
     function onPointerMove(clientX) {
         if (!isDragging || !activeSlide) {
             return;
@@ -65,9 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setSplitPosition(activeSlide, percentage);
     }
 
-    /**
-     * Stop dragging.
-     */
     function onPointerUp() {
         if (!isDragging) {
             return;
@@ -78,11 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.userSelect = '';
     }
 
-    /**
-     * Switch to a specific slide by index.
-     *
-     * @param {number} index
-     */
+    /** @param {number} index */
     function goToSlide(index) {
         currentIndex = index;
 
@@ -102,11 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setSplitPosition(activeSlide, 50);
     }
 
-    /* Initialise each slide at 50 % */
     slides.forEach((slide) => {
         setSplitPosition(slide, 50);
 
-        /* Mouse events on handle */
         const handle = slide.querySelector('[data-avant-apres-handle]');
 
         if (handle) {
@@ -121,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { passive: false });
         }
 
-        /* Allow clicking anywhere on the slide to reposition */
         slide.addEventListener('click', (e) => {
             if (!isDragging) {
                 const percentage = getPercentageFromX(slide, e.clientX);
@@ -130,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* Global mouse / touch move & up */
     document.addEventListener('mousemove', (e) => {
         onPointerMove(e.clientX);
     });
@@ -149,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         onPointerUp();
     });
 
-    /* Dot navigation */
     dots.forEach((dot) => {
         dot.addEventListener('click', () => {
             const index = parseInt(dot.dataset.slideIndex, 10);
@@ -157,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* Arrow navigation */
     if (prevBtn) {
         prevBtn.addEventListener('click', () => {
             const index = (currentIndex - 1 + slides.length) % slides.length;

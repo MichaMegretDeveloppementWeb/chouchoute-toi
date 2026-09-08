@@ -1,14 +1,12 @@
 {{--
-    Publie depuis falcon/ui-kit. Le rail ne se deploie plus au survol : la
-    largeur de la barre ne depend que du bouton de la barre du haut, a toutes
-    les largeurs d'ecran. Un rail qui s'ouvrait sous la souris deplacait
-    l'entree qu'on visait pendant qu'on avancait vers elle.
+    Published from falcon/ui-kit. The rail never unfolds on hover: the sidebar's
+    width answers to the topbar button alone, at every screen width.
 
-    L'etat vit sur `<html>` en `data-fb-sidebar`, pose avant la peinture. Les
-    classes ci-dessous decrivent la barre **deployee** ; la feuille de l'hote
-    replie chaque piece par sa classe `fb-sidebar-*` quand l'attribut le demande.
-    La barre du telephone garde ses libelles : les regles visent `.fb-sidebar`,
-    qui n'existe que sur le bureau.
+    The state lives on `<html>` in `data-fb-sidebar`, written before paint. The
+    classes below describe the sidebar expanded; the host's stylesheet folds
+    each piece by its `fb-sidebar-*` class when the attribute asks for it. The
+    phone drawer keeps its labels: those rules target `.fb-sidebar`, which only
+    exists on the desktop.
 
     The bar has two roots, one per breakpoint, so unknown attributes are not
     merged onto either: every attribute this component honours is declared here.
@@ -49,8 +47,8 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
                 @endisset
                 <span class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-gray-100">{{ $brand }}</span>
             </div>
-            {{-- Une hauteur posee, et non le retrait qui dimensionnait ce
-                 bouton : 32 px se manquent au doigt. --}}
+            {{-- A stated height, and not the padding that used to size this
+                 button: 32px is missed by a finger. --}}
             <button type="button" onclick="closeMobileSidebar()" aria-label="Fermer le menu" class="flex h-11 w-11 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
                 <x-ui.icon name="x-mark" class="h-5 w-5" />
             </button>
@@ -75,9 +73,9 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
     x-on:mouseout="quitter($event)"
     class="fb-sidebar group/sidebar hidden lg:block fixed inset-y-0 left-0 z-30 w-[260px] overflow-clip border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900">
 
-    {{-- Une seule infobulle pour tous les liens du rail, posee a cote de celui
-         qu'on survole. Teleportee comme le volet d'une section : la barre est
-         en `overflow-clip`, et un panneau y serait rogne. --}}
+    {{-- One tooltip for every link on the rail, placed beside the hovered one.
+         Teleported like a section's panel: the sidebar is `overflow-clip`, and
+         a panel would be clipped inside it. --}}
     <template x-teleport="body">
         <span x-show="ouvert" x-cloak x-init="panneau = $el" role="tooltip"
             x-bind:style="`top: ${haut}px; left: ${gauche}px`"

@@ -1,48 +1,16 @@
-/*
- * LA feuille du back-office · une page, une feuille Tailwind.
- *
- * **Cette entree importe, elle ne contient pas.** Nos regles vivent dans
- * `admin/`, chacune dans son fichier, enchainees plus bas.
- *
- * Le kit et les paquets ne compilent rien. Ils **declarent** — leurs ecrans a
- * lire, leurs couleurs, leurs regles — et ce fichier les rassemble.
- * `npm run build` en produit un seul, ou chaque classe n'est ecrite qu'une fois.
- *
- * **Pourquoi pas une feuille par fournisseur ?** Parce que deux feuilles
- * Tailwind sur une meme page ecrivent les memes noms de classes, et qu'a poids
- * egal la derniere chargee gagne. La notre arrivait en dernier : son `.bg-white`
- * tombait apres le `dark:bg-gray-800` de booking et l'annulait, sans la moindre
- * erreur. Mesure aussi en poids · 223 ko en trois fichiers contre 133 en un.
- *
- * `source(none)` : ne sont lus que les fichiers nommes ici, ou par un paquet
- * dans son propre point d'entree. Rien n'entre par accident.
- */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 @import 'tailwindcss' source(none);
 
-/*
- * Une ligne par fournisseur, ecrite par son installateur. Chacun declare ses
- * vues, son theme et ses regles · nous ne connaissons ni ses fichiers ni leur
- * nombre.
- *
- * L'ordre compte pour leurs regles ecrites a la main : le dernier importe passe
- * par-dessus. Il ne compte pas pour les utilitaires, que Tailwind range selon
- * son propre ordre, quel que soit celui qui a ecrit la classe.
- */
+/* Order matters for hand-written rules, the last import winning. It does not
+   matter for utilities, which Tailwind orders on its own. */
 @import '../../vendor/falcon/ui-kit/resources/css/preset.css';
 @import '../../vendor/falcon/booking/resources/css/booking-admin.css';
 @import '../../vendor/falcon/analytics/resources/css/analytics-admin.css';
 
-/* Le commun aux deux espaces. Vide aujourd'hui, et c'est sa place. */
 @import './app.css';
 
-/*
- * Nos vues a nous · nos ecrans, nos surcharges de composants, et les vues de
- * paquets que nous aurions publiees pour les reecrire.
- */
 @source '../views/**/*.blade.php';
 
-/* Nos reglages et nos regles · ils arrivent apres ceux du kit, donc ils gagnent. */
 @import './admin/theme.css';
 @import './admin/fields.css';
 @import './admin/sidebar.css';

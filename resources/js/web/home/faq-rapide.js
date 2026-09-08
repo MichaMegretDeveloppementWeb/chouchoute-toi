@@ -1,7 +1,3 @@
-/**
- * Accordéon FAQ rapide : page d'accueil
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     const items = document.querySelectorAll('[data-home-faq-item]');
 

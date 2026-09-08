@@ -1,7 +1,7 @@
 {{--
-    Publie depuis falcon/ui-kit : le libelle se replie par sa classe plutot que
-    par des variantes de largeur d'ecran, et le lien porte son titre pour
-    l'infobulle que la barre affiche quand elle est sur son rail.
+    Published from falcon/ui-kit: the label folds by its class rather than by
+    screen-width variants, and the link carries its title for the tooltip the
+    sidebar shows when it is on its rail.
 --}}
 @props([
     'href' => '#',
@@ -11,8 +11,8 @@
 
 @php
 $labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
-// `max-sm:py-3` : sous 640 la barre est un tiroir qu'on vise au doigt, et
-// 34 px de haut est en dessous de ce qu'un doigt atteint sans se reprendre.
+// `max-sm:py-3`: below 640 the sidebar is a drawer aimed at with a finger, and
+// 34px of height is under what a finger reaches without a second try.
 $navLinkBase = 'fb-sidebar-link group flex items-center rounded-lg px-2.5 py-[7px] max-sm:py-3 text-[13px] font-normal gap-x-3 max-w-full transition-[max-width,gap,background-color,color] duration-300 ease-in-out';
 $stateClass = $active
     ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
@@ -26,11 +26,11 @@ $iconClass = $active
     {{-- aria-current, not the class alone: the colours say where we are to
          whoever sees them, and nothing said it to anyone else.
 
-         `data-fb-title` : sur le rail, l'icone est seule et ne dit rien a qui
-         ne la connait pas encore. Une seule infobulle sert toute la barre, du
-         cote de celle-ci ; la poser sur chaque lien en faisait quatre-vingt-
-         quatorze, la barre etant rendue deux fois et chaque section rendant ses
-         liens deux fois de plus. --}}
+         `data-fb-title`: on the rail the icon stands alone and says nothing to
+         whoever does not know it yet. One tooltip serves the whole sidebar,
+         from the sidebar's side; putting one on each link made dozens of them,
+         the sidebar being rendered twice and each section rendering its links
+         twice more. --}}
     <a href="{{ $href }}" data-fb-title="{{ trim($slot) }}"
         @if($active) aria-current="page" @endif
         {{ $attributes->merge(['class' => "$navLinkBase $stateClass"]) }}>

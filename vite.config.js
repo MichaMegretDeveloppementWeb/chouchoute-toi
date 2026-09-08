@@ -7,20 +7,17 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                // Un espace, une paire d'entrées. `app.css` et `app.js`
-                // portent le commun aux deux et ne sont pas des entrées :
-                // `web` et `admin` les importent, chacun dans sa compilation.
-                // Deux feuilles Tailwind sur une page écrivent les mêmes noms
-                // de classes, et la dernière chargée gagne par sa position.
+                // One space, one pair of entries. app.css and app.js carry what
+                // both share and are not entries themselves: web and admin
+                // import them, each into its own compilation.
                 'resources/css/web.css',
                 'resources/js/web.js',
                 'resources/css/admin.css',
                 'resources/js/admin.js',
 
-                // Le CSS et le JS par page du site public, chargés par un
-                // `@vite` dans leur vue. Ils ne portent jamais Tailwind : que
-                // des règles à nous, dont les sélecteurs n'appartiennent qu'à
-                // nous.
+                // The public site's per-page CSS and JS, loaded by a `@vite` in
+                // their own view. They never carry Tailwind: only our rules,
+                // whose selectors are ours alone.
                 ...glob.sync('resources/css/web/*/index.css'),
                 ...glob.sync('resources/js/web/*/index.js'),
                 'resources/css/components/layout/header.css',

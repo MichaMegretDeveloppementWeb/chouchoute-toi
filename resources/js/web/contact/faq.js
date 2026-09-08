@@ -1,7 +1,3 @@
-/**
- * Accordéon FAQ
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     const items = document.querySelectorAll('[data-faq-item]');
 

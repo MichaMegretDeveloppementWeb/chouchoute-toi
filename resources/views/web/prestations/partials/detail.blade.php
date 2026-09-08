@@ -28,8 +28,7 @@
             Mes prestations
         </h1>
 
-        {{-- Zigzag des catégories --}}
-        @foreach ($categories as $slug => $categorie)
+                @foreach ($categories as $slug => $categorie)
             <div id="{{ $slug }}" class="prestation-detail mb-[100px] grid grid-cols-2 items-center gap-16 max-md:mb-16 max-md:grid-cols-1 max-md:gap-8 {{ $loop->even ? 'prestation-detail--reverse' : '' }}" data-animate>
                 <div class="prestation-detail__image {{ $loop->even ? 'order-2 max-md:order-1' : '' }}">
                     <div class="aspect-[4/3] w-full rounded-xl bg-sand flex items-center justify-center" aria-hidden="true">
@@ -75,7 +74,6 @@
             </div>
         @endforeach
 
-        {{-- Dépose --}}
         <div id="depose" class="prestation-detail mb-[100px] grid grid-cols-2 items-center gap-16 max-md:mb-16 max-md:grid-cols-1 max-md:gap-8" data-animate>
             <div class="prestation-detail__image">
                 <div class="aspect-[4/3] w-full rounded-xl bg-sand flex items-center justify-center" aria-hidden="true">

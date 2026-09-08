@@ -1,5 +1,3 @@
-/* Section Avant / Après */
-
 .avant-apres {
     --color-wine: #512731;
     --color-sand: #ebe4de;
@@ -37,8 +35,6 @@
     clip-path: inset(0 0 0 var(--split-position, 50%));
 }
 
-/* Handle : vertical divider line */
-
 .avant-apres__handle {
     position: absolute;
     top: 0;
@@ -69,8 +65,6 @@
     flex-shrink: 0;
 }
 
-/* Labels : Avant / Après */
-
 .avant-apres__label {
     position: absolute;
     bottom: 16px;
@@ -93,8 +87,6 @@
 .avant-apres__label--apres {
     right: 16px;
 }
-
-/* Navigation : arrows + dots + label */
 
 .avant-apres__nav {
     display: flex;

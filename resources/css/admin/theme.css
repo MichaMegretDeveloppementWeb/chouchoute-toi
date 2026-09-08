@@ -1,36 +1,10 @@
-/*
- * Les jetons de l'administration · ce qui distingue notre back-office du kit.
- */
-
 @theme {
-    /* Chouchoute-toi identity carried over to the back-office. */
     --color-admin-brand: #512731;
 
-    /*
-     * Open Sans plutot que la DM Sans du kit.
-     *
-     * Ce fichier est importe apres le preset, donc il gagne : le point
-     * d'extension est prevu, rien n'est touche dans le vendor.
-     *
-     * La reference de ce projet ecrit ses valeurs de formulaire en 13 px gras
-     * 600, comme nous. Ce qui differait etait la famille : la DM Sans a une
-     * hauteur d'x plus faible et un gras plus serre, d'ou une lecture a la fois
-     * plus petite et plus lourde a mesures egales. Reprendre la famille rend ses
-     * mesures transposables telles quelles.
-     *
-     * Le site public garde la sienne : cette entree n'est chargee que par la
-     * coquille d'administration.
-     */
     --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/*
- * Les jetons semantiques du formulaire (encre, filets, cases grises, etats
- * passes) vivaient ici et appartenaient a falcon/booking, qui seul les lisait.
- * Ils sont partis dans sa palette, sur `.fb-booking` : le paquet doit etre
- * complet la ou on l'installe.
- */
 :root {
     --fb-focus: #38a169;
 }

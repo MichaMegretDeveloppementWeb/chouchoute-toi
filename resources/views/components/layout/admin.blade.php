@@ -1,19 +1,9 @@
 {{--
-    `wide` retire la largeur maximale et les marges du contenu.
+    `wide` drops the content's maximum width and margins.
 
-    La colonne centrée convient à un formulaire ou à une liste, qu'on lit sur
-    une ligne courte. Elle est fausse pour une grille temporelle : sur un grand
-    écran elle laisse près d'un tiers de la largeur vide alors que chaque
-    colonne de jour gagne à respirer.
---}}
-{{--
-    Il y avait ici une prop `charts`, qui posait `@uiKitCharts`.
-
-    Elle existait parce que falcon/analytics dessinait ses graphiques avec
-    `new window.Chart(...)` sans jamais demander la bibliothèque. Il l'attend
-    maintenant lui-même, par `await window.falconCharts()`, et le build découpe
-    Chart.js en un fichier à part que seules les pages qui en affichent
-    téléchargent. Retirée le 2026-09-06 avec la directive.
+    The centred column suits a form or a list, read on a short line. It is wrong
+    for a time grid, where it leaves nearly a third of a large screen empty
+    while every day column gains from the room.
 --}}
 @props(['title' => 'Administration', 'wide' => false])
 
@@ -21,8 +11,8 @@
     $analytics = config('analytics.dashboard.route_name', 'analytics');
     $marketing = config('analytics.marketing.route_name', 'marketing');
 
-    // Le prefixe vient de la configuration du package, comme pour analytics :
-    // les ecrans peuvent etre montes ailleurs sans toucher a cette barre.
+    // The prefix comes from the package's configuration, as for analytics: the
+    // screens can be mounted elsewhere without touching this sidebar.
     $booking = config('booking.admin.route_name', 'booking.admin.');
     $admin = auth()->guard('admin')->user();
 @endphp
@@ -38,17 +28,11 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
 
-    {{-- L'etat de la barre laterale, pose avant la peinture · lu apres, la
-         barre changerait de largeur sous les yeux.
+    {{-- The sidebar's state, written before paint: read afterwards, the sidebar
+         would change width under the eye.
 
-         Le theme, lui, n'a plus besoin de script : il est lu cote serveur dans
-         un cookie et rendu sur `<html>` plus haut. C'est ce qui remplace
-         `@uiKitHead`, retire le 2026-09-06.
-
-         Rien de retenu : repliee en dessous de 1500 px, ouverte au-dela. C'est
-         la ou la barre ouverte coute un sixieme de la largeur a un portable, et
-         ou elle ne coute plus rien a un grand ecran. Le choix n'est pas ecrit
-         dans la memoire, pour qu'un autre ecran retrouve le sien. --}}
+         With nothing remembered: folded below 1500px, open beyond. That default
+         is not written to storage, so another screen finds its own. --}}
     <script>
         try {
             var stored = localStorage.getItem('fb-sidebar');
@@ -61,9 +45,8 @@
         }
     </script>
 
-    {{-- LA feuille de cet espace · une seule, et elle porte tout. Le kit et
-         falcon/booking y sont importés en une ligne chacun ; le build les
-         compile avec nos écrans. Voir l'en-tête de resources/css/admin.css. --}}
+    {{-- One sheet and one script for this space, carrying everything. The kit
+         and the packages are imported a line each inside them. --}}
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
     @livewireStyles
@@ -71,13 +54,10 @@
 <body class="min-h-full antialiased">
 
     {{--
-        Un seul groupe : les sections sont maintenant des sous-menus repliables,
-        et l'etiquette de groupe ferait doublon avec leur libelle.
-
-        L'etat actif d'une section se calcule sur le prefixe de ses routes, pas
-        sur la liste de ses liens : « Integrations » n'apparait que si la Search
-        Console est configuree, donc la section ne peut pas se deduire de ce
-        qu'elle contient.
+        A section's active state is computed from its route prefix and not from
+        the list of its links: « Intégrations » only appears when the Search
+        Console is configured, so the section cannot be deduced from what it
+        holds.
     --}}
     <x-app-ui::sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
         <x-app-ui::sidebar.group>
@@ -88,9 +68,8 @@
                 Tableau de bord
             </x-app-ui::sidebar.link>
 
-            {{-- `href` : la première page de la section. Le libellé y mène tant
-                 qu'on n'y est pas, et redevient une simple bascule une fois
-                 dedans. Le chevron ne bascule jamais que l'ouverture. --}}
+            {{-- `href`: the section's first page. The label leads there while we
+                 are not in it, and becomes a plain toggle once inside. --}}
             <x-app-ui::sidebar.collapsible
                 name="agenda"
                 label="Agenda"
@@ -121,8 +100,8 @@
                     Journal
                 </x-app-ui::sidebar.link>
 
-                {{-- Un troisième niveau : les réglages sont une section, une page
-                     par famille, et les horaires en font partie. --}}
+                {{-- A third level: the settings are a section of their own, one
+                     page per family, opening hours among them. --}}
                 <x-app-ui::sidebar.collapsible
                     name="settings"
                     label="Réglages"
@@ -255,24 +234,18 @@
 
         <header class="flex h-14 shrink-0 items-center justify-between border-b border-base bg-surface px-4 sm:px-6">
             <div class="flex items-center gap-x-3">
-                {{-- Une hauteur posée plutôt qu'un retrait élargi : le kit
-                     dimensionne ce bouton par son `p-1.5`, et deux valeurs du
-                     même utilitaire ne s'annulent pas. --}}
+                {{-- A stated height rather than a wider padding: the kit sizes
+                     this button by its `p-1.5`, and two values of the same
+                     utility do not cancel each other. --}}
                 <x-app-ui::sidebar.trigger class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
 
-                {{-- Le pendant du declencheur mobile, pour l'autre bout de
-                     l'echelle : au-dela de 1500 px la barre est ouverte d'office
-                     et prend une largeur dont la grille du planning a besoin.
-                     Entre les deux, la barre est deja un rail et il n'y a rien a
-                     replier, d'ou `hidden wide:inline-flex`.
+                {{-- The counterpart of the mobile trigger, and the same glyph:
+                     the same gesture at the other end of the scale. An arrow
+                     would state a direction, and this button toggles.
 
-                     Le meme trait que le declencheur mobile : c'est le meme
-                     geste, sur l'autre bout de l'echelle. Une fleche aurait dit
-                     un sens, or ce bouton bascule.
-
-                     Des `lg` et non des `wide` : le survol ne deploie plus la
-                     barre, donc sans ce bouton les libelles seraient hors
-                     d'atteinte entre 1024 et 1500 px. --}}
+                     From `lg` and not from `wide`: hover no longer unfolds the
+                     sidebar, so without this button the labels would be out of
+                     reach between 1024 and 1500px. --}}
                 <button type="button" onclick="toggleSidebar()"
                     class="hidden rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 lg:inline-flex dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                     aria-label="Replier ou deployer la barre laterale">
@@ -282,12 +255,10 @@
                 <span class="text-[13px] font-medium text-secondary">{{ $title }}</span>
             </div>
 
-            {{-- « Voir le site » et « Déconnexion » vivent dans le menu utilisateur
-                 de la sidebar : la topbar ne garde que le réglage d'affichage.
-
-                 Le variant par défaut plutôt que l'interrupteur : celui-ci prend
-                 84 px pour trois éléments dont un seul se touche, large de 36 et
-                 haut de 20. Un bouton unique dit la même chose et se vise. --}}
+            {{-- The default variant rather than the switch: the switch takes
+                 84px for three elements of which only one is a target, 36 wide
+                 and 20 high. A single button says the same and can be aimed
+                 at. --}}
             <div class="flex items-center gap-x-3">
                 <x-ui.theme-toggle class="max-sm:flex max-sm:h-11 max-sm:w-11 max-sm:items-center max-sm:justify-center" />
             </div>
@@ -305,8 +276,8 @@
 
     <x-app-ui::toast position="top-right" />
 
-    {{-- Aucune directive du kit ni des paquets · leurs scripts sont importés
-         dans resources/js/admin.js et compilés avec le nôtre. --}}
+    {{-- No directive from the kit nor from the packages: their scripts are
+         imported in resources/js/admin.js and compiled with ours. --}}
     @livewireScripts
 </body>
 </html>

@@ -4,10 +4,8 @@
 ])
 
 @php
-    // Same collapse animation as the ui-kit sidebar labels: the text folds away
-    // while the rail is narrow, and unfolds on hover or on a wide screen.
-    // Le repli passe par la classe, comme dans les composants publies de la
-    // barre : c'est la feuille qui decide, et non la largeur de l'ecran.
+    // Same fold as the published sidebar components: it goes through the class,
+    // so the stylesheet decides and not the screen width.
     $labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
 
     $initials = collect(explode(' ', trim($name)))

@@ -1,15 +1,3 @@
-/*
- * Ce qui est commun aux deux espaces · le site public et le back-office.
- *
- * **Ce fichier n'est pas une entree.** Il ne porte pas `@import 'tailwindcss'`
- * et n'est pas declare dans `vite.config.js` · ce sont `web.css` et `admin.css`
- * qui l'importent, chacun dans sa compilation.
- *
- * Lui donner Tailwind en ferait une seconde feuille sur chaque page, et deux
- * feuilles Tailwind ecrivent les memes noms de classes : la derniere chargee
- * gagne par sa seule position, sans la moindre erreur.
- *
- * Il est vide aujourd'hui, et il reste · le jour ou une regle vaut pour les
- * deux espaces, elle a sa place, et les deux entrees la prennent sans qu'on y
- * touche.
- */
+/* What both spaces share. Empty today, and it stays: web.css and admin.css
+   both import it. Never `@import 'tailwindcss'` here, which would compile a
+   second sheet into every page. */

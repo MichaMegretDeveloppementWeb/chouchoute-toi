@@ -1,7 +1,3 @@
-/**
- * Accordéon témoignages
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     const items = document.querySelectorAll('[data-accordion-item]');
 

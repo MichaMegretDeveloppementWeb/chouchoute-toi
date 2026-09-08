@@ -10,11 +10,9 @@
     ])
 @endsection
 
-{{-- ── Ce que cette page ajoute au graphe du site ───────────────────────────
-
-     Le catalogue complet, rubrique par rubrique, et la prestation qu'il decrit.
-     L'entreprise vient du gabarit · elle n'est plus recopiee en `provider`,
-     elle y est designee par son `@id`. --}}
+{{-- What this page adds to the site's graph: the whole catalogue, section by
+     section, and the treatment it describes. The business comes from the
+     layout and is named in `provider` by its `@id`, never copied out. --}}
 @section('schema')
     @php
         $rubriques = [];
@@ -97,8 +95,8 @@
                 'itemListElement' => $rubriques,
             ],
         ],
-        {{-- Le catalogue rattache a l'entreprise · la prestation la designe
-             deja par `provider`, et c'est le sens qui compte. --}}
+        {{-- The catalogue tied back to the business: the treatment already
+             names it through `provider`, and the direction is what counts. --}}
         [
             '@id' => \App\Services\SiteGraphService::id('business'),
             'hasOfferCatalog' => ['@id' => url()->current().'#catalogue'],

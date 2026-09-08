@@ -10,7 +10,6 @@
         </h2>
 
         <div class="grid grid-cols-3 gap-8 max-md:grid-cols-1">
-            {{-- Bienveillance --}}
             <div class="rounded-xl border border-charcoal/5 p-8 transition-all duration-300 hover:border-charcoal/15 hover:shadow-sm">
                 <div class="mb-6 flex h-[58px] w-[58px] items-center justify-center rounded-[10px] bg-sand">
                     <x-icon.heart class="text-wine" />
@@ -21,7 +20,6 @@
                 </p>
             </div>
 
-            {{-- Excellence --}}
             <div class="rounded-xl border border-charcoal/5 p-8 transition-all duration-300 hover:border-charcoal/15 hover:shadow-sm">
                 <div class="mb-6 flex h-[58px] w-[58px] items-center justify-center rounded-[10px] bg-sand">
                     <x-icon.gem class="text-wine" />
@@ -32,7 +30,6 @@
                 </p>
             </div>
 
-            {{-- Personnalisation --}}
             <div class="rounded-xl border border-charcoal/5 p-8 transition-all duration-300 hover:border-charcoal/15 hover:shadow-sm">
                 <div class="mb-6 flex h-[58px] w-[58px] items-center justify-center rounded-[10px] bg-sand">
                     <x-icon.eye class="text-wine" />

@@ -1,13 +1,13 @@
 {{--
-    Un bloc de donnees structurees, sous la forme d'un `@graph`.
+    A block of structured data, shaped as a `@graph`.
 
-    Le graphe plutot qu'un nœud isole · c'est la forme qui permet a plusieurs
-    nœuds de se designer entre eux par leur `@id`, ce qui est tout l'objet du
-    decoupage entre le gabarit et les pages.
+    The graph rather than a lone node: it is the shape that lets several nodes
+    name each other by their `@id`, which is the whole point of the split
+    between the layout and the pages.
 
-    Le rendu passe par `SiteGraphService::render()`, qui echappe les chevrons ·
-    un « </script> » arrive dans un avis Google fermerait la balise, et tout ce
-    qui suit deviendrait du HTML.
+    Rendered through SiteGraphService::render(), which escapes the angle
+    brackets: a « </script> » arriving in a Google review would close the tag,
+    and everything after it would become HTML.
 --}}
 @props(['nodes'])
 
