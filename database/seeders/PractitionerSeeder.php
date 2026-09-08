@@ -23,7 +23,7 @@ use Illuminate\Database\Seeder;
 final class PractitionerSeeder extends Seeder
 {
     /** @var list<array{name: string, position: int, color: string}> */
-    private const EQUIPE = [
+    private const TEAM = [
         // Three distinct families from the same palette as the treatments, so a
         // practitioner and a treatment are never confused. Named by family and
         // rank and never in hexadecimal: the palette moves, these follow.
@@ -34,13 +34,13 @@ final class PractitionerSeeder extends Seeder
 
     public function run(): void
     {
-        foreach (self::EQUIPE as $personne) {
+        foreach (self::TEAM as $person) {
             Practitioner::query()->firstOrCreate(
-                ['name' => $personne['name']],
+                ['name' => $person['name']],
                 [
                     'is_bookable_online' => true,
-                    'position' => $personne['position'],
-                    'color' => $personne['color'],
+                    'position' => $person['position'],
+                    'color' => $person['color'],
                 ],
             );
         }

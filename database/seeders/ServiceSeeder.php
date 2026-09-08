@@ -99,16 +99,16 @@ final class ServiceSeeder extends Seeder
             }
         }
 
-        $depose = config('tarifs.depose');
+        $removal = config('tarifs.depose');
 
         // Deliberately under no category: it belongs to no range, and the
         // catalogue has a place for exactly that.
         $created += $this->createService(
-            name: $depose['nom'],
+            name: $removal['nom'],
             slug: 'depose',
-            description: $depose['description'],
-            duration: $this->durationToMinutes($depose['duree']),
-            priceCents: $depose['prix'] * 100,
+            description: $removal['description'],
+            duration: $this->durationToMinutes($removal['duree']),
+            priceCents: $removal['prix'] * 100,
             color: self::COLORS['depose'],
             position: 0,
             categoryId: null,

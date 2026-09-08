@@ -83,18 +83,18 @@ class ContactForm extends Component
         }
 
         $categories = config('tarifs.categories');
-        $categorie = $categories[$this->volume] ?? null;
+        $category = $categories[$this->volume] ?? null;
 
-        if (! $categorie) {
+        if (! $category) {
             return [];
         }
 
         $options = [['value' => 'pose-complete', 'label' => 'Pose complète']];
 
-        foreach ($categorie['remplissages'] as $remplissage) {
+        foreach ($category['remplissages'] as $refill) {
             $options[] = [
-                'value' => Str::slug($remplissage['nom']),
-                'label' => $remplissage['nom'],
+                'value' => Str::slug($refill['nom']),
+                'label' => $refill['nom'],
             ];
         }
 

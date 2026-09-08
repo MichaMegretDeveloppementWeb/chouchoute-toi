@@ -43,10 +43,10 @@ class GoogleReviewsService
                 // Nobody promises what the API returns: every field is read
                 // with its default, and the shape is declared so what follows
                 // types instead of drifting into mixed.
-                /** @var list<array<string, mixed>> $brutes */
-                $brutes = is_array($data['reviews'] ?? null) ? array_values($data['reviews']) : [];
+                /** @var list<array<string, mixed>> $raw */
+                $raw = is_array($data['reviews'] ?? null) ? array_values($data['reviews']) : [];
 
-                $reviews = collect($brutes)
+                $reviews = collect($raw)
                     ->filter(fn (array $review): bool => ((int) ($review['rating'] ?? 0)) >= 4)
                     ->map(fn (array $review) => [
                         'nom' => $review['authorAttribution']['displayName'] ?? 'Cliente',

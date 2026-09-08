@@ -167,59 +167,59 @@ final class DemoCatalogueSeeder extends Seeder
 
     public function run(): void
     {
-        $gammes = 0;
-        $prestations = 0;
-        $rangGamme = 100;
+        $ranges = 0;
+        $services = 0;
+        $rangeRank = 100;
 
-        foreach (self::RANGES as $nom => $gamme) {
-            $slug = 'demo-'.Str::slug($nom);
+        foreach (self::RANGES as $name => $range) {
+            $slug = 'demo-'.Str::slug($name);
 
-            $categorie = ServiceCategory::query()->firstOrCreate(
+            $category = ServiceCategory::query()->firstOrCreate(
                 ['slug' => $slug],
-                ['name' => $nom, 'color' => $gamme['color'], 'position' => $rangGamme++],
+                ['name' => $name, 'color' => $range['color'], 'position' => $rangeRank++],
             );
 
-            $gammes += $categorie->wasRecentlyCreated ? 1 : 0;
+            $ranges += $category->wasRecentlyCreated ? 1 : 0;
 
-            $rangPrestation = 0;
+            $serviceRank = 0;
 
-            foreach ($gamme['services'] as $ligne) {
-                [$nomPrestation, $minutes, $centimes] = $ligne;
+            foreach ($range['services'] as $row) {
+                [$serviceName, $minutes, $priceCents] = $row;
 
                 // Everything past the price is optional: a treatment costs a
                 // fixed amount, is bookable and carries no abbreviation unless
                 // its row says otherwise.
-                $mode = $ligne[3] ?? PricingMode::Fixed;
-                $plafond = $ligne[4] ?? null;
-                $visibilite = $ligne[5] ?? Visibility::Bookable;
-                $abreviation = $ligne[6] ?? null;
+                $mode = $row[3] ?? PricingMode::Fixed;
+                $priceMaxCents = $row[4] ?? null;
+                $visibility = $row[5] ?? Visibility::Bookable;
+                $abbreviation = $row[6] ?? null;
 
-                $prestation = Service::query()->firstOrCreate(
-                    ['slug' => $slug.'-'.Str::slug($nomPrestation)],
+                $service = Service::query()->firstOrCreate(
+                    ['slug' => $slug.'-'.Str::slug($serviceName)],
                     [
-                        'service_category_id' => $categorie->id,
-                        'name' => $nomPrestation,
-                        'abbreviation' => $abreviation,
+                        'service_category_id' => $category->id,
+                        'name' => $serviceName,
+                        'abbreviation' => $abbreviation,
                         'duration_minutes' => $minutes,
                         'pricing' => $mode,
-                        'price_cents' => $centimes,
-                        'price_max_cents' => $plafond,
-                        'color' => $gamme['color'],
-                        'visibility' => $visibilite,
-                        'position' => $rangPrestation++,
+                        'price_cents' => $priceCents,
+                        'price_max_cents' => $priceMaxCents,
+                        'color' => $range['color'],
+                        'visibility' => $visibility,
+                        'position' => $serviceRank++,
                     ],
                 );
 
-                if ($prestation->wasRecentlyCreated) {
-                    $prestation->practitioners()->sync(Practitioner::query()->pluck('id')->all());
+                if ($service->wasRecentlyCreated) {
+                    $service->practitioners()->sync(Practitioner::query()->pluck('id')->all());
                 }
 
-                $prestations += $prestation->wasRecentlyCreated ? 1 : 0;
+                $services += $service->wasRecentlyCreated ? 1 : 0;
             }
         }
 
         $this->command?->info(
-            "{$gammes} gamme(s) et {$prestations} prestation(s) créées, le reste était déjà en base."
+            "{$ranges} gamme(s) et {$services} prestation(s) créées, le reste était déjà en base."
         );
     }
 }
