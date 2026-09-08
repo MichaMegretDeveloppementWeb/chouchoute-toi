@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 class GoogleReviewsService
 {
     /**
-     * Récupère les avis Google pour le Place ID configuré.
-     * Les résultats sont mis en cache pour 24h.
+     * Fetches the Google reviews for the configured Place ID. The results are
+     * cached for 24 hours.
      *
      * @return array{reviews: array<int, array{nom: string, note: int, texte: string, date: string}>, rating: float|null, total: int|null}
      */
@@ -40,9 +40,9 @@ class GoogleReviewsService
 
                 $data = $response->json();
 
-                // Ce que l'API rend n'est promis par personne : chaque champ se
-                // lit avec son defaut, et la forme est declaree pour que la
-                // suite se type au lieu de partir en mixed.
+                // Nobody promises what the API returns: every field is read
+                // with its default, and the shape is declared so what follows
+                // types instead of drifting into mixed.
                 /** @var list<array<string, mixed>> $brutes */
                 $brutes = is_array($data['reviews'] ?? null) ? array_values($data['reviews']) : [];
 

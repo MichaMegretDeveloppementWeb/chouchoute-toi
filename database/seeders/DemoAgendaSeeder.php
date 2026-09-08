@@ -41,7 +41,7 @@ use Illuminate\Database\Seeder;
  * across two agendas, visits at the client's, deliberate overlaps, weekly
  * series, and the states a past appointment ends in.
  *
- * **Written through the Actions, never through the factories.** A visit written
+ * Written through the Actions, never through the factories. A visit written
  * the real way carries its treatment lines, and the agenda reads their count to
  * put « +2 » on a card: rows built by hand would draw cards that lie. The
  * factories are also dev-only autoload, and the `Admin\` space refuses nothing,
@@ -69,13 +69,9 @@ final class DemoAgendaSeeder extends Seeder
     private const AFTERNOON = ['14:00', '19:00'];
 
     /**
-     * Les heures où l'on pose une visite : celles des deux plages ci-dessus, la
-     * pause du midi sautée.
-     *
-     * Une table et non `9 + $slot`, qui posait des visites à midi et midi et
-     * demi, donc dans la bande hachurée. Le décalage de deux heures le
-     * masquait : les créneaux tombaient alors de 11 h à 16 h, et personne ne
-     * voyait le défaut tant que l'heure elle-même était fausse.
+     * The hours a visit is laid on: those of the two ranges above, the midday
+     * break skipped. A table and not `9 + $slot`, which would lay visits at
+     * noon, inside the hatched band.
      */
     private const SLOT_HOURS = [9, 10, 11, 14, 15, 16];
 
@@ -100,24 +96,20 @@ final class DemoAgendaSeeder extends Seeder
     ];
 
     /**
-     * Aujourd'hui à minuit, **à l'heure de l'établissement**.
+     * Today at midnight, in the establishment's own time. Everything this
+     * seeder lays derives from it.
      *
-     * Tout ce que ce seeder pose en dérive. `CarbonImmutable::now()` répondrait
-     * dans le fuseau de l'application, UTC, où `setTime(9, 0)` signifie neuf
-     * heures UTC, soit onze heures à Paris : la démonstration plaçait ainsi ses
-     * visites deux heures après l'ouverture, et son congé de 02:00 à 02:00.
-     *
-     * Le fuseau de l'établissement se lit par `BusinessClock`, jamais par
-     * `now()` ni par `config()`. Voir .ai/rules/src.md.
+     * The establishment's zone is read through `BusinessClock` and never
+     * through `now()` or `config()`: the latter answer in the application's
+     * zone, where `setTime(9, 0)` means nine UTC and lands the demonstration
+     * two hours after opening.
      */
     private CarbonImmutable $today;
 
     /**
-     * Les deux lieux de la démonstration, résolus une fois.
-     *
-     * Chaque visite porte le sien · le genre seul ne suffit plus depuis que les
-     * lieux sont des lignes, et une démonstration dont les rendez-vous ne sont
-     * nulle part ne montre pas ce que les écrans affichent.
+     * The demonstration's two places, resolved once. Every visit carries its
+     * own: the kind alone no longer says where, and appointments that are
+     * nowhere would not show what the screens display.
      */
     private Location $onSitePlace;
 
@@ -446,17 +438,13 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * Le rang du créneau où la visite **tient** avant la fermeture, en reculant
-     * depuis celui qu'elle visait.
+     * The rank of the slot where the visit fits before closing, walking back
+     * from the one it aimed at: a salon does not start a four hour package at
+     * four in the afternoon, and a card laid across the hatched band reads as a
+     * defect of the screen rather than as data.
      *
-     * Un institut ne commence pas un forfait de quatre heures à seize heures.
-     * Sans cette marche arrière, deux visites sur près de trois cents finissaient
-     * après la fermeture, dont une à 21 h 30, soit deux heures et demie de carte
-     * posée en pleine bande hachurée, ce qui se lit comme un défaut de l'écran
-     * plutôt que comme une donnée.
-     *
-     * Le premier créneau tient toujours : la plus longue paire possible fait huit
-     * heures, et neuf heures plus huit tombe avant dix-neuf heures.
+     * The first slot always fits: the longest possible pair runs eight hours,
+     * and nine plus eight falls before seven in the evening.
      *
      * @param  list<BookedTreatmentData>  $treatments
      */
@@ -480,18 +468,15 @@ final class DemoAgendaSeeder extends Seeder
      * What a visit ended up being: honoured, missed, or called off.
      *
      * Marking a visit honoured or missed is done under the eyes of whoever is
-     * looking at the screen, so **it reaches no journal**: the journal records
+     * looking at the screen, so it reaches no journal: the journal records
      * what the agenda does not already show.
      *
-     * **Une annulation, si.** Elle est, avec la suppression, l'un des deux
-     * gestes de l'établissement qui laissent une trace : elle retire au client
-     * un rendez-vous qu'il tenait. Le journal de la démonstration n'est donc
-     * plus vide, et il ne doit pas l'être : ces annulations-là ont bien eu lieu
-     * dans l'histoire que le seeder raconte, au même titre que les visites.
+     * A cancellation does. It is, with deletion, one of the two gestures that
+     * take from a client an appointment they held, so the demonstration's
+     * journal is not empty and must not be.
      *
-     * Ce qui reste interdit est d'écrire des entrées **à la main**, pour un
-     * passé que rien n'a joué. Elles ne viennent ici que du chemin ordinaire,
-     * celui qui les écrirait en production.
+     * What stays forbidden is writing entries by hand, for a past nothing
+     * played. They come here only from the ordinary path.
      */
     private function settle(
         TransitionAppointmentAction $transition,
@@ -550,11 +535,8 @@ final class DemoAgendaSeeder extends Seeder
     }
 
     /**
-     * « Manger tous les mardis avec X », l'exemple d'origine, posé tel quel.
-     *
-     * Une indisponibilité qui se répète, pour que l'agenda en montre une : le
-     * `⟳` sur la carte, la portée demandée au déplacement, la règle relisible
-     * dans le panneau.
+     * A repeating unavailability, so the agenda shows one: the `⟳` on the
+     * card, the scope asked for on a move, the rule readable in the panel.
      */
     private function repeatedUnavailability(Practitioner $practitioner): void
     {

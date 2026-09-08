@@ -35,12 +35,11 @@ final class ServiceSeeder extends Seeder
      * `depose` is the exception and belongs to a treatment alone, which is
      * filed under no category at all.
      *
-     * **Une famille et un rang, jamais un hexadécimal.** Ce qui compte ici est
-     * la place dans l'échelle — la naturelle la plus claire, l'intense la plus
-     * soutenue — et non la couleur elle-même. Écrite en clair, elle sort de la
-     * grille le jour où la palette bouge, et le formulaire affiche alors une
-     * pastille isolée là où il devrait cocher une case.
-     * `SeededColoursComeFromThePaletteTest` tient la règle.
+     * A family and a rank, never a hexadecimal: what matters is the place in
+     * the scale and not the colour itself. Written out in full it leaves the
+     * grid the day the palette moves, and the form then shows a lone swatch
+     * where it should tick a box. `SeededColoursComeFromThePaletteTest` holds
+     * the rule.
      */
     private const COLORS = [
         'naturelle' => Palette::FAMILIES['blue'][0],
@@ -57,8 +56,8 @@ final class ServiceSeeder extends Seeder
         $rank = 0;
 
         foreach (config('tarifs.categories') as $slug => $category) {
-            // La gamme porte la couleur de ses prestations : une famille se lit
-            // comme une famille, du titre de section jusqu'aux rangees.
+            // The range carries its treatments' colour: a family reads as a
+            // family, from the section title down to the rows.
             $range = ServiceCategory::query()->firstOrCreate(
                 ['slug' => $slug],
                 [
@@ -145,9 +144,8 @@ final class ServiceSeeder extends Seeder
         );
 
         if ($service->wasRecentlyCreated) {
-            // Toute l'équipe, comme la migration l'a fait pour l'existant. Sur
-            // une prestation déjà là, on ne touche à rien : une compétence
-            // retirée à la main ne doit pas revenir au prochain rejeu.
+            // The whole team. On a treatment already there nothing is touched:
+            // a skill removed by hand must not come back on the next replay.
             $service->practitioners()->sync(Practitioner::query()->pluck('id')->all());
         }
 

@@ -4,11 +4,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Grille tarifaire · Chouchoute toi
+    | Price list
     |--------------------------------------------------------------------------
     |
-    | Accessible via config('tarifs.categories'), config('tarifs.depose'), etc.
-    | Chaque categorie contient ses prestations (pose + remplissages).
+    | The public pages read these prices straight from here, while the booking
+    | catalogue reads the database that Database\Seeders\ServiceSeeder filled
+    | from them. The seeder is idempotent on the slug, so a price edited here
+    | reaches the public pages and never an already seeded service.
     |
     */
 

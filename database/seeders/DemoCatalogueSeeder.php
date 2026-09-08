@@ -147,18 +147,16 @@ final class DemoCatalogueSeeder extends Seeder
                 ['Forfait cils et sourcils', 150, 9500],
                 ['Forfait mains et pieds', 120, 6500],
 
-                // Les deux seules du catalogue à ne pas coûter un nombre : sans
-                // elles, rien à l'écran ne montre les tarifs « à partir de » et
-                // « sur devis », et c'est sur cette base qu'on les regarde.
+                // The only two in the catalogue not to cost a number: without
+                // them nothing on screen shows the « à partir de » and « sur
+                // devis » prices, and this is the database they are looked at
+                // on.
                 ['Cure de trois soins du visage', 180, 15000, PricingMode::From, 20000],
 
-                // La seule qui s'affiche en ligne sans pouvoir être réservée :
-                // un devis se discute, donc le client appelle. Sans elle, le
-                // troisième état de visibilité ne se verrait nulle part sur la
-                // base de développement.
-                //
-                // C'est aussi le nom le plus long du catalogue, donc celui qui
-                // a le plus besoin d'une abréviation sur une carte.
+                // The only one shown online without being bookable, so the
+                // third visibility state is visible somewhere. It is also the
+                // longest name in the catalogue, hence the one most in need of
+                // an abbreviation on a card.
                 ['Forfait mariée complet, cheveux non inclus', 240, 0, PricingMode::Quote, null, Visibility::Shown, 'Forfait mariée'],
 
                 ['Carte cadeau découverte', 60, 5000],
@@ -188,9 +186,9 @@ final class DemoCatalogueSeeder extends Seeder
             foreach ($gamme['services'] as $ligne) {
                 [$nomPrestation, $minutes, $centimes] = $ligne;
 
-                // Les deux derniers sont facultatifs : une prestation coûte un
-                // nombre sauf mention contraire, et les soixante-dix autres
-                // lignes n'ont pas à porter ce qu'elles n'utilisent pas.
+                // Everything past the price is optional: a treatment costs a
+                // fixed amount, is bookable and carries no abbreviation unless
+                // its row says otherwise.
                 $mode = $ligne[3] ?? PricingMode::Fixed;
                 $plafond = $ligne[4] ?? null;
                 $visibilite = $ligne[5] ?? Visibility::Bookable;

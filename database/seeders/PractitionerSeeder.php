@@ -9,34 +9,24 @@ use Falcon\Booking\Support\Palette;
 use Illuminate\Database\Seeder;
 
 /**
- * L'agenda auquel tout se rattache.
+ * The agenda everything else hangs from. Without a practitioner the planning
+ * screen has nothing to show and the form refuses to save: this is the first
+ * row that opening hours, unavailabilities and appointments depend on.
  *
- * Sans praticienne, l'écran du planning n'a rien à afficher et le formulaire
- * refuse d'enregistrer : c'est la première ligne dont dépendent les horaires,
- * les indisponibilités et les rendez-vous.
+ * The other two come after her, and for judging: the form's selector, the
+ * « occupé » mention and splitting a visit across several hands cannot be
+ * judged on one person. They carry no hours, which serve online booking alone.
  *
- * Camille et Sarah viennent après elle, et pour l'essai : le sélecteur du
- * formulaire, la mention « occupé » et la répartition d'une visite entre
- * plusieurs mains ne se jugent pas à une seule personne. Elles n'ont pas
- * d'horaires, qui ne serviront qu'à la réservation en ligne, et l'écran des
- * horaires ne pilote pour l'instant que la première.
- *
- * La couleur ne sert encore à rien : le planning n'a qu'une colonne. Elle est
- * posée pour le jour où il en aura une par personne.
- *
- * Idempotent, repéré au nom : rejouable en production sans écraser une fiche
- * déjà retouchée.
+ * Idempotent, matched on the name: replayable in production without
+ * overwriting a record already edited.
  */
 final class PractitionerSeeder extends Seeder
 {
     /** @var list<array{name: string, position: int, color: string}> */
     private const EQUIPE = [
-        // Trois familles distinctes de la même palette que les prestations : un
-        // praticien et un soin ne se confondent nulle part, et deux nuanciers
-        // pour un seul espace de travail se seraient contredits.
-        //
-        // Nommées par famille et par rang, jamais en hexadécimal : la palette
-        // bouge, ces trois-là suivent.
+        // Three distinct families from the same palette as the treatments, so a
+        // practitioner and a treatment are never confused. Named by family and
+        // rank and never in hexadecimal: the palette moves, these follow.
         ['name' => 'Amandine', 'position' => 0, 'color' => Palette::DEFAULT_HUE],
         ['name' => 'Camille', 'position' => 1, 'color' => Palette::FAMILIES['sage'][3]],
         ['name' => 'Sarah', 'position' => 2, 'color' => Palette::FAMILIES['amber'][3]],

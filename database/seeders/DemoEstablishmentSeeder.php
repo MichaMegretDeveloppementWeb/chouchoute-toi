@@ -12,30 +12,27 @@ use Falcon\Booking\Support\Palette;
 use Illuminate\Database\Seeder;
 
 /**
- * Un établissement qui a un siège, et trois endroits où l'on reçoit.
+ * An establishment with a registered office and three places where clients are
+ * received. `booking:install` lays a single one, which says nothing about the
+ * screens: a list of one cannot be dragged, cannot be reordered, and its last
+ * active place cannot be archived.
  *
- * `booking:install` en pose un seul, ce qui est vrai d'une installation neuve et
- * ne dit rien des écrans : une liste d'un élément ne se glisse pas, ne se
- * réordonne pas, et son dernier lieu actif ne s'archive pas. Trois lignes
- * suffisent à voir tout cela.
+ * The office matters as much as the places: it drives the address carry-over
+ * and the follow-up when it moves, and neither has anything to show without it.
  *
- * **Le siège compte autant que les lieux.** Il commande la reprise d'adresse et
- * le suivi quand il déménage, et ces deux gestes n'ont rien à montrer sans lui.
+ * Deliberately absent from {@see DatabaseSeeder}: what it lays is invented, and
+ * it runs by hand on a local database, like {@see DemoCatalogueSeeder}.
  *
- * Volontairement absent de {@see DatabaseSeeder} : ce qu'il pose est inventé, et
- * il se lance à la main sur une base locale, comme {@see DemoCatalogueSeeder}.
- *
- * Idempotent sur le nom du lieu, et additif : il ne touche jamais à ce qui est
- * déjà en base, réglage compris.
+ * Idempotent on the place's name, and additive: it never touches what is
+ * already in the database, settings included.
  */
 final class DemoEstablishmentSeeder extends Seeder
 {
     /**
-     * Le siège, et l'adresse du lieu principal avec lui.
-     *
-     * Le même endroit pour les deux, comme chez la plupart des indépendants ·
-     * c'est l'état où le bouton « Reprendre l'adresse du siège » se retire de
-     * lui-même, et le déménager fait paraître le suivi.
+     * The registered office, and the main place's address with it: the same
+     * spot for both, as with most sole traders. That is the state where the
+     * « Reprendre l'adresse du siège » button withdraws by itself, and moving
+     * it makes the follow-up appear.
      *
      * @var array<string, string>
      */
@@ -48,10 +45,9 @@ final class DemoEstablishmentSeeder extends Seeder
     ];
 
     /**
-     * Les deux lieux qui s'ajoutent à celui de l'installation.
-     *
-     * Ailleurs qu'au siège, et pour de bon · deux adresses distinctes, sans quoi
-     * la liste refuserait la seconde, et c'est ce refus qui les rend utiles.
+     * The two places added to the one the installer lays. Elsewhere than the
+     * office, and genuinely so: two distinct addresses, without which the list
+     * would refuse the second.
      *
      * @var list<array<string, string>>
      */
@@ -84,12 +80,11 @@ final class DemoEstablishmentSeeder extends Seeder
     }
 
     /**
-     * L'établissement de la démonstration se déplace, et le dit.
-     *
-     * L'installation archive « À domicile » tant qu'aucune visite ne s'y est
-     * tenue, ce qui est juste pour une installation neuve. L'agenda de la
-     * démonstration en pose vingt-cinq juste après : le laisser archivé
-     * montrerait un écran qui contredit ses propres rendez-vous.
+     * The demonstration's establishment travels, and says so. The installer
+     * archives « À domicile » while no visit has been held there, which is
+     * right for a fresh install; the demonstration's agenda lays twenty-five
+     * right after, and leaving it archived would show a screen contradicting
+     * its own appointments.
      */
     private function homeVisits(): void
     {
@@ -103,8 +98,8 @@ final class DemoEstablishmentSeeder extends Seeder
             'archived_at' => null,
             'visibility' => Visibility::Bookable->value,
 
-            // Le point de départ, qui n'est pas une adresse où l'on reçoit ·
-            // celle du client est portée par chaque rendez-vous.
+            // The starting point, which is not an address where clients are
+            // received: theirs is carried by each appointment.
             'address' => self::SEAT['business.address'],
             'postal_code' => self::SEAT['business.postal_code'],
             'city' => self::SEAT['business.city'],
@@ -115,10 +110,9 @@ final class DemoEstablishmentSeeder extends Seeder
     }
 
     /**
-     * Le siège, posé seulement s'il n'a pas déjà été renseigné.
-     *
-     * Clé par clé, et non en bloc · une base locale où l'on vient de saisir un
-     * numéro de téléphone n'a pas à le perdre parce qu'il manquait une adresse.
+     * The registered office, laid only where nothing was filled in. Key by key
+     * and not in one block: a local database where a phone number was just
+     * typed must not lose it because an address was missing.
      */
     private function seat(): void
     {
@@ -140,12 +134,10 @@ final class DemoEstablishmentSeeder extends Seeder
     }
 
     /**
-     * Les lieux, et l'adresse du principal.
-     *
-     * Celui de l'installation naît sans adresse quand le siège n'était pas
-     * encore renseigné, ce qui est l'ordre où ces commandes se lancent. Il la
-     * reçoit ici, faute de quoi la démonstration montrerait un endroit où l'on
-     * reçoit sans dire où.
+     * The places, and the main one's address. The installer's is born without
+     * one when the office was not yet filled in, which is the order these
+     * commands run in; it receives it here, failing which the demonstration
+     * would show a place without saying where.
      */
     private function places(): void
     {

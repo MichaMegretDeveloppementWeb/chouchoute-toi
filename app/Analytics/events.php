@@ -16,8 +16,7 @@ use Falcon\Analytics\Events\TrackedEvent;
 | (config/tarifs.php: a first appointment runs 65 to 95 EUR, average 80).
 | A conversion is valued as if it became an appointment, which is optimistic
 | in absolute terms but keeps every channel on the same scale, so comparing
-| sources and campaigns stays correct. Revisit the figures once Amandine can
-| say what share of requests actually turns into an appointment.
+| sources and campaigns stays correct.
 |
 */
 

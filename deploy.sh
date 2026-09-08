@@ -15,9 +15,9 @@ set -euo pipefail
 BRANCH="main"
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# PHP 8.5 minimum (contrainte de composer.json). Sur Hostinger le `php` du PATH
-# est une version plus ancienne : on cible le binaire 8.5 explicitement.
-# Surchargeable : PHP_BIN=/chemin/vers/php ./deploy.sh
+# PHP 8.5 minimum, as composer.json requires. The `php` on Hostinger's PATH is
+# older, so the 8.5 binary is targeted explicitly.
+# Overridable: PHP_BIN=/path/to/php ./deploy.sh
 if [ -z "${PHP_BIN:-}" ]; then
     for candidate in /opt/alt/php85/usr/bin/php /usr/local/bin/php85 /usr/bin/php85; do
         if [ -x "$candidate" ]; then
@@ -28,7 +28,7 @@ if [ -z "${PHP_BIN:-}" ]; then
 fi
 PHP_BIN="${PHP_BIN:-$(command -v php 2>/dev/null || echo "php")}"
 
-# -- Couleurs -----------------------------------------------------------------
+# -- Colours ------------------------------------------------------------------
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -36,7 +36,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# -- Fonctions ----------------------------------------------------------------
+# -- Helpers ------------------------------------------------------------------
 
 info()    { echo -e "${BLUE}[INFO]${NC} $1"; }
 success() { echo -e "${GREEN}[OK]${NC} $1"; }
@@ -48,7 +48,7 @@ step() {
     echo -e "${BLUE}━━━ $1 ━━━${NC}"
 }
 
-# Remettre le site en ligne en cas d'erreur
+# Bring the site back up on error
 cleanup() {
     if [ -f "${APP_DIR}/storage/framework/down" ]; then
         warn "Erreur detectee, remise en ligne du site..."
@@ -57,7 +57,7 @@ cleanup() {
 }
 trap cleanup ERR
 
-# -- Validation ---------------------------------------------------------------
+# -- Checks -------------------------------------------------------------------
 
 cd "$APP_DIR"
 
@@ -71,7 +71,7 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# -- Args ---------------------------------------------------------------------
+# -- Arguments ----------------------------------------------------------------
 
 FRESH=false
 ROLLBACK=false
@@ -99,7 +99,7 @@ if [ "$ROLLBACK" = true ]; then
     exit 0
 fi
 
-# -- Debut du deploiement ----------------------------------------------------
+# -- Deployment starts here ---------------------------------------------------
 
 DEPLOY_START=$(date +%s)
 COMMIT_BEFORE=$(git rev-parse --short HEAD 2>/dev/null || echo "inconnu")
@@ -113,15 +113,15 @@ info "Branche : $BRANCH"
 info "Commit actuel : $COMMIT_BEFORE"
 info "PHP : $($PHP_BIN -v | head -1)"
 
-# Arret immediat si le binaire PHP ne satisfait pas la contrainte du projet :
-# composer install echouerait de toute facon, mais apres la mise en maintenance.
+# Stop at once when the PHP binary does not satisfy the project's constraint:
+# composer install would fail anyway, but after the site went into maintenance.
 if ! $PHP_BIN -r 'exit(PHP_VERSION_ID >= 80500 ? 0 : 1);'; then
     error "PHP 8.5 minimum requis, or $PHP_BIN est en $($PHP_BIN -r 'echo PHP_VERSION;')."
     error "Relancez avec : PHP_BIN=/opt/alt/php85/usr/bin/php ./deploy.sh"
     exit 1
 fi
 
-# -- 1. Mode maintenance ------------------------------------------------------
+# -- 1. Maintenance mode ------------------------------------------------------
 
 step "1/6 · Mode maintenance"
 $PHP_BIN artisan down --secret="deploy-$(date +%Y%m%d)" --retry=60 2>/dev/null || true
@@ -133,10 +133,9 @@ step "2/6 · Mise a jour du code"
 
 git fetch origin "$BRANCH"
 
-# Le script est volontairement rejouable : l'absence de nouveau commit n'est pas
-# une raison de s'arreter. On veut pouvoir relancer la sequence complete
-# (dependances, migrations, caches, permissions) apres une modification du .env,
-# un correctif applique a la main, ou un deploiement interrompu.
+# The script is deliberately replayable: no new commit is no reason to stop.
+# The whole sequence must be runnable again after a change to .env, a fix
+# applied by hand, or an interrupted deployment.
 git reset --hard "origin/$BRANCH"
 COMMIT_AFTER=$(git rev-parse --short HEAD)
 
@@ -146,10 +145,10 @@ else
     success "Code mis a jour : $COMMIT_BEFORE → $COMMIT_AFTER"
 fi
 
-# Les assets Vite sont commites (pas de build sur le serveur). Un `git commit -am`
-# apres un `npm run build` embarque le manifeste sans les nouveaux fichiers
-# hashes : on verifie donc que tout ce que le manifeste reference existe, avant
-# de toucher aux dependances.
+# The Vite assets are committed, there being no build on the server. A
+# `git commit -am` after `npm run build` carries the manifest without the newly
+# hashed files, so everything the manifest references is checked to exist
+# before dependencies are touched.
 info "Verification des assets compiles..."
 
 if [ ! -f "public/build/manifest.json" ]; then
@@ -180,7 +179,7 @@ step "3/6 · Dependances PHP"
 COMPOSER_BIN=$(command -v composer 2>/dev/null || echo "")
 
 if [ -z "$COMPOSER_BIN" ]; then
-    # Tenter les chemins courants Hostinger
+    # Try Hostinger's usual paths
     for path in ~/bin/composer ~/composer.phar /usr/local/bin/composer; do
         if [ -f "$path" ]; then
             COMPOSER_BIN="$path"
@@ -220,7 +219,7 @@ fi
 
 success "Migrations executees"
 
-# -- 5. Cache et optimisation --------------------------------------------------
+# -- 5. Cache and optimisation -------------------------------------------------
 
 step "5/6 · Optimisation"
 
@@ -239,7 +238,7 @@ chmod -R 775 storage/logs storage/framework 2>/dev/null || true
 
 success "Permissions ajustees"
 
-# -- Fin -----------------------------------------------------------------------
+# -- Done ---------------------------------------------------------------------
 
 $PHP_BIN artisan up
 DEPLOY_END=$(date +%s)

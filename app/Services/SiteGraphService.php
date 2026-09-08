@@ -5,30 +5,23 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Le graphe Schema.org du site, compose depuis `config/entreprise.php`.
+ * The site's Schema.org graph, composed from `config/entreprise.php`.
  *
- * **Une entreprise, declaree une fois, designee partout.** Chacune des cinq
- * pages publiques reecrivait un `BeautySalon` complet avec sa propre adresse
- * postale, ses coordonnees et ses horaires : six copies, aucune ne portant
- * d'`@id`. Un moteur y lisait six entreprises sans rapport la ou il n'y en a
- * qu'une, et une correction en oubliait toujours une.
+ * One business, declared once and referenced everywhere: the layout emits the
+ * business, the site and the current page, and each page adds only its own
+ * nodes, naming the business through {@see self::ref()}. Copies without an
+ * `@id` would read as that many unrelated businesses.
  *
- * Le gabarit emet desormais l'entreprise, le site et la page courante ; chaque
- * page n'ajoute que ses propres nœuds, et designe l'entreprise par
- * {@see self::ref()}.
- *
- * **Deux balises `<script>` par page**, celle du gabarit et celle de la page ·
- * un moteur fusionne les blocs d'une meme page et resout les `@id` entre eux.
- * N'en avoir qu'une obligerait le gabarit a recevoir les nœuds de la page, et
- * Blade n'offre aucun mecanisme propre pour cela.
+ * Two `<script>` tags per page, the layout's and the page's: an engine merges
+ * the blocks of one page and resolves the `@id`s between them. Having only one
+ * would oblige the layout to receive the page's nodes, for which Blade offers
+ * no clean mechanism.
  */
 final class SiteGraphService
 {
     /**
-     * Un renvoi vers un nœud declare ailleurs sur la page.
-     *
-     * C'est ce qui remplace la recopie · `SiteGraphService::ref('business')`
-     * pese trois mots la ou l'entreprise en pesait quarante.
+     * A reference to a node declared elsewhere on the page, which is what
+     * replaces copying it out.
      *
      * @return array<string, string>
      */
@@ -38,12 +31,10 @@ final class SiteGraphService
     }
 
     /**
-     * L'identifiant d'un nœud · toujours sur la racine du site, jamais sur la
-     * page courante.
-     *
-     * L'entreprise ne change pas selon la page qui la mentionne, et un `@id`
-     * qui porterait l'adresse de la page en ferait autant d'entites qu'il y a
-     * de pages · c'est exactement ce qu'on repare ici.
+     * A node's identifier, always on the site's root and never on the current
+     * page: the business does not change with the page mentioning it, and an
+     * `@id` carrying the page's address would make as many entities as there
+     * are pages.
      */
     public static function id(string $fragment): string
     {
@@ -51,11 +42,9 @@ final class SiteGraphService
     }
 
     /**
-     * Les quatre nœuds que le gabarit pose sur chaque page.
-     *
-     * La fondatrice en fait partie bien qu'aucune page ne la reclame · elle est
-     * le `founder` de l'entreprise, et une reference qui pend dans le vide est
-     * un graphe casse.
+     * The nodes the layout lays on every page. The founder is among them
+     * although no page asks for her: she is the business's `founder`, and a
+     * reference dangling in the void is a broken graph.
      *
      * @return list<array<string, mixed>>
      */
@@ -70,7 +59,7 @@ final class SiteGraphService
     }
 
     /**
-     * L'entreprise · le nœud que tout le reste designe.
+     * The business: the node everything else refers to.
      *
      * @return array<string, mixed>
      */
@@ -114,11 +103,9 @@ final class SiteGraphService
     }
 
     /**
-     * La personne derriere l'entreprise.
-     *
-     * Un nœud a elle, et non une `Person` recopiee · elle est le `founder` de
-     * l'entreprise et le sujet de la page « A propos », qui la decrivaient
-     * chacune de leur cote.
+     * The person behind the business: a node of her own and not a `Person`
+     * copied out, being both the business's `founder` and the subject of the
+     * « À propos » page.
      *
      * @return array<string, mixed>
      */
@@ -138,7 +125,7 @@ final class SiteGraphService
     }
 
     /**
-     * Le site · ce dont chaque page fait partie.
+     * The site: what every page is part of.
      *
      * @return array<string, mixed>
      */
@@ -157,15 +144,13 @@ final class SiteGraphService
     }
 
     /**
-     * La page courante · ni le site, ni l'entreprise dont elle parle.
+     * The current page: neither the site nor the business it speaks of.
      *
-     * Son `@id` porte l'adresse de la page, contrairement a tous les autres ·
-     * c'est le seul nœud qui change d'une page a l'autre, et c'est bien de
-     * pages differentes qu'il s'agit.
+     * Its `@id` carries the page's address, unlike every other node, this being
+     * the only one that changes from one page to the next.
      *
-     * Le type vient de la page, qui seule sait ce qu'elle est · `AboutPage` et
-     * `ContactPage` descendent de `WebPage`, et le declarer ici demanderait au
-     * gabarit de connaitre les routes qu'il rend.
+     * The type comes from the page, which alone knows what it is: declaring it
+     * here would oblige the layout to know the routes it renders.
      *
      * @return array<string, mixed>
      */
@@ -185,7 +170,7 @@ final class SiteGraphService
     }
 
     /**
-     * Les villes ou l'on se deplace.
+     * The towns the business travels to.
      *
      * @return list<array<string, string>>
      */
@@ -198,7 +183,7 @@ final class SiteGraphService
     }
 
     /**
-     * La semaine, groupee par plage.
+     * The week, grouped by range.
      *
      * @return list<array<string, mixed>>
      */
@@ -216,11 +201,10 @@ final class SiteGraphService
     }
 
     /**
-     * Le graphe, tel qu'il entre dans une balise `<script>`.
-     *
-     * `JSON_HEX_TAG` n'est pas decoratif · sans lui, un « </script> » arrive
-     * dans un avis Google ou un nom de prestation fermerait la balise, et tout
-     * ce qui suit deviendrait du HTML.
+     * The graph, as it enters a `<script>` tag. `JSON_HEX_TAG` is not
+     * decorative: without it a « </script> » arriving in a Google review or a
+     * treatment's name would close the tag, and everything after it would
+     * become HTML.
      *
      * @param  list<array<string, mixed>>  $nodes
      */

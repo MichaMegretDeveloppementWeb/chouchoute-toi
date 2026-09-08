@@ -21,8 +21,8 @@ final class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        // L'établissement d'abord · l'agenda pose ses rendez-vous dans des
-        // lieux, et il en tient un de chaque genre au moment où il commence.
+        // The establishment first: the agenda lays its appointments in places,
+        // and holds one of each kind by the time it starts.
         $this->call([
             DemoEstablishmentSeeder::class,
             DemoCatalogueSeeder::class,
