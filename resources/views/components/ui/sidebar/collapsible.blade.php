@@ -68,22 +68,22 @@ $iconState = $active
      counter being global is also what makes the two renderings of the bar,
      mobile and desktop, come out with distinct ids.
 
-     `pointerdown` is the fallback for `mener()`: `click` is not a
+     `pointerdown` is the fallback for `lead()`: `click` is not a
      `PointerEvent` everywhere, and the gesture's source has to be known. --}}
-<li x-data="barreSection({{ $state }}, {{ $active ? 'true' : 'false' }})"
-    x-id="['ui-sidebar-sous-menu']"
-    x-on:mouseenter="viser()"
-    x-on:mouseleave="quitter()"
-    x-on:pointerdown="pointeur = $event.pointerType"
+<li x-data="sidebarSection({{ $state }}, {{ $active ? 'true' : 'false' }})"
+    x-id="['ui-sidebar-submenu']"
+    x-on:mouseenter="aim()"
+    x-on:mouseleave="leave()"
+    x-on:pointerdown="pointerType = $event.pointerType"
     class="relative">
 
     {{-- The row carries the pill and both controls live inside it. A `<button>`
          cannot sit inside an `<a>`, so they are siblings. --}}
-    <div x-ref="declencheur" {{ $attributes->merge(['class' => "$rowBase $rowState"]) }}>
+    <div x-ref="trigger" {{ $attributes->merge(['class' => "$rowBase $rowState"]) }}>
         @if ($leadsSomewhere)
-            <a href="{{ $href }}" x-on:click="mener($event)" class="{{ $labelPart }}">
+            <a href="{{ $href }}" x-on:click="lead($event)" class="{{ $labelPart }}">
         @else
-            <button type="button" x-on:click="basculer()" class="{{ $labelPart }}">
+            <button type="button" x-on:click="toggle()" class="{{ $labelPart }}">
         @endif
 
             @if($icon)
@@ -105,21 +105,21 @@ $iconState = $active
              `-my-3` below 640: the target is forty-four pixels a side without
              the row growing with it. --}}
         <button type="button"
-            x-on:click="basculer()"
-            x-on:keydown.escape="fermerLeVolet()"
-            :aria-expanded="rail() ? volet : ouvert"
-            :aria-controls="$id('ui-sidebar-sous-menu')"
+            x-on:click="toggle()"
+            x-on:keydown.escape="closePanel()"
+            :aria-expanded="isRail() ? isPanelOpen : isOpen"
+            :aria-controls="$id('ui-sidebar-submenu')"
             aria-label="Sous-menu {{ $label }}"
             class="flex shrink-0 items-center justify-center max-sm:-my-3 max-sm:h-11 max-sm:w-11 {{ $labelClass }}">
             <x-ui.icon name="chevron-down"
                 class="h-4 w-4 transition-transform duration-200"
-                ::class="ouvert ? 'rotate-180' : ''"
+                ::class="isOpen ? 'rotate-180' : ''"
                 aria-hidden="true" />
         </button>
     </div>
 
     {{-- The accordion, when the sidebar is expanded. --}}
-    <div x-show="ouvert" x-collapse x-cloak :id="$id('ui-sidebar-sous-menu')">
+    <div x-show="isOpen" x-collapse x-cloak :id="$id('ui-sidebar-submenu')">
         {{-- Hidden rather than faded in the rail: display:none also takes the
              links out of the tab order and out of the accessibility tree, which
              opacity would not.
@@ -137,13 +137,13 @@ $iconState = $active
     <template x-teleport="body">
         {{-- The element hands itself to the component rather than through an
              `x-ref`: teleported under `body`, it no longer climbs back to the
-             root that holds the refs, and `$refs.volet` stayed empty. --}}
-        <div x-show="volet" x-cloak x-init="panneau = $el"
-            x-on:mouseenter="garder()"
-            x-on:mouseleave="quitter()"
-            x-on:keydown.escape.window="fermerLeVolet()"
-            x-on:scroll.window="fermerLeVolet()"
-            x-bind:style="`top: ${haut}px; left: ${gauche}px`"
+             root that holds the refs, and `$refs.panel` stayed empty. --}}
+        <div x-show="isPanelOpen" x-cloak x-init="panel = $el"
+            x-on:mouseenter="keep()"
+            x-on:mouseleave="leave()"
+            x-on:keydown.escape.window="closePanel()"
+            x-on:scroll.window="closePanel()"
+            x-bind:style="`top: ${top}px; left: ${left}px`"
             role="group" aria-label="{{ $label }}"
             class="fb-sidebar-panel fixed z-[60] w-[220px] rounded-xl border border-base bg-surface p-2 shadow-lg">
 

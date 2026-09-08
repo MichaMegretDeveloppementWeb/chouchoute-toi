@@ -68,17 +68,17 @@ $logoClass = 'h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-bl
 </aside>
 
 <!-- Desktop sidebar (>= lg) : fixed, collapsible between lg and wide, always open on wide+ -->
-<aside x-data="barreInfobulle()"
-    x-on:mouseover="viser($event)"
-    x-on:mouseout="quitter($event)"
+<aside x-data="sidebarTooltip()"
+    x-on:mouseover="aim($event)"
+    x-on:mouseout="leave($event)"
     class="fb-sidebar group/sidebar hidden lg:block fixed inset-y-0 left-0 z-30 w-[260px] overflow-clip border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900">
 
     {{-- One tooltip for every link on the rail, placed beside the hovered one.
          Teleported like a section's panel: the sidebar is `overflow-clip`, and
          a panel would be clipped inside it. --}}
     <template x-teleport="body">
-        <span x-show="ouvert" x-cloak x-init="panneau = $el" role="tooltip"
-            x-bind:style="`top: ${haut}px; left: ${gauche}px`"
+        <span x-show="isOpen" x-cloak x-init="panel = $el" role="tooltip"
+            x-bind:style="`top: ${top}px; left: ${left}px`"
             class="pointer-events-none fixed z-[60] whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-[12px] font-medium text-white shadow-lg dark:bg-gray-100 dark:text-gray-900"></span>
     </template>
     <div class="flex h-full w-[260px] flex-col">

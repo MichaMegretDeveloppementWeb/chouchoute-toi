@@ -2,7 +2,7 @@
     $hasGoogleReviews = ! empty($googleReviews);
 
     // Fallback shown when no Google reviews are configured.
-    $exemples = [
+    $examples = [
         [
             'nom' => 'Sophie M.',
             'note' => 5,
@@ -47,7 +47,7 @@
         ],
     ];
 
-    $temoignages = $hasGoogleReviews ? ($googleReviews ?? []) : $exemples;
+    $reviews = $hasGoogleReviews ? ($googleReviews ?? []) : $examples;
 @endphp
 
 <section class="mb-[150px] max-md:mb-20 pt-12">
@@ -80,7 +80,7 @@
         </div>
 
         <div>
-            @foreach ($temoignages as $index => $temoignage)
+            @foreach ($reviews as $index => $review)
                 <div class="border-t border-wine/10" data-accordion-item>
                     <button class="flex w-full items-center gap-4 py-5 text-left" data-accordion-trigger>
                         <div class="accordion-icon text-charcoal" data-accordion-icon>
@@ -89,22 +89,22 @@
                         </div>
 
                         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sand text-sm font-medium text-wine">
-                            {{ mb_substr($temoignage['nom'], 0, 1) }}
+                            {{ mb_substr($review['nom'], 0, 1) }}
                         </div>
 
-                        <span class="flex-1 text-base font-normal text-dark">{{ $temoignage['nom'] }}</span>
+                        <span class="flex-1 text-base font-normal text-dark">{{ $review['nom'] }}</span>
 
                         @if ($hasGoogleReviews)
                             <span class="hidden items-center gap-1 text-sm text-charcoal sm:flex">
-                                @if (! empty($temoignage['date']))
-                                    {{ $temoignage['date'] }}
+                                @if (! empty($review['date']))
+                                    {{ $review['date'] }}
                                 @endif
                             </span>
                         @else
                             <span class="hidden items-center gap-3 text-sm text-charcoal sm:flex">
-                                <span>{{ $temoignage['type'] }}</span>
+                                <span>{{ $review['type'] }}</span>
                                 <span class="text-charcoal/30">|</span>
-                                <span>{{ $temoignage['ville'] }}</span>
+                                <span>{{ $review['ville'] }}</span>
                             </span>
                         @endif
                     </button>
@@ -113,20 +113,20 @@
                         <div class="pb-2 pl-[88px] pt-4 max-md:pl-0 max-md:pt-3">
                             @if (! $hasGoogleReviews)
                                 <div class="mb-3 flex items-center gap-1 sm:hidden">
-                                    <span class="text-sm text-charcoal">{{ $temoignage['type'] }}</span>
+                                    <span class="text-sm text-charcoal">{{ $review['type'] }}</span>
                                     <span class="text-charcoal/30">|</span>
-                                    <span class="text-sm text-charcoal">{{ $temoignage['ville'] }}</span>
+                                    <span class="text-sm text-charcoal">{{ $review['ville'] }}</span>
                                 </div>
                             @endif
 
                             <div class="mb-3 flex gap-0.5">
-                                @for ($i = 0; $i < $temoignage['note']; $i++)
+                                @for ($i = 0; $i < $review['note']; $i++)
                                     <x-icon.star-filled class="text-wine" />
                                 @endfor
                             </div>
 
                             <p class="max-w-2xl text-base leading-[1.7] text-charcoal">
-                                « {{ $temoignage['texte'] }} »
+                                « {{ $review['texte'] }} »
                             </p>
                         </div>
                     </div>

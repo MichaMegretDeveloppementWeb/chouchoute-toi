@@ -20,12 +20,12 @@ window.toggleSidebar = function () {
    Both are `fixed` and teleported to `body`, the sidebar being `overflow-clip`.
    Their position is computed from the trigger as they open, and they close on
    scroll: a fixed panel does not follow what opened it. */
-const ECART_DU_RAIL = 8;
-const DELAI_OUVERTURE = 80;
-const DELAI_FERMETURE = 180;
+const RAIL_GAP = 8;
+const OPEN_DELAY = 80;
+const CLOSE_DELAY = 180;
 
 /** True when the sidebar is on its rail. The stylesheet is what says so. */
-function surLeRail(element) {
+function onTheRail(element) {
     return getComputedStyle(element).getPropertyValue('--fb-rail').trim() === '1';
 }
 
@@ -36,14 +36,14 @@ function surLeRail(element) {
  * would flash for one frame in the top left corner. `visibility` and not
  * `opacity`, which takes the element out of the paint without taking its box.
  */
-function hauteurCachee(panneau) {
-    const memoire = panneau.style.cssText;
+function hiddenHeight(panel) {
+    const saved = panel.style.cssText;
 
-    panneau.style.cssText = `${memoire};display:block;visibility:hidden`;
-    const hauteur = panneau.offsetHeight;
-    panneau.style.cssText = memoire;
+    panel.style.cssText = `${saved};display:block;visibility:hidden`;
+    const height = panel.offsetHeight;
+    panel.style.cssText = saved;
 
-    return hauteur;
+    return height;
 }
 
 /**
@@ -52,61 +52,61 @@ function hauteurCachee(panneau) {
  * Pulled up when it would overflow the bottom of the window, and never above
  * it: a low section otherwise opened a panel showing only its first line.
  */
-function ancrerAuRail(declencheur, hauteur) {
-    const cadre = declencheur.getBoundingClientRect();
-    const marge = 8;
+function anchorToRail(trigger, height) {
+    const box = trigger.getBoundingClientRect();
+    const margin = 8;
 
     // The rail's edge and not the button's: the navigation is inset from its
     // sides, so a panel placed on the button started four pixels inside the
     // sidebar.
-    const barre = declencheur.closest('.fb-sidebar');
-    const bord = barre ? barre.getBoundingClientRect().right : cadre.right;
+    const sidebar = trigger.closest('.fb-sidebar');
+    const edge = sidebar ? sidebar.getBoundingClientRect().right : box.right;
 
     return {
-        gauche: Math.round(bord + ECART_DU_RAIL),
-        haut: Math.round(Math.max(marge, Math.min(cadre.top, window.innerHeight - hauteur - marge))),
+        left: Math.round(edge + RAIL_GAP),
+        top: Math.round(Math.max(margin, Math.min(box.top, window.innerHeight - height - margin))),
     };
 }
 
 document.addEventListener('alpine:init', () => {
     /** A section of the sidebar: accordion in place, panel on the rail. */
-    Alpine.data('barreSection', (ouvertInitial, actif) => ({
-        ouvert: ouvertInitial,
-        volet: false,
-        haut: 0,
-        gauche: 0,
-        minuterie: null,
+    Alpine.data('sidebarSection', (initiallyOpen, active) => ({
+        isOpen: initiallyOpen,
+        isPanelOpen: false,
+        top: 0,
+        left: 0,
+        timer: null,
 
-        /* The pointer type of the last `pointerdown`, which `mener()` reads. */
-        pointeur: '',
+        /* The pointer type of the last `pointerdown`, which `lead()` reads. */
+        pointerType: '',
 
         /* The panel hands itself over: teleported under `body`, it no longer
            climbs back to the root that holds the refs. */
-        panneau: null,
+        panel: null,
 
         init() {
             // The sidebar has to say where we are: the section carrying the
             // current page wins over what had been remembered.
-            if (actif) {
-                this.ouvert = true;
+            if (active) {
+                this.isOpen = true;
             }
         },
 
-        rail() {
-            return surLeRail(this.$root);
+        isRail() {
+            return onTheRail(this.$root);
         },
 
-        basculer() {
-            if (! this.rail()) {
-                this.ouvert = ! this.ouvert;
+        toggle() {
+            if (! this.isRail()) {
+                this.isOpen = ! this.isOpen;
 
                 return;
             }
 
-            if (this.volet) {
-                this.fermerLeVolet();
+            if (this.isPanelOpen) {
+                this.closePanel();
             } else {
-                this.ouvrirLeVolet();
+                this.openPanel();
             }
         },
 
@@ -119,55 +119,55 @@ document.addEventListener('alpine:init', () => {
          * pointer: without this guard the type remembered from an earlier press
          * would be applied to it.
          */
-        mener(evenement) {
-            if (! this.rail() || evenement.detail === 0) {
+        lead(event) {
+            if (! this.isRail() || event.detail === 0) {
                 return;
             }
 
-            if ((evenement.pointerType || this.pointeur) !== 'touch') {
+            if ((event.pointerType || this.pointerType) !== 'touch') {
                 return;
             }
 
-            evenement.preventDefault();
-            this.ouvrirLeVolet();
+            event.preventDefault();
+            this.openPanel();
         },
 
-        viser() {
-            if (! this.rail()) {
+        aim() {
+            if (! this.isRail()) {
                 return;
             }
 
-            clearTimeout(this.minuterie);
-            this.minuterie = setTimeout(() => this.ouvrirLeVolet(), DELAI_OUVERTURE);
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.openPanel(), OPEN_DELAY);
         },
 
         /* Time enough to cross the eight pixels between rail and panel. */
-        garder() {
-            clearTimeout(this.minuterie);
+        keep() {
+            clearTimeout(this.timer);
         },
 
-        quitter() {
-            clearTimeout(this.minuterie);
-            this.minuterie = setTimeout(() => { this.volet = false; }, DELAI_FERMETURE);
+        leave() {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => { this.isPanelOpen = false; }, CLOSE_DELAY);
         },
 
-        ouvrirLeVolet() {
-            if (! this.panneau) {
+        openPanel() {
+            if (! this.panel) {
                 return;
             }
 
             // Placed before shown and not the reverse, so the panel never
             // appears in the corner of the screen for one frame.
-            const place = ancrerAuRail(this.$refs.declencheur, hauteurCachee(this.panneau));
+            const spot = anchorToRail(this.$refs.trigger, hiddenHeight(this.panel));
 
-            this.gauche = place.gauche;
-            this.haut = place.haut;
-            this.volet = true;
+            this.left = spot.left;
+            this.top = spot.top;
+            this.isPanelOpen = true;
         },
 
-        fermerLeVolet() {
-            clearTimeout(this.minuterie);
-            this.volet = false;
+        closePanel() {
+            clearTimeout(this.timer);
+            this.isPanelOpen = false;
         },
     }));
 
@@ -178,48 +178,48 @@ document.addEventListener('alpine:init', () => {
      * one on each link made dozens of them, the sidebar being rendered twice
      * and each section rendering its links twice more.
      */
-    Alpine.data('barreInfobulle', () => ({
-        ouvert: false,
-        haut: 0,
-        gauche: 0,
-        minuterie: null,
-        panneau: null,
+    Alpine.data('sidebarTooltip', () => ({
+        isOpen: false,
+        top: 0,
+        left: 0,
+        timer: null,
+        panel: null,
 
-        viser(evenement) {
-            const lien = evenement.target.closest('[data-fb-title]');
+        aim(event) {
+            const link = event.target.closest('[data-fb-title]');
 
-            if (! lien || ! this.panneau || ! surLeRail(this.$root)) {
+            if (! link || ! this.panel || ! onTheRail(this.$root)) {
                 return;
             }
 
-            clearTimeout(this.minuterie);
+            clearTimeout(this.timer);
 
-            this.minuterie = setTimeout(() => {
+            this.timer = setTimeout(() => {
                 // The title is written into the element rather than bound: the
                 // box is sized on it, and a binding would only be applied on
                 // the next tick, so after the measurement.
-                this.panneau.textContent = lien.dataset.fbTitle;
+                this.panel.textContent = link.dataset.fbTitle;
 
-                const cadre = lien.getBoundingClientRect();
-                const hauteur = hauteurCachee(this.panneau);
+                const box = link.getBoundingClientRect();
+                const height = hiddenHeight(this.panel);
 
-                this.gauche = ancrerAuRail(lien, hauteur).gauche;
-                this.haut = Math.round(cadre.top + (cadre.height - hauteur) / 2);
-                this.ouvert = true;
-            }, DELAI_OUVERTURE);
+                this.left = anchorToRail(link, height).left;
+                this.top = Math.round(box.top + (box.height - height) / 2);
+                this.isOpen = true;
+            }, OPEN_DELAY);
         },
 
-        quitter(evenement) {
+        leave(event) {
             // `mouseout` also fires moving from one child of the same link to
             // another: close only when the cursor really left the sidebar or
             // changed link.
-            if (evenement.relatedTarget && this.$root.contains(evenement.relatedTarget)
-                && evenement.relatedTarget.closest('[data-fb-title]') === evenement.target.closest('[data-fb-title]')) {
+            if (event.relatedTarget && this.$root.contains(event.relatedTarget)
+                && event.relatedTarget.closest('[data-fb-title]') === event.target.closest('[data-fb-title]')) {
                 return;
             }
 
-            clearTimeout(this.minuterie);
-            this.ouvert = false;
+            clearTimeout(this.timer);
+            this.isOpen = false;
         },
     }));
 });

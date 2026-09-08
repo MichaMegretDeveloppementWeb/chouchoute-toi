@@ -39,7 +39,7 @@ final class SidebarNavigationTest extends TestCase
 
         // Repliee, la barre ouvre un volet plutot que l'accordeon : le chevron
         // annonce celui des deux qui s'applique.
-        $this->assertStringContainsString(':aria-expanded="rail() ? volet : ouvert"', $shell);
+        $this->assertStringContainsString(':aria-expanded="isRail() ? isPanelOpen : isOpen"', $shell);
     }
 
     // ── L'en-tete mene, le chevron replie ─────────────────────────────────
@@ -47,17 +47,17 @@ final class SidebarNavigationTest extends TestCase
     /** Le motif d'un en-tete de section rendu comme un lien vers `$url`. */
     private function headerLinkedTo(string $url): string
     {
-        return '/<a href="'.preg_quote($url, '/').'"[^>]*x-on:click="mener\(\$event\)"/';
+        return '/<a href="'.preg_quote($url, '/').'"[^>]*x-on:click="lead\(\$event\)"/';
     }
 
     /**
      * Le motif d'un en-tete de section rendu comme une bascule.
      *
      * Les deux attributs, et dans cet ordre : le chevron porte aussi
-     * `basculer()` mais pas cette classe, et le menu utilisateur porte cette
-     * classe mais pas `basculer()`.
+     * `toggle()` mais pas cette classe, et le menu utilisateur porte cette
+     * classe mais pas `toggle()`.
      */
-    private const HEADER_THAT_ONLY_FOLDS = '/<button[^>]*x-on:click="basculer\(\)"[^>]*class="fb-sidebar-gap/';
+    private const HEADER_THAT_ONLY_FOLDS = '/<button[^>]*x-on:click="toggle\(\)"[^>]*class="fb-sidebar-gap/';
 
     /**
      * Ouvrir une section ou l'on n'est pas ne menait nulle part : il fallait
@@ -173,7 +173,7 @@ final class SidebarNavigationTest extends TestCase
 
         // Une seule : le tiroir du telephone montre ses libelles, il n'a rien a
         // faire dire par une infobulle.
-        $this->assertSame(1, substr_count($shell, 'barreInfobulle()'));
+        $this->assertSame(1, substr_count($shell, 'sidebarTooltip()'));
         $this->assertStringContainsString('data-fb-title="Planning"', $shell);
     }
 
@@ -196,9 +196,9 @@ final class SidebarNavigationTest extends TestCase
     {
         $shell = $this->shell();
 
-        $this->assertSame(10, substr_count($shell, "x-id=\"['ui-sidebar-sous-menu']\""));
-        $this->assertSame(10, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-sous-menu\')"'));
-        $this->assertSame(10, substr_count($shell, ':id="$id(\'ui-sidebar-sous-menu\')"'));
+        $this->assertSame(10, substr_count($shell, "x-id=\"['ui-sidebar-submenu']\""));
+        $this->assertSame(10, substr_count($shell, ':aria-controls="$id(\'ui-sidebar-submenu\')"'));
+        $this->assertSame(10, substr_count($shell, ':id="$id(\'ui-sidebar-submenu\')"'));
     }
 
     public function test_the_section_holding_the_current_page_opens_by_itself(): void
@@ -213,7 +213,7 @@ final class SidebarNavigationTest extends TestCase
         // est rendue une fois par rendu de la barre, donc deux fois.
         $this->assertSame(2, substr_count(
             $shell,
-            'barreSection($persist(false).as(&#039;ui-sidebar-agenda&#039;), true)',
+            'sidebarSection($persist(false).as(&#039;ui-sidebar-agenda&#039;), true)',
         ));
 
         $this->assertSame(8, substr_count($shell, ', false)'), 'Les quatre autres sections, deux fois chacune.');
