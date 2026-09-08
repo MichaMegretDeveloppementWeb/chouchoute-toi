@@ -172,14 +172,17 @@ final class SiteGraphService
     /**
      * The towns the business travels to.
      *
+     * `array_values` is not cosmetic: a config written with keys would encode
+     * as a JSON object, and Schema.org expects a list here.
+     *
      * @return list<array<string, string>>
      */
     public static function areaServed(): array
     {
-        return array_map(
+        return array_values(array_map(
             static fn (string $city): array => ['@type' => 'City', 'name' => $city],
             (array) config('entreprise.villes_desservies'),
-        );
+        ));
     }
 
     /**
@@ -189,7 +192,7 @@ final class SiteGraphService
      */
     public static function openingHours(): array
     {
-        return array_map(
+        return array_values(array_map(
             static fn (array $range): array => [
                 '@type' => 'OpeningHoursSpecification',
                 'dayOfWeek' => $range['jours'],
@@ -197,7 +200,7 @@ final class SiteGraphService
                 'closes' => $range['ferme'],
             ],
             (array) config('entreprise.horaires'),
-        );
+        ));
     }
 
     /**
