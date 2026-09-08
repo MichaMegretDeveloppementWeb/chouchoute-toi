@@ -29,15 +29,14 @@ return [
     | Le collecteur va dans le script du site public, jamais dans celui du
     | back-office : on ne mesure pas les visites de l'administratrice.
     |
-    | `admin_js` et `web_css` sont retenus sans servir : le paquet n'a pas de
-    | script de back-office, et son collecteur n'a pas de feuille.
+    | `admin_js` ne porte aucun import du paquet : c'est ce que l'installateur
+    | passe à `ui-kit:install`, le kit dessinant les écrans.
     |
     */
 
     'assets' => [
         'admin_css' => 'resources/css/admin.css',
         'admin_js' => 'resources/js/admin.js',
-        'web_css' => 'resources/css/web.css',
         'web_js' => 'resources/js/web.js',
     ],
 

@@ -156,7 +156,6 @@ Le layout doit prévoir une section `assets` dans le `<head>` pour accueillir ce
 ```blade
 {{-- resources/views/layouts/web.blade.php --}}
 <head>
-    {{-- Assets communs du layout --}}
     @vite([
         'resources/css/components/layout/header.css',
         'resources/js/components/layout/header.js',
@@ -164,14 +163,13 @@ Le layout doit prévoir une section `assets` dans le `<head>` pour accueillir ce
         'resources/js/components/layout/footer.js',
     ])
 
-    {{-- Assets specifiques a la page --}}
     @yield('assets')
 </head>
 ```
 
 ## Configuration de Vite
 
-Le fichier `vite.config.js` utilise `import.meta.glob` via la propriété `input` du plugin Laravel pour détecter automatiquement tous les points d'entrée `index.css` et `index.js` des pages, ainsi que les assets des composants du layout.
+Le fichier `vite.config.js` emploie `glob.sync`, du paquet npm `glob`, dans la propriété `input` du plugin Laravel : les points d'entrée `index.css` et `index.js` de chaque page sont détectés tout seuls. Les quatre entrées des espaces et les assets des composants du layout, eux, sont nommés à la main.
 
 ```js
 import { defineConfig } from 'vite';
@@ -183,6 +181,11 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/css/web.css',
+                'resources/js/web.js',
+                'resources/css/admin.css',
+                'resources/js/admin.js',
+
                 ...glob.sync('resources/css/web/*/index.css'),
                 ...glob.sync('resources/js/web/*/index.js'),
                 'resources/css/components/layout/header.css',
@@ -194,6 +197,11 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        watch: {
+            ignored: ['**/storage/framework/views/**'],
+        },
+    },
 });
 ```
 

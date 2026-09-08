@@ -120,7 +120,6 @@ Le layout `web.blade.php` fournit la structure HTML commune à toutes les pages 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - {{ config('app.name') }}</title>
 
-    {{-- Assets communs du layout --}}
     @vite([
         'resources/css/components/layout/header.css',
         'resources/js/components/layout/header.js',
@@ -128,7 +127,6 @@ Le layout `web.blade.php` fournit la structure HTML commune à toutes les pages 
         'resources/js/components/layout/footer.js',
     ])
 
-    {{-- Assets specifiques a la page --}}
     @yield('assets')
 </head>
 <body>

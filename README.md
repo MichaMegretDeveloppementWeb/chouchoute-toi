@@ -47,9 +47,10 @@ mentions légales), le graphe de données structurées du site, la coquille du
 back-office dans laquelle les écrans des paquets viennent se poser, et la
 grille tarifaire dans `config/tarifs.php`.
 
-L'identité de l'entreprise vit dans `config/entreprise.php`, une seule fois.
-Elle était recopiée dans chaque vue, et une correction en oubliait toujours
-une.
+L'identité de l'entreprise vit dans `config/entreprise.php`, lue par
+`App\Services\SiteGraphService` qui en fait le graphe de données structurées.
+Le pied de page écrit encore le téléphone et l'adresse de courriel à la main :
+les changer ici ne les change pas là.
 
 ## Travailler dessus
 
