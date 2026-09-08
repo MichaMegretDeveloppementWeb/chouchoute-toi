@@ -1,31 +1,16 @@
 {{--
-    Le message du back-office, publié depuis falcon/ui-kit et retravaillé.
+    The back office's toast, published from falcon/ui-kit and reworked: at the
+    top, centred, larger on desktop, with a bar at the foot that runs down over
+    the real display time.
 
-    Trois écarts avec l'amont, et un seul motif : dans un coin, à 320 px et sans
-    rien dire du temps qui reste, un message passait inaperçu sur un grand écran
-    — le regard est au milieu de la page, là où l'on vient de cliquer.
-
-    - **En haut, centré**, et l'entrée glisse depuis le haut : un glissement
-      latéral ne veut plus rien dire sur un objet centré.
-    - **Plus grand sur desktop seulement**, hauteur minimale comprise. Sous
-      640 px la place est comptée et la boîte garde sa hauteur naturelle.
-    - **Une barre au bas** qui décroît sur la durée réelle d'affichage.
-
-    La graduation du texte ne bouge pas — 13 px le titre, 12 px la description :
-    c'est la boîte qui grandit. Une échelle à part ferait de ce message le seul
-    de son espèce dans tout le back-office.
-
-    **Ce fichier a un jumeau**, dans la pile de falcon/booking, pour que le
-    dessin voyage avec le paquet. Les deux sont identiques au caractère près et
-    `PublishedComponentsTest` le tient : deux copies rédigées séparément dérivent
-    sans que rien ne le montre, une seule étant à l'écran à la fois.
+    This file has a twin in falcon/booking's stack, so the drawing travels with
+    the package. The two are identical to the character and
+    `PublishedComponentsTest` holds it.
 --}}
 @props([
-    // Déclarée pour être avalée, jamais lue. Le tableau de bord de
-    // falcon/analytics passe `top-right` et vit dans `vendor/`, hors de portée :
-    // l'honorer rendrait au back-office les deux positions qu'on vient de lui
-    // retirer. Une position par back-office, pas une par appelant. Déclarée
-    // quand même, sinon elle atterrirait en attribut HTML sur la racine.
+    // Declared to be swallowed and never read: falcon/analytics passes
+    // `top-right` from `vendor/`, out of reach. Declared all the same, else it
+    // would land as an HTML attribute on the root.
     'position' => 'top-center',
 ])
 
@@ -55,10 +40,9 @@
     }
 @endphp
 
-{{-- Les images-clés vivent ici et non dans une feuille : les deux copies
-     restent alors identiques, et ni la feuille du site ni celle du paquet n'a
-     besoin d'être touchée. `@@` échappe l'arobase, que Blade lirait sinon comme
-     le début d'une directive. --}}
+{{-- The keyframes live here and not in a sheet, so the two copies stay
+     identical. `@@` escapes the at-sign, which Blade would otherwise read as the
+     start of a directive. --}}
 <style>
     @@keyframes fb-toast-countdown {
         from { transform: scaleX(1); }
@@ -74,20 +58,9 @@
             let toast = this.normalize(data);
             if (!toast) return;
             const id = ++this.counter;
-            // Combien de temps il reste, décidé **une seule fois** : le minuteur
-            // qui le retire et l'animation qui vide la barre lisent cette même
-            // valeur. Deux durées écrites à part dériveraient, et la barre
-            // annoncerait un temps qui n'est plus celui du minuteur.
-            //
-            // A toast carrying an action has to be read AND clicked; four seconds is the budget
-            // for reading alone.
-            //
-            // **L'appelant peut dire la sienne**, et c'est ce que demandent les
-            // textes longs · quatre secondes suffisent à une soixantaine de
-            // caractères, pas aux cent quatre-vingts d'un titre suivi de sa
-            // description. La valeur se choisit à l'appel, à la main : une durée
-            // calculée ici serait une mécanique de plus pour un réglage qui se
-            // décide mieux en lisant la phrase.
+            // How long is left, decided once: the timer that removes it and the
+            // animation that empties the bar read this same value. The caller may
+            // give its own, which long texts ask for.
             const life = toast.life ?? (toast.action ? 10000 : 4000);
             this.toasts.push({ ...toast, id, life, visible: true });
             if (this.toasts.length > 5) this.remove(this.toasts[0].id);
@@ -136,20 +109,11 @@
     "
     @endif
     @toast.window="add($event.detail)"
-    {{-- Pleine largeur avec un retrait, plutôt qu'un centrage par
-         transformation : une largeur prise sur la fenêtre compte la barre de
-         défilement là où le centrage ne la compte pas, ce qui décalait la boîte
-         de six pixels — mesuré sur un écran de 412 px. Ici la gouttière est la
-         même des deux côtés par construction.
-
-         `pointer-events-none` sur le conteneur, qui barre toute la largeur en
-         haut de la page ; chaque message reprend le clic pour lui. --}}
+    {{-- `pointer-events-none` on the container, which bars the whole width at the
+         top of the page; each message takes the click back for itself. --}}
     class="pointer-events-none fixed inset-x-0 top-4 z-50 flex flex-col items-center gap-2 px-4"
 >
     <template x-for="toast in toasts" :key="toast.id">
-        {{-- `items-center` et non `items-start` : la hauteur minimale laisse de
-             l'air sous un message d'une ligne, et un contenu collé en haut y
-             lirait comme une boîte mal remplie. --}}
         <div x-show="toast.visible"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="-translate-y-4 opacity-0"
@@ -185,8 +149,6 @@
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
 
-            {{-- Le temps qui reste, dit plutôt que subi. Sa durée vient de
-                 `toast.life`, la même que celle du minuteur ci-dessus. --}}
             <div class="absolute inset-x-0 bottom-0 h-[3px]" aria-hidden="true">
                 <div class="h-full w-full origin-left"
                      :class="{
