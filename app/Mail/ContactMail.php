@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class ContactMail extends Mailable
 {
     /**
-     * @param  array{name: string, email: string, phone: string, commune: string, volume: string, prestation: string, message: string}  $data
+     * @param  array{name: string, email: string, phone: string, town: string, volume: string, service: string, message: string}  $data
      */
     public function __construct(public array $data) {}
 

@@ -17,11 +17,11 @@ class ContactForm extends Component
 
     public string $phone = '';
 
-    public string $commune = '';
+    public string $town = '';
 
     public string $volume = '';
 
-    public string $prestation = '';
+    public string $service = '';
 
     public string $message = '';
 
@@ -34,9 +34,9 @@ class ContactForm extends Component
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'commune' => 'nullable|string|max:100',
+            'town' => 'nullable|string|max:100',
             'volume' => 'nullable|string|max:100',
-            'prestation' => 'nullable|string|max:100',
+            'service' => 'nullable|string|max:100',
             'message' => 'nullable|string|max:2000',
         ];
     }
@@ -66,13 +66,13 @@ class ContactForm extends Component
 
     public function updatedVolume(): void
     {
-        $this->prestation = '';
+        $this->service = '';
     }
 
     /**
      * @return list<array{value: string, label: string}>
      */
-    public function getPrestationOptionsProperty(): array
+    public function getServiceOptionsProperty(): array
     {
         if (! $this->volume || $this->volume === 'indecise') {
             return [];
@@ -109,9 +109,9 @@ class ContactForm extends Component
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'commune' => $this->commune,
+            'town' => $this->town,
             'volume' => $this->volume,
-            'prestation' => $this->prestation,
+            'service' => $this->service,
             'message' => $this->message,
         ]));
 
@@ -119,11 +119,11 @@ class ContactForm extends Component
         // actually left. Deferred, no-op for excluded traffic, never throws.
         Analytics::record('contact.request.submitted', props: [
             'volume' => $this->volume ?: null,
-            'prestation' => $this->prestation ?: null,
-            'commune' => $this->commune ?: null,
+            'service' => $this->service ?: null,
+            'town' => $this->town ?: null,
         ]);
 
-        $this->reset(['name', 'email', 'phone', 'commune', 'volume', 'prestation', 'message']);
+        $this->reset(['name', 'email', 'phone', 'town', 'volume', 'service', 'message']);
         $this->sent = true;
     }
 

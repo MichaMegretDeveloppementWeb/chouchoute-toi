@@ -45,32 +45,32 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="padding: 8px 0;{{ $data['commune'] || $data['volume'] ? ' border-bottom: 1px solid rgba(0,0,0,0.06);' : '' }}">
+                                                <td style="padding: 8px 0;{{ $data['town'] || $data['volume'] ? ' border-bottom: 1px solid rgba(0,0,0,0.06);' : '' }}">
                                                     <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #999999;">Téléphone</span><br>
                                                     <a href="tel:{{ $data['phone'] }}" style="font-size: 15px; color: #512731; text-decoration: none;">{{ $data['phone'] }}</a>
                                                 </td>
                                             </tr>
-                                            @if ($data['commune'])
+                                            @if ($data['town'])
                                                 <tr>
                                                     <td style="padding: 8px 0;{{ $data['volume'] ? ' border-bottom: 1px solid rgba(0,0,0,0.06);' : '' }}">
                                                         <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #999999;">Commune</span><br>
-                                                        <span style="font-size: 15px; color: #222222;">{{ $data['commune'] }}</span>
+                                                        <span style="font-size: 15px; color: #222222;">{{ $data['town'] }}</span>
                                                     </td>
                                                 </tr>
                                             @endif
                                             @if ($data['volume'])
                                                 <tr>
-                                                    <td style="padding: 8px 0;{{ $data['prestation'] ? ' border-bottom: 1px solid rgba(0,0,0,0.06);' : '' }}">
+                                                    <td style="padding: 8px 0;{{ $data['service'] ? ' border-bottom: 1px solid rgba(0,0,0,0.06);' : '' }}">
                                                         <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #999999;">Volume</span><br>
                                                         <span style="font-size: 15px; color: #222222;">{{ $data['volume'] }}</span>
                                                     </td>
                                                 </tr>
                                             @endif
-                                            @if ($data['prestation'])
+                                            @if ($data['service'])
                                                 <tr>
                                                     <td style="padding: 8px 0;">
                                                         <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #999999;">Prestation</span><br>
-                                                        <span style="font-size: 15px; color: #222222;">{{ $data['prestation'] }}</span>
+                                                        <span style="font-size: 15px; color: #222222;">{{ $data['service'] }}</span>
                                                     </td>
                                                 </tr>
                                             @endif

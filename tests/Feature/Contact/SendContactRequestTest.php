@@ -97,13 +97,13 @@ final class SendContactRequestTest extends TestCase
             ->assertSet('volume', '');
     }
 
-    public function test_changing_the_volume_resets_the_chosen_prestation(): void
+    public function test_changing_the_volume_resets_the_chosen_service(): void
     {
         $this->fillForm()
             ->set('volume', 'naturelle')
-            ->set('prestation', 'pose-complete')
+            ->set('service', 'pose-complete')
             ->set('volume', 'volume-intense')
-            ->assertSet('prestation', '');
+            ->assertSet('service', '');
     }
 
     private function fillForm(): Testable
@@ -112,6 +112,6 @@ final class SendContactRequestTest extends TestCase
             ->set('name', 'Camille Durand')
             ->set('email', 'camille@example.test')
             ->set('phone', '0600000000')
-            ->set('commune', 'Évian-les-Bains');
+            ->set('town', 'Évian-les-Bains');
     }
 }

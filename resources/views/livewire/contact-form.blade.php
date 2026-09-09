@@ -92,8 +92,8 @@
                         </div>
 
                         <div>
-                            <label for="commune" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Commune</label>
-                            <select wire:model="commune" id="commune" class="w-full rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10">
+                            <label for="town" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Commune</label>
+                            <select wire:model="town" id="town" class="w-full rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10">
                                 <option value="">Sélectionnez...</option>
                                 <option value="Évian-les-Bains">Évian-les-Bains</option>
                                 <option value="Thonon-les-Bains">Thonon-les-Bains</option>
@@ -119,13 +119,13 @@
                             </div>
 
                             <div>
-                                <label for="prestation" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Type de prestation</label>
-                                <select wire:model="prestation" id="prestation" class="w-full rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10 disabled:opacity-50" @if (empty($this->prestationOptions)) disabled @endif>
-                                    @if (empty($this->prestationOptions))
+                                <label for="service" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Type de prestation</label>
+                                <select wire:model="service" id="service" class="w-full rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10 disabled:opacity-50" @if (empty($this->serviceOptions)) disabled @endif>
+                                    @if (empty($this->serviceOptions))
                                         <option value="">{{ $volume ? 'Choisissez une prestation' : 'Choisissez d\'abord un volume' }}</option>
                                     @else
                                         <option value="">Sélectionnez...</option>
-                                        @foreach ($this->prestationOptions as $option)
+                                        @foreach ($this->serviceOptions as $option)
                                             <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
                                         @endforeach
                                     @endif
