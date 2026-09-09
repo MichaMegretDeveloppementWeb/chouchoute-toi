@@ -44,6 +44,15 @@ du CSS écrit à la main, dont les sélecteurs n'appartiennent qu'à nous.
 
 `tests/Feature/Admin/OneStylesheetPerPageTest.php` tient ces invariants.
 
+**Tailwind lit les commentaires comme le reste.** Il ne parse pas le code : il
+ramasse dans les fichiers `@source` tout ce qui ressemble à un nom de classe, y
+compris dans un `//`, un `/* */` ou un `{{-- --}}`. Deux conséquences, toutes
+deux vécues au chantier 10 · une classe citée dans un commentaire entre dans la
+feuille alors que rien ne l'emploie, et **retirer ce commentaire l'en fait
+sortir**. Si une classe n'existe que dans du JavaScript ou dans une chaîne
+construite, ne comptez pas sur un commentaire pour la maintenir en vie ·
+déclarez la source, comme `web.css` le fait pour `../js/**/*.js`.
+
 ## Structure des fichiers
 
 ```
