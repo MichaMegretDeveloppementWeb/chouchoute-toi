@@ -229,18 +229,18 @@ final class SidebarNavigationTest extends TestCase
         $shell = $this->shell();
         $booking = config('booking.admin.route_name');
 
-        $rangs = [];
+        $ranks = [];
 
-        foreach (['agenda', 'catalogue', 'categories', 'journal', 'settings'] as $ecran) {
-            $rangs[$ecran] = strpos($shell, route($booking.$ecran));
+        foreach (['agenda', 'catalogue', 'categories', 'journal', 'settings'] as $screen) {
+            $ranks[$screen] = strpos($shell, route($booking.$screen));
         }
 
-        $this->assertSame($rangs, array_filter($rangs, is_int(...)));
+        $this->assertSame($ranks, array_filter($ranks, is_int(...)));
 
-        $tries = $rangs;
+        $tries = $ranks;
         asort($tries);
 
-        $this->assertSame(array_keys($rangs), array_keys($tries));
+        $this->assertSame(array_keys($ranks), array_keys($tries));
     }
 
     public function test_the_current_page_is_named_to_more_than_the_eye(): void
