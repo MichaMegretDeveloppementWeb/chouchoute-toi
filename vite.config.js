@@ -17,13 +17,10 @@ export default defineConfig({
 
                 // The public site's per-page CSS and JS, loaded by a `@vite` in
                 // their own view. They never carry Tailwind: only our rules,
-                // whose selectors are ours alone.
-                ...glob.sync('resources/css/web/*/index.css'),
-                ...glob.sync('resources/js/web/*/index.js'),
-                'resources/css/components/layout/header.css',
-                'resources/css/components/layout/footer.css',
-                'resources/js/components/layout/header.js',
-                'resources/js/components/layout/footer.js',
+                // whose selectors are ours alone. A directory under `pages/`
+                // is a page, and nothing else lives there.
+                ...glob.sync('resources/css/pages/*/index.css'),
+                ...glob.sync('resources/js/pages/*/index.js'),
             ],
             refresh: true,
         }),

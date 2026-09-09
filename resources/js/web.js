@@ -3,3 +3,6 @@
 import '../../vendor/falcon/analytics/resources/js/collector.js';
 
 import './app.js';
+
+import './web/animations.js';
+import './web/header.js';

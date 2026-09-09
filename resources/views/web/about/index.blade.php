@@ -4,10 +4,7 @@
 @section('meta_description', 'Technicienne certifiée en extensions de cils à domicile. Découvrez l\'histoire et les valeurs de Chouchoute-toi sur Évian et Thonon-les-Bains.')
 
 @section('assets')
-    @vite([
-        'resources/css/web/about/index.css',
-        'resources/js/web/about/index.js',
-    ])
+    @vite(['resources/css/pages/about/index.css'])
 @endsection
 
 {{-- What this page adds to the site's graph: almost nothing, the layout

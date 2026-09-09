@@ -1,0 +1,11 @@
+/* The fixed header is 64px tall, 72px from lg up: an anchor lands under it
+   without this margin. */
+[id] {
+    scroll-margin-top: 80px;
+}
+
+@media (min-width: 1024px) {
+    [id] {
+        scroll-margin-top: 88px;
+    }
+}

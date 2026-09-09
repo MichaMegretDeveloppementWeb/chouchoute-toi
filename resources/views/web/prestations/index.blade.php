@@ -4,10 +4,7 @@
 @section('meta_description', 'Extensions de cils à domicile : pose complète dès 65 €, remplissage, volume russe, dépose. Tarifs et prestations sur Évian et Thonon-les-Bains.')
 
 @section('assets')
-    @vite([
-        'resources/css/web/prestations/index.css',
-        'resources/js/web/prestations/index.js',
-    ])
+    @vite(['resources/css/pages/prestations/index.css'])
 @endsection
 
 {{-- What this page adds to the site's graph: the whole catalogue, section by

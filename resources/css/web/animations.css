@@ -8,13 +8,3 @@
     opacity: 1;
     transform: translateY(0);
 }
-
-[id] {
-    scroll-margin-top: 80px;
-}
-
-@media (min-width: 1024px) {
-    [id] {
-        scroll-margin-top: 88px;
-    }
-}

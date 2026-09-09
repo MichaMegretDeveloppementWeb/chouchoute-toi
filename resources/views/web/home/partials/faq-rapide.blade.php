@@ -32,16 +32,16 @@
 
         <div>
             @foreach ($questions as $faq)
-                <div class="border-t border-wine/10" data-home-faq-item>
-                    <button class="flex w-full items-center gap-4 py-5 text-left" data-home-faq-trigger>
-                        <div class="accordion-icon text-charcoal" data-home-faq-icon>
+                <div class="border-t border-wine/10" data-accordion-item>
+                    <button class="flex w-full items-center gap-4 py-5 text-left" data-accordion-trigger>
+                        <div class="accordion-icon text-charcoal" data-accordion-icon>
                             <span class="accordion-icon__h"></span>
                             <span class="accordion-icon__v"></span>
                         </div>
                         <span class="flex-1 text-base font-medium text-dark">{{ $faq['question'] }}</span>
                     </button>
 
-                    <div class="max-h-0 overflow-hidden transition-all duration-300" data-home-faq-content>
+                    <div class="max-h-0 overflow-hidden transition-all duration-300" data-accordion-content>
                         <p class="pb-2 pl-12 pt-4 text-base leading-[1.7] text-charcoal max-md:pl-0 max-md:pt-3">
                             {{ $faq['reponse'] }}
                         </p>

@@ -33,13 +33,6 @@
 
     @vite(['resources/css/web.css', 'resources/js/web.js'])
 
-    @vite([
-        'resources/css/components/layout/header.css',
-        'resources/js/components/layout/header.js',
-        'resources/css/components/layout/footer.css',
-        'resources/js/components/layout/footer.js',
-    ])
-
     @yield('assets')
 
     @stack('head-extra')

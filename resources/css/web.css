@@ -18,3 +18,5 @@
 
 @import './web/theme.css';
 @import './web/animations.css';
+@import './web/anchors.css';
+@import './web/header.css';

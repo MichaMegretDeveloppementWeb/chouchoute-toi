@@ -2,7 +2,9 @@
 
 ## Principe
 
-Chaque page possède ses propres fichiers CSS et JS, importés individuellement via Vite. Les assets communs au layout (header, footer) sont importés directement depuis le layout.
+Deux entrées par espace, et une paire par page. L'entrée de l'espace porte tout
+ce qui vaut pour toutes ses pages ; la paire d'une page ne porte que ce qui
+n'appartient qu'à elle.
 
 ## Les trois espaces
 
@@ -55,98 +57,120 @@ déclarez la source, comme `web.css` le fait pour `../js/**/*.js`.
 
 ## Structure des fichiers
 
+Quatre dossiers, et chacun répond à une question différente · `web/` et
+`admin/` portent ce qui vaut pour tout un espace, `pages/` ce qui n'appartient
+qu'à une page, `components/` ce que plusieurs pages partagent.
+
 ```
 resources/
 ├── css/
-│   ├── admin.css                 # Entree du back-office
-│   ├── web.css                   # Entree du site public
-│   ├── app.css                   # Le commun · importe par les deux
-│   ├── admin/                    # Les regles du back-office
+│   ├── web.css                   # ENTREE · le site public
+│   ├── admin.css                 # ENTREE · le back-office
+│   ├── app.css                   # le commun aux deux, importe par les deux
+│   │
+│   ├── web/                      # les regles du SITE, importees par web.css
+│   │   ├── theme.css             #   la police et les six couleurs de la marque
+│   │   ├── animations.css        #   l'apparition au defilement
+│   │   ├── anchors.css           #   le decalage des ancres sous l'en-tete fixe
+│   │   └── header.css            #   l'en-tete, present sur toutes les pages
+│   │
+│   ├── admin/                    # les regles du BACK-OFFICE, importees par admin.css
 │   │   ├── theme.css
 │   │   ├── fields.css
 │   │   └── sidebar.css
-│   ├── components/
-│   │   └── layout/
-│   │       ├── header.css        # Styles du header
-│   │       └── footer.css        # Styles du footer
-│   └── web/                      # Les regles du site public, et ses pages
-│       ├── theme.css
-│       ├── animations.css
+│   │
+│   ├── components/               # partages, importes par les pages qui en ont besoin
+│   │   ├── accordion.css
+│   │   └── cta-banner.css
+│   │
+│   └── pages/                    # une page, un dossier · le glob ne lit que ca
 │       ├── home/
-│       │   ├── index.css         # Point d'entree CSS de la page d'accueil
-│       │   ├── hero.css          # Styles de la section hero (optionnel)
-│       │   └── features.css      # Styles d'une autre section (optionnel)
+│       │   ├── index.css         #   le point d'entree de la page
+│       │   ├── hero.css          #   une section
+│       │   └── avant-apres.css
 │       ├── about/
-│       │   └── index.css
-│       └── contact/
-│           └── index.css
+│       ├── contact/
+│       ├── prestations/
+│       └── reviews/
+│
 └── js/
-    ├── admin.js                  # Entree du back-office
-    ├── web.js                    # Entree du site public
-    ├── app.js                    # Le commun · importe par les deux
+    ├── web.js                    # ENTREE · collecteur, animations, en-tete
+    ├── admin.js                  # ENTREE
+    ├── app.js                    # le commun aux deux
+    │
+    ├── web/
+    │   ├── animations.js         #   l'observateur qui pose `is-visible`
+    │   └── header.js
+    │
     ├── admin/
     │   └── sidebar.js
+    │
     ├── components/
-    │   └── layout/
-    │       ├── header.js
-    │       └── footer.js
-    └── web/
+    │   └── accordion.js          #   UN accordeon, pour les trois pages qui en ont un
+    │
+    └── pages/
         ├── home/
-        │   ├── index.js          # Point d'entree JS de la page d'accueil
-        │   └── hero.js           # JS de la section hero (optionnel)
-        ├── about/
-        │   └── index.js
-        └── contact/
-            └── index.js
+        │   ├── index.js
+        │   └── avant-apres.js
+        ├── contact/
+        └── reviews/
 ```
 
-Le glob de `vite.config.js` ne ramasse que `web/{page}/index.css` et
-`web/{page}/index.js` · `web/theme.css` et `web/animations.css` sont importés
-par `web.css`, pas compilés à part.
+**Le glob ne ramasse que `pages/*/index.css` et `pages/*/index.js`.** Un dossier
+sous `pages/` **est** une page ; rien d'autre n'y vit. Les fichiers de `web/` et
+d'`admin/` sont importés par leur entrée, jamais compilés à part.
 
 ## Règles
 
-### Un fichier `index.css` / `index.js` par page
+### Une paire par page, et seulement si elle sert
 
-Chaque page doit avoir au minimum un fichier `index.css` et/ou `index.js` dans son dossier sous `resources/css/web/{page}/` et `resources/js/web/{page}/`. Ce fichier est le **point d'entrée unique** de la page pour Vite.
+Une page a un `index.css` **et/ou** un `index.js` dans son dossier sous
+`resources/css/pages/{page}/` et `resources/js/pages/{page}/`. Ce fichier est le
+**point d'entrée unique** de la page pour Vite.
 
-### Segmentation optionnelle par section/composant
+**Une page qui n'a ni CSS ni JS propre n'a pas de `@section('assets')`** —
+`mentions-legales` est dans ce cas. **Aucun fichier vide** : un fichier de
+section se crée le jour où il a quelque chose à porter, pas avant.
 
-Si le CSS ou le JS d'une page devient trop volumineux, il est possible de le diviser en fichiers dédiés à chaque section ou composant de la page. Ces fichiers sont ensuite importés dans le `index.css` ou `index.js` correspondant.
+### Segmentation optionnelle par section
 
-Exemple pour `resources/css/web/home/index.css` :
+Si le CSS ou le JS d'une page devient volumineux, on le divise en fichiers
+dédiés à chaque section, importés dans l'`index` correspondant.
 
 ```css
+/* resources/css/pages/home/index.css */
 @import './hero.css';
-@import './features.css';
+@import './avant-apres.css';
+@import '../../components/accordion.css';
 ```
-
-Exemple pour `resources/js/web/home/index.js` :
 
 ```js
-import './hero.js';
-import './slider.js';
+/* resources/js/pages/home/index.js */
+import './avant-apres.js';
+import '../../components/accordion.js';
 ```
 
-### Assets du layout (header, footer)
+### Ce qui vaut pour tout le site va dans l'entrée
 
-Les fichiers CSS et JS des composants du layout se trouvent dans `resources/css/components/layout/` et `resources/js/components/layout/`. Ils sont importés directement dans le `<head>` du layout `web.blade.php` car ils sont communs à toutes les pages publiques.
+Un comportement ou un style présent sur **toutes** les pages n'est pas une page :
+il va dans `web/`, importé par `web.css` ou `web.js`. C'est le cas de l'en-tête,
+de l'observateur d'animations, du thème et des ancres.
 
-```blade
-{{-- resources/views/layouts/web.blade.php --}}
-<head>
-    @vite([
-        'resources/css/components/layout/header.css',
-        'resources/js/components/layout/header.js',
-        'resources/css/components/layout/footer.css',
-        'resources/js/components/layout/footer.js',
-    ])
-</head>
-```
+> Ce n'était pas le cas jusqu'au 2026-09-09 · `header.css`, `header.js`,
+> `footer.css` et `footer.js` étaient quatre entrées Vite déclarées à part et
+> chargées par un second `@vite` dans le layout — sur exactement les mêmes pages
+> que `web.css` et `web.js`. `footer.js` ne contenait d'ailleurs rien du pied de
+> page, mais l'observateur de tout le site, et `footer.css` était vide.
 
-### Directive `@vite` dans les vues de page
+### Ce que plusieurs pages partagent va dans `components/`
 
-Chaque vue principale de page inclut une seule directive `@vite` qui référence ses propres fichiers `index.css` et `index.js`.
+Un accordéon, une bannière d'appel à l'action. Le fichier vit dans
+`components/`, et chaque page qui l'emploie l'importe depuis son `index`. Rien
+n'entre dans l'entrée de l'espace tant que toutes les pages n'en ont pas besoin.
+
+### La directive `@vite` dans les vues de page
+
+Le layout charge l'entrée de l'espace ; la vue de page charge la sienne.
 
 ```blade
 {{-- resources/views/web/home/index.blade.php --}}
@@ -154,23 +178,16 @@ Chaque vue principale de page inclut une seule directive `@vite` qui référence
 
 @section('assets')
     @vite([
-        'resources/css/web/home/index.css',
-        'resources/js/web/home/index.js',
+        'resources/css/pages/home/index.css',
+        'resources/js/pages/home/index.js',
     ])
 @endsection
 ```
 
-Le layout doit prévoir une section `assets` dans le `<head>` pour accueillir ces directives :
-
 ```blade
 {{-- resources/views/layouts/web.blade.php --}}
 <head>
-    @vite([
-        'resources/css/components/layout/header.css',
-        'resources/js/components/layout/header.js',
-        'resources/css/components/layout/footer.css',
-        'resources/js/components/layout/footer.js',
-    ])
+    @vite(['resources/css/web.css', 'resources/js/web.js'])
 
     @yield('assets')
 </head>
@@ -178,7 +195,9 @@ Le layout doit prévoir une section `assets` dans le `<head>` pour accueillir ce
 
 ## Configuration de Vite
 
-Le fichier `vite.config.js` emploie `glob.sync`, du paquet npm `glob`, dans la propriété `input` du plugin Laravel : les points d'entrée `index.css` et `index.js` de chaque page sont détectés tout seuls. Les quatre entrées des espaces et les assets des composants du layout, eux, sont nommés à la main.
+Le fichier `vite.config.js` emploie `glob.sync`, du paquet npm `glob`, dans la
+propriété `input` du plugin Laravel : les points d'entrée de chaque page sont
+détectés tout seuls. Les quatre entrées des espaces sont nommées à la main.
 
 ```js
 import { defineConfig } from 'vite';
@@ -195,12 +214,8 @@ export default defineConfig({
                 'resources/css/admin.css',
                 'resources/js/admin.js',
 
-                ...glob.sync('resources/css/web/*/index.css'),
-                ...glob.sync('resources/js/web/*/index.js'),
-                'resources/css/components/layout/header.css',
-                'resources/css/components/layout/footer.css',
-                'resources/js/components/layout/header.js',
-                'resources/js/components/layout/footer.js',
+                ...glob.sync('resources/css/pages/*/index.css'),
+                ...glob.sync('resources/js/pages/*/index.js'),
             ],
             refresh: true,
         }),
@@ -214,12 +229,15 @@ export default defineConfig({
 });
 ```
 
-De cette manière, chaque nouveau dossier de page créé sous `resources/css/web/` ou `resources/js/web/` avec un fichier `index.css` / `index.js` sera automatiquement pris en charge par Vite sans modifier la configuration.
+Un nouveau dossier sous `resources/css/pages/` ou `resources/js/pages/` avec un
+`index` est pris en charge sans toucher à la configuration.
 
 ## Résumé
 
-| Élément | Emplacement CSS | Emplacement JS | Import Vite |
+| Élément | Emplacement CSS | Emplacement JS | Import |
 |---|---|---|---|
-| Page (ex: home) | `resources/css/web/home/index.css` | `resources/js/web/home/index.js` | `@vite` dans la vue de la page |
-| Section de page (ex: hero) | `resources/css/web/home/hero.css` | `resources/js/web/home/hero.js` | `@import` dans `index.css` / `import` dans `index.js` |
-| Composant layout (ex: header) | `resources/css/components/layout/header.css` | `resources/js/components/layout/header.js` | `@vite` dans le layout `web.blade.php` |
+| Entrée de l'espace | `css/web.css` | `js/web.js` | `@vite` dans le layout |
+| Règle du site entier | `css/web/{sujet}.css` | `js/web/{sujet}.js` | `@import` / `import` dans l'entrée |
+| Page (ex : home) | `css/pages/home/index.css` | `js/pages/home/index.js` | `@vite` dans la vue de la page |
+| Section de page (ex : hero) | `css/pages/home/hero.css` | `js/pages/home/hero.js` | `@import` / `import` dans l'`index` |
+| Composant partagé (ex : accordéon) | `css/components/accordion.css` | `js/components/accordion.js` | `@import` / `import` dans l'`index` des pages concernées |

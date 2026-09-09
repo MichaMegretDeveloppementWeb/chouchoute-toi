@@ -14,68 +14,39 @@
       "admin.css"
     ]
   },
-  "resources/css/components/layout/footer.css": {
-    "file": "assets/index-tn0RQdqM.css",
-    "src": "resources/css/web/legal/index.css",
-    "isEntry": true,
-    "name": "footer",
-    "names": [
-      "index.css",
-      "footer.css"
-    ]
-  },
-  "resources/css/components/layout/header.css": {
-    "file": "assets/header-DOpPpH9e.css",
-    "src": "resources/css/components/layout/header.css",
-    "isEntry": true,
-    "name": "header",
-    "names": [
-      "header.css"
-    ]
-  },
-  "resources/css/web.css": {
-    "file": "assets/web-Da6c8uwr.css",
-    "src": "resources/css/web.css",
-    "isEntry": true,
-    "name": "web",
-    "names": [
-      "web.css"
-    ]
-  },
-  "resources/css/web/about/index.css": {
+  "resources/css/pages/about/index.css": {
     "file": "assets/index-BvMGxzIs.css",
-    "src": "resources/css/web/about/index.css",
+    "src": "resources/css/pages/about/index.css",
     "isEntry": true,
     "name": "index",
     "names": [
       "index.css"
     ]
   },
-  "resources/css/web/contact/index.css": {
+  "resources/css/pages/contact/index.css": {
     "file": "assets/index-CNPeHfaj.css",
-    "src": "resources/css/web/reviews/index.css"
+    "src": "resources/css/pages/reviews/index.css"
   },
-  "resources/css/web/home/index.css": {
+  "resources/css/pages/home/index.css": {
     "file": "assets/index-Do1TOf3p.css",
-    "src": "resources/css/web/home/index.css"
+    "src": "resources/css/pages/home/index.css"
   },
-  "resources/css/web/legal/index.css": {
-    "file": "assets/index-tn0RQdqM.css",
-    "src": "resources/css/web/legal/index.css",
-    "isEntry": true,
-    "name": "footer",
-    "names": [
-      "index.css",
-      "footer.css"
-    ]
-  },
-  "resources/css/web/prestations/index.css": {
+  "resources/css/pages/prestations/index.css": {
     "file": "assets/index-CWPAnhMp.css",
-    "src": "resources/css/web/prestations/index.css"
+    "src": "resources/css/pages/prestations/index.css"
   },
-  "resources/css/web/reviews/index.css": {
+  "resources/css/pages/reviews/index.css": {
     "file": "assets/index-CNPeHfaj.css",
-    "src": "resources/css/web/reviews/index.css"
+    "src": "resources/css/pages/reviews/index.css"
+  },
+  "resources/css/web.css": {
+    "file": "assets/web-Cet5jfu1.css",
+    "src": "resources/css/web.css",
+    "isEntry": true,
+    "name": "web",
+    "names": [
+      "web.css"
+    ]
   },
   "resources/js/admin.js": {
     "file": "assets/admin-DtkOnhfi.js",
@@ -86,58 +57,34 @@
       "packages/falcon-ui-kit/dist/ui-kit-charts.js"
     ]
   },
-  "resources/js/components/layout/footer.js": {
-    "file": "assets/footer-yYUmirKT.js",
-    "name": "footer",
-    "src": "resources/js/components/layout/footer.js",
-    "isEntry": true
+  "resources/js/pages/contact/index.js": {
+    "file": "assets/index-BtJWiids.js",
+    "name": "index",
+    "src": "resources/js/pages/contact/index.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/pages/reviews/index.js"
+    ]
   },
-  "resources/js/components/layout/header.js": {
-    "file": "assets/header-D-RkUl_l.js",
-    "name": "header",
-    "src": "resources/js/components/layout/header.js",
+  "resources/js/pages/home/index.js": {
+    "file": "assets/index-C5NJwBq9.js",
+    "name": "index",
+    "src": "resources/js/pages/home/index.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/pages/reviews/index.js"
+    ]
+  },
+  "resources/js/pages/reviews/index.js": {
+    "file": "assets/index-DU1WAvV6.js",
+    "name": "index",
+    "src": "resources/js/pages/reviews/index.js",
     "isEntry": true
   },
   "resources/js/web.js": {
-    "file": "assets/web-Rf8VW2xV.js",
+    "file": "assets/web-DMIhxpXs.js",
     "name": "web",
     "src": "resources/js/web.js",
-    "isEntry": true
-  },
-  "resources/js/web/about/index.js": {
-    "file": "assets/index-K6Dvbx-E.js",
-    "name": "index",
-    "src": "resources/js/web/about/index.js",
-    "isEntry": true
-  },
-  "resources/js/web/contact/index.js": {
-    "file": "assets/index-Bbqr_etB.js",
-    "name": "index",
-    "src": "resources/js/web/contact/index.js",
-    "isEntry": true
-  },
-  "resources/js/web/home/index.js": {
-    "file": "assets/index-BHEVioDw.js",
-    "name": "index",
-    "src": "resources/js/web/home/index.js",
-    "isEntry": true
-  },
-  "resources/js/web/legal/index.js": {
-    "file": "assets/index-DP2rzg_V.js",
-    "name": "index",
-    "src": "resources/js/web/legal/index.js",
-    "isEntry": true
-  },
-  "resources/js/web/prestations/index.js": {
-    "file": "assets/index-l0sNRNKZ.js",
-    "name": "index",
-    "src": "resources/js/web/prestations/index.js",
-    "isEntry": true
-  },
-  "resources/js/web/reviews/index.js": {
-    "file": "assets/index-DU1WAvV6.js",
-    "name": "index",
-    "src": "resources/js/web/reviews/index.js",
     "isEntry": true
   }
 }

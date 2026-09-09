@@ -5,8 +5,8 @@
 
 @section('assets')
     @vite([
-        'resources/css/web/reviews/index.css',
-        'resources/js/web/reviews/index.js',
+        'resources/css/pages/reviews/index.css',
+        'resources/js/pages/reviews/index.js',
     ])
 @endsection
 

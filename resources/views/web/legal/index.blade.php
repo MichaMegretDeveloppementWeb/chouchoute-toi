@@ -3,13 +3,6 @@
 @section('title', 'Mentions légales')
 @section('meta_description', 'Mentions légales, conditions générales de vente et politique de confidentialité du site Chouchoute-toi by Amande · Extensions de cils à domicile.')
 
-@section('assets')
-    @vite([
-        'resources/css/web/legal/index.css',
-        'resources/js/web/legal/index.js',
-    ])
-@endsection
-
 @section('content')
     <section class="mx-auto max-w-[1336px] px-5 pb-20 pt-12">
         <p class="mb-3 flex items-center gap-2 text-sm font-normal uppercase tracking-[2px] text-wine">
