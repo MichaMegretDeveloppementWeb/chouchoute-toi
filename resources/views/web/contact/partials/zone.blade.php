@@ -1,5 +1,5 @@
 @php
-    $communes = [
+    $towns = [
         'Évian-les-Bains',
         'Thonon-les-Bains',
         'Publier',
@@ -28,8 +28,8 @@
                 </p>
 
                 <div class="mb-8 flex flex-wrap gap-3">
-                    @foreach ($communes as $commune)
-                        <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">{{ $commune }}</span>
+                    @foreach ($towns as $town)
+                        <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">{{ $town }}</span>
                     @endforeach
                 </div>
 
