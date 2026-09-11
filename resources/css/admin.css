@@ -3,7 +3,12 @@
 
 /* Order matters for hand-written rules, the last import winning. It does not
    matter for utilities, which Tailwind orders on its own. */
-@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
+
+/* The kit's names, so `bg-surface` and friends work in the markup written here.
+   The mapping only — the kit compiles and serves its own components, and its
+   typeface stays in `typography.css`, which this file deliberately skips: the
+   admin picks Open Sans further down. */
+@import '../../vendor/falcon/ui-kit/resources/css/theme.css';
 @import '../../vendor/falcon/booking/resources/css/booking-admin.css';
 @import '../../vendor/falcon/analytics/resources/css/analytics-admin.css';
 
