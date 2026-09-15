@@ -1,6 +1,8 @@
 @import 'tailwindcss' source(none);
 
-@import '../../vendor/falcon/booking/resources/css/booking-public.css';
+/* Rien de falcon/booking ici · il compile sa feuille et la livre, cette
+   application en publie une copie et la sert. La page de réservation la reçoit
+   par `@falconStyles`, que la coquille du paquet écrit. */
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../views/**/*.blade.php';

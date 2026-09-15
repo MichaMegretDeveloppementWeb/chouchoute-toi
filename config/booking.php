@@ -89,26 +89,20 @@ return [
     ],
 
     /*
-    | Your entry points, where `booking:install` wrote its imports.
+    | Il n'y a plus rien à régler pour les assets, et c'est le but.
     |
-    | The package compiles no CSS. Its back office styles are declared in
-    | `resources/css/booking-admin.css`, which the host imports into its own
-    | entry and compiles with it, FullCalendar's sheet included. The JavaScript
-    | ships compiled and is imported the same way.
+    | Le paquet compile sa feuille et son script, les livre déjà compilés, et
+    | `vendor:publish` en pose une copie dans `public/vendor/falcon/booking`.
+    | Cette application n'importe rien, ne scanne aucune vue du paquet, et
+    | n'installe aucune dépendance de compilation.
     |
-    | These files are yours, and your `npm run build` reads them.
-    | `booking:check` opens them to verify the imports are still there. Change a
-    | path here when you move or rename one of them; paths are relative to the
-    | project root.
+    | La seule chose à faire, et à chaque déploiement ·
     |
-    | `web_css` carries two roles: the shopfront import is written there, and
-    | the public layout loads that sheet through `@vite`.
+    |     php artisan vendor:publish --tag=laravel-assets --force
+    |
+    | Sans elle, les écrans lèvent en nommant la commande, plutôt que de servir
+    | une feuille périmée en silence.
     */
-    'assets' => [
-        'admin_css' => 'resources/css/admin.css',
-        'admin_js' => 'resources/js/admin.js',
-        'web_css' => 'resources/css/web.css',
-    ],
 
     'seo' => [
         // When the host already describes its business in JSON-LD, put its @id

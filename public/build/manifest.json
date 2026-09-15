@@ -1,12 +1,6 @@
 {
-  "packages/falcon-ui-kit/dist/ui-kit-charts.js": {
-    "file": "assets/ui-kit-charts-Zxr0FrrV.js",
-    "name": "ui-kit-charts",
-    "src": "packages/falcon-ui-kit/dist/ui-kit-charts.js",
-    "isDynamicEntry": true
-  },
   "resources/css/admin.css": {
-    "file": "assets/admin-lA7fW30C.css",
+    "file": "assets/admin-Nu82GKld.css",
     "src": "resources/css/admin.css",
     "isEntry": true,
     "name": "admin",
@@ -40,7 +34,7 @@
     "src": "resources/css/pages/reviews/index.css"
   },
   "resources/css/web.css": {
-    "file": "assets/web-Cet5jfu1.css",
+    "file": "assets/web-Bc1EoOQl.css",
     "src": "resources/css/web.css",
     "isEntry": true,
     "name": "web",
@@ -49,13 +43,10 @@
     ]
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-DtkOnhfi.js",
+    "file": "assets/admin-CjSQs3CI.js",
     "name": "admin",
     "src": "resources/js/admin.js",
-    "isEntry": true,
-    "dynamicImports": [
-      "packages/falcon-ui-kit/dist/ui-kit-charts.js"
-    ]
+    "isEntry": true
   },
   "resources/js/pages/contact/index.js": {
     "file": "assets/index-BtJWiids.js",

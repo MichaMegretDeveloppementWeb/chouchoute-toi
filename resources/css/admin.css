@@ -9,8 +9,15 @@
    typeface stays in `typography.css`, which this file deliberately skips: the
    admin picks Open Sans further down. */
 @import '../../vendor/falcon/ui-kit/resources/css/theme.css';
-@import '../../vendor/falcon/booking/resources/css/booking-admin.css';
-@import '../../vendor/falcon/analytics/resources/css/analytics-admin.css';
+
+/* Et rien des paquets · ils compilent leurs feuilles et les livrent, cette
+   application en publie une copie et la sert. Trois `@import` vivaient ici et
+   faisaient compiler leurs vues par ce build ; ils ont disparu avec le passage
+   de chaque paquet au modèle publier-et-servir.
+
+       php artisan vendor:publish --tag=laravel-assets --force
+
+   à chaque déploiement, et rien d'autre. */
 
 @import './app.css';
 
