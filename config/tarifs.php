@@ -7,10 +7,14 @@ return [
     | Price list
     |--------------------------------------------------------------------------
     |
-    | The public pages read these prices straight from here, while the booking
-    | catalogue reads the database that Database\Seeders\ServiceSeeder filled
-    | from them. The seeder is idempotent on the slug, so a price edited here
-    | reaches the public pages and never an already seeded service.
+    | The public pages read these prices straight from here: the home page, the
+    | price list and the contact form. This is the site's own price list.
+    |
+    | The booking catalogue is a separate thing, kept by falcon/booking in its
+    | own tables and filled from its back office. Nothing copies one into the
+    | other, and nothing should: the package knows nothing of this application,
+    | and keeping the two consistent is the establishment's business, like any
+    | other establishment installing it.
     |
     */
 

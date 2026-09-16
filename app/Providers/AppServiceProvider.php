@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Falcon\UiKit\UiKit;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,22 +20,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         /*
-         * Our own stack of kit components, `<x-app-ui::sidebar>`. Without it
-         * our overrides would hold for everybody: a file laid in
-         * `resources/views/components/ui/` replaces the component everywhere,
-         * the screens of falcon/booking and falcon/analytics included.
+         * Nothing to declare for the kit's components.
          *
-         * The stack searches three folders and the first holding the file
-         * wins:
-         *
-         *   1. `resources/views/vendor/app/components/ui/`  (unused, the host
-         *      already being the first level of its own stack)
-         *   2. `resources/views/components/ui/`             our overrides
-         *   3. the kit's components                         everything else
-         *
-         * Each package declares its own the same way, and none reaches
-         * another's.
+         * falcon/ui-kit resolves the stack itself: a package's own skin wins
+         * inside that package, an application's override lives in
+         * `resources/views/vendor/ui/components/`, and the kit's own comes
+         * last. A `UiKit::componentsFor()` call stood here for the version that
+         * asked the host to declare it, and that class no longer exists.
          */
-        UiKit::componentsFor('app', resource_path('views'));
     }
 }
