@@ -4,9 +4,11 @@
 ])
 
 @php
-    // Same fold as the published sidebar components: it goes through the class,
-    // so the stylesheet decides and not the screen width.
-    $labelClass = 'fb-sidebar-label whitespace-nowrap max-w-[200px] overflow-hidden transition-[opacity,max-width] duration-300 ease-in-out';
+    // Les classes de repli sont celles du kit · c'est sa feuille qui leur donne
+    // leur valeur depuis l'état de la barre, et l'écran n'a pas à connaître de
+    // largeur. `ui-sidebar-label` pour ce qui disparaît sur le rail,
+    // `ui-sidebar-gap` pour l'espacement qui se resserre avec lui.
+    $labelClass = 'ui-sidebar-label';
 
     $initials = collect(explode(' ', trim($name)))
         ->filter()
@@ -26,22 +28,22 @@
         @click="open = !open"
         :aria-expanded="open"
         aria-haspopup="true"
-        class="fb-sidebar-gap flex w-full items-center gap-x-3 px-5 py-3 transition-[gap,background-color] duration-300 ease-in-out hover:bg-gray-50 lg:px-0 lg:py-3 dark:hover:bg-gray-800"
+        class="ui-sidebar-gap flex w-full items-center px-5 py-3 transition-colors hover:bg-gray-50 lg:px-0 lg:py-3 dark:hover:bg-gray-800"
     >
-        <x-ui.avatar :initials="$initials" size="default" class="shrink-0" />
+        <x-ui::avatar :initials="$initials" size="default" class="shrink-0" />
 
         <div class="min-w-0 flex-1 text-left {{ $labelClass }}">
             <p class="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100">{{ $name }}</p>
             <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">{{ $email }}</p>
         </div>
 
-        <x-ui.icon
+        <x-ui::icon
             name="chevron-up-down"
             class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500 {{ $labelClass }}"
         />
     </button>
 
-    {{-- Opens upward: the block sits at the very bottom of the sidebar. --}}
+    {{-- S'ouvre vers le haut : le bloc est tout en bas de la barre. --}}
     <div
         x-show="open"
         x-cloak
@@ -53,24 +55,25 @@
         x-transition:leave-end="opacity-0 scale-95"
         class="absolute bottom-full left-3 right-3 z-30 mb-2 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:shadow-2xl dark:shadow-black/20"
     >
-        <x-ui.dropdown-item :href="route('admin.profile')" icon="user-circle">
+        <x-ui::dropdown-item :href="route('admin.profile')" icon="user-circle">
             Mon profil
-        </x-ui.dropdown-item>
+        </x-ui::dropdown-item>
 
-        <x-ui.dropdown-item :href="route('home')" icon="arrow-top-right-on-square" target="_blank" rel="noopener">
+        <x-ui::dropdown-item :href="route('home')" icon="arrow-top-right-on-square" target="_blank" rel="noopener">
             Voir le site
-        </x-ui.dropdown-item>
+        </x-ui::dropdown-item>
 
-        <x-ui.dropdown-item separator />
+        <x-ui::dropdown-item separator />
 
-        {{-- Sign-out is a POST, so it needs its own form rather than a dropdown-item. --}}
+        {{-- La déconnexion est un POST, donc elle a son formulaire plutôt qu'une
+             entrée de menu. --}}
         <form method="POST" action="{{ route('admin.logout') }}">
             @csrf
             <button
                 type="submit"
                 class="flex w-full items-center gap-x-2 px-3 py-2 text-[13px] text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
             >
-                <x-ui.icon name="arrow-right-start-on-rectangle" class="h-4 w-4 text-red-400 dark:text-red-500" />
+                <x-ui::icon name="arrow-right-start-on-rectangle" class="h-4 w-4 text-red-400 dark:text-red-500" />
                 Déconnexion
             </button>
         </form>

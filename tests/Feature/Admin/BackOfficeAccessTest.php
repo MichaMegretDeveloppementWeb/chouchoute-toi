@@ -18,21 +18,26 @@ final class BackOfficeAccessTest extends TestCase
      * Every screen of the back-office, the application's own and the two
      * modules mounted by falcon/analytics.
      *
+     * Les noms sont écrits en clair, et c'est le paquet qui le demande · ils
+     * sont fixes, seules leurs adresses se règlent. Les composer depuis une clé
+     * de configuration a laissé cette liste viser `analytics.overview` bien
+     * après que le paquet l'eut renommée, et rien ne l'a dit.
+     *
      * @return array<string, array{string}>
      */
     public static function provideProtectedRoutes(): array
     {
         return [
             'dashboard' => ['admin.dashboard'],
-            'analytics overview' => ['analytics.overview'],
-            'analytics realtime' => ['analytics.realtime'],
-            'analytics visitors' => ['analytics.visitors'],
-            'analytics sessions' => ['analytics.sessions'],
-            'analytics events' => ['analytics.events'],
-            'analytics funnels' => ['analytics.funnels'],
-            'marketing dashboard' => ['marketing.dashboard'],
-            'marketing campaigns' => ['marketing.campaigns'],
-            'marketing ads' => ['marketing.ads'],
+            'analytics overview' => ['analytics.admin.overview'],
+            'analytics realtime' => ['analytics.admin.realtime'],
+            'analytics visitors' => ['analytics.admin.visitors'],
+            'analytics sessions' => ['analytics.admin.sessions'],
+            'analytics events' => ['analytics.admin.events'],
+            'analytics funnels' => ['analytics.admin.funnels'],
+            'marketing dashboard' => ['analytics.admin.marketing.dashboard'],
+            'marketing campaigns' => ['analytics.admin.marketing.campaigns'],
+            'marketing ads' => ['analytics.admin.marketing.ads'],
         ];
     }
 
@@ -60,7 +65,7 @@ final class BackOfficeAccessTest extends TestCase
 
     public function test_analytics_screens_render_inside_the_host_shell(): void
     {
-        $response = $this->actingAs(Admin::factory()->create(), 'admin')->get(route('analytics.overview'));
+        $response = $this->actingAs(Admin::factory()->create(), 'admin')->get(route('analytics.admin.overview'));
 
         $response->assertOk();
         // Markers of the host shell, absent from the package's own layout.

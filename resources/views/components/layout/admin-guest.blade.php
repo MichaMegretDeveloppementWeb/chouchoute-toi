@@ -12,9 +12,11 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}">
 
-    {{-- The same sheet and script as the back-office. The theme is read
-         server-side and rendered on `<html>` above, so no head script is
-         needed. --}}
+    {{-- Le kit et les paquets d'abord · ils livrent des fichiers compilés, cette
+         application en sert une copie publiée. Puis la nôtre, qui arrive après
+         et gagne donc sans rien avoir à forcer. --}}
+    @falconStyles
+
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 
     @livewireStyles
@@ -32,12 +34,15 @@
             <p class="text-[13px] text-secondary">Espace d'administration</p>
         </div>
 
-        <x-ui.card class="shadow-sm ring-1 ring-black/5 dark:ring-white/5">
+        <x-ui::card class="shadow-sm ring-1 ring-black/5 dark:ring-white/5">
             {{ $slot }}
-        </x-ui.card>
+        </x-ui::card>
     </div>
 
-    <x-app-ui::toast position="top-right" />
+    {{-- Le conteneur des notifications voyage avec les scripts du kit · c'est
+         la pièce qu'un gabarit écrit à la main oublie le plus souvent, et
+         l'oublier ne casse rien de visible. --}}
+    @falconScripts
 
     @livewireScripts
 </body>

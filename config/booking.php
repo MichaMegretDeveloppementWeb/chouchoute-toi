@@ -21,6 +21,26 @@ return [
     // again.
     'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | La coquille autour de chaque espace
+    |--------------------------------------------------------------------------
+    |
+    | La valeur est un composant Blade · un écran l'ouvre comme une balise et
+    | remplit son slot, donc on le nomme comme on l'écrirait — `layout.admin`
+    | pour `<x-layout.admin>`.
+    |
+    | Le back-office prend le nôtre, avec notre barre et notre compte. La page
+    | publique garde celle du paquet · elle se suffit, et notre site a ses
+    | propres pages.
+    |
+    */
+
+    'layouts' => [
+        'admin' => 'layout.admin',
+        'public' => null,
+    ],
+
     'admin' => [
         'route_prefix' => 'admin/agenda',
         'route_name' => 'booking.admin.',
@@ -36,14 +56,6 @@ return [
         // guard, which is rarely the right one for a back office.
         'guard' => 'admin',
 
-        // A view of the host the package's screens extend. Null makes the
-        // package render the full page itself.
-        'layout' => 'layouts.booking-admin',
-
-        // The section that layout yields. A screen rendered into the wrong
-        // section shows up blank rather than failing, so it is configurable
-        // rather than assumed.
-        'layout_section' => 'content',
     ],
 
     /*
@@ -61,12 +73,6 @@ return [
         // No `auth` here, unlike the back office: this page is the one place
         // the package speaks to someone who has no account.
         'middleware' => ['web'],
-
-        // A view of the host the page extends, and the section it yields. Null
-        // makes the package render the full page through a shell of its own,
-        // nothing guaranteeing a host has a layout at all.
-        'layout' => null,
-        'layout_section' => 'content',
 
         // False stops the package registering its public routes at all, for a
         // host that would rather mount the views under routes of its own. The

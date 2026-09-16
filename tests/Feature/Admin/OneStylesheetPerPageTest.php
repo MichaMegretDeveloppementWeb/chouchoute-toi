@@ -85,60 +85,6 @@ final class OneStylesheetPerPageTest extends TestCase
     }
 
     /**
-     * Notre entrée importe chaque fournisseur, plutôt que d'aller lire ses vues.
-     *
-     * Un `@source` qui pointe dans `vendor/` veut dire qu'on devine ce qu'un
-     * paquet contient · le jour où il ajoute un dossier de vues, on ne le sait
-     * pas et les classes manquent. Son point d'entrée, lui, le déclare pour
-     * nous.
-     */
-    public function test_our_entry_imports_each_provider(): void
-    {
-        /*
-         * Les deux espaces, et ce que chacun doit porter.
-         *
-         * `web.css` a rejoint cette liste le 2026-09-07 · `booking-public.css`
-         * était compilée par le paquet et servie depuis `vendor/` par une route
-         * à lui. Elle est déclarée comme les autres depuis, et sans cet import
-         * la page de réservation arrive nue, sans la moindre erreur.
-         */
-        $entries = [
-            'resources/css/admin.css' => [
-                '../../vendor/falcon/ui-kit/resources/css/preset.css',
-                '../../vendor/falcon/booking/resources/css/booking-admin.css',
-                '../../vendor/falcon/analytics/resources/css/analytics-admin.css',
-            ],
-            'resources/css/web.css' => [
-                '../../vendor/falcon/booking/resources/css/booking-public.css',
-            ],
-        ];
-
-        foreach ($entries as $path => $providers) {
-            $entry = $this->contentsOf($path);
-
-            foreach ($providers as $provider) {
-                $this->assertStringContainsString("@import '{$provider}';", $entry);
-            }
-
-            preg_match_all('/@source\s+\'([^\']+)\'/', $entry, $matches);
-
-            foreach ($matches[1] as $source) {
-                // La pagination de Laravel est nommée à la main : elle vit dans
-                // `vendor/`, que git ignore, et aucun point d'entrée ne la
-                // déclare pour nous.
-                if (str_contains($source, 'Illuminate/Pagination')) {
-                    continue;
-                }
-
-                $this->assertTrue(
-                    str_starts_with($source, '../views/') || str_starts_with($source, '../js/'),
-                    "« {$source} » va lire les vues d'un paquet à sa place. Importez son point d'entrée.",
-                );
-            }
-        }
-    }
-
-    /**
      * `app.css` porte le commun, et n'est pas une entrée.
      *
      * **Lui donner Tailwind en ferait une seconde feuille sur chaque page.**
@@ -176,43 +122,6 @@ final class OneStylesheetPerPageTest extends TestCase
             (string) file_get_contents(base_path('vite.config.js')),
             "app.css est déclaré comme entrée Vite alors qu'il est importé : le build en ferait un fichier orphelin.",
         );
-    }
-
-    /**
-     * Nos surcharges de composants ne débordent pas sur les paquets.
-     *
-     * Un fichier posé dans `resources/views/components/ui/` remplace le
-     * composant pour **tout le monde**, écrans de paquets compris · c'est ainsi
-     * que falcon/analytics a un jour rendu ses boutons avec le dessin de
-     * falcon/booking. La pile déclarée par `UiKit::componentsFor('app', …)` les
-     * réserve à nos écrans, et `<x-app-ui::…>` est le nom qui la lit.
-     */
-    public function test_our_overrides_are_called_through_our_own_stack(): void
-    {
-        $overridden = [];
-
-        foreach ((array) glob(resource_path('views/components/ui/{,*/}*.blade.php'), GLOB_BRACE) as $path) {
-            $name = str_replace('\\', '/', substr((string) $path, strlen(resource_path('views/components/ui')) + 1));
-            $overridden[] = str_replace('/', '.', substr($name, 0, -strlen('.blade.php')));
-        }
-
-        $this->assertNotSame([], $overridden, 'Aucune surcharge trouvée.');
-
-        foreach ($this->views() as $path => $contents) {
-            foreach ($overridden as $component) {
-                // `sidebar.index` s'appelle `sidebar`, et ses enfants portent
-                // leur segment · on compare sur la racine du nom.
-                $root = explode('.', $component)[0];
-
-                $this->assertStringNotContainsString(
-                    '<x-ui.'.$root,
-                    $contents,
-                    $path." appelle « {$root} » par le créneau global, alors que nous le "
-                    ."surchargeons.\nNotre copie s'appliquerait aussi aux écrans des paquets. "
-                    .'Écrivez `<x-app-ui::'.$root.'>`.',
-                );
-            }
-        }
     }
 
     /**

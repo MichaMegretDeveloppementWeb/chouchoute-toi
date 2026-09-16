@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Session\Middleware\StartSession;
+
 return [
 
     /*
@@ -14,31 +18,6 @@ return [
     */
 
     'enabled' => env('ANALYTICS_ENABLED', true),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Assets
-    |--------------------------------------------------------------------------
-    |
-    | Nos entrées, où les imports du paquet sont écrits.
-    |
-    | Le paquet ne compile rien : ces fichiers sont les nôtres, et c'est notre
-    | `npm run build` qui les lit. Deux lignes seulement — la feuille des
-    | tableaux de bord dans `admin_css`, le collecteur dans `web_js`.
-    |
-    | Le collecteur va dans le script du site public, jamais dans celui du
-    | back-office : on ne mesure pas les visites de l'administratrice.
-    |
-    | `admin_js` ne porte aucun import du paquet : c'est ce que l'installateur
-    | passe à `ui-kit:install`, le kit dessinant les écrans.
-    |
-    */
-
-    'assets' => [
-        'admin_css' => 'resources/css/admin.css',
-        'admin_js' => 'resources/js/admin.js',
-        'web_js' => 'resources/js/web.js',
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -72,26 +51,6 @@ return [
     // Paths (relative to the base path) scanned by analytics:events:scan for
     // data-track-event attributes and Analytics::record calls.
     'events_scan_paths' => ['app', 'resources/views'],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Marketing module
-    |--------------------------------------------------------------------------
-    |
-    | The marketing screens (dashboard, campaigns, ads) mount as their own
-    | top-level module, separate from the analytics dashboard, mirroring the
-    | dashboard block below. A campaign or ad is matched to a session by the free
-    | URL-parameter conditions captured on it (mkt_params), at report time.
-    |
-    */
-
-    'marketing' => [
-        'route_prefix' => 'admin/marketing',
-        'route_name' => 'marketing',
-        'middleware' => ['web', 'auth:admin'],
-        'layout' => 'layouts.analytics-admin',
-        'layout_section' => 'content',
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -150,31 +109,68 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Dashboard
+    | La coquille dans laquelle chaque espace est rendu
     |--------------------------------------------------------------------------
+    |
+    | La valeur est un composant Blade · un écran l'ouvre comme une balise et
+    | remplit son slot, donc on le nomme comme on l'écrirait — `layout.admin`
+    | pour `<x-layout.admin>`.
+    |
+    | Marketing n'a pas de clé à lui, et c'est voulu · la coquille appartient à
+    | l'espace, et marketing est la même administration.
+    |
     */
 
-    'dashboard' => [
-        // What appears in the URL for every dashboard page (e.g. /admin/analytics).
+    'layouts' => [
+        'admin' => 'layout.admin',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Espace d'administration
+    |--------------------------------------------------------------------------
+    |
+    | Où les écrans se montent, et derrière quoi. Les NOMS de routes ne sont pas
+    | ici, à dessein · ils sont fixes — `analytics.admin.overview`,
+    | `analytics.admin.marketing.campaigns` — pour qu'un menu ou une redirection
+    | puisse en écrire un. Seules les adresses bougent.
+    |
+    */
+
+    'admin' => [
         'route_prefix' => 'admin/analytics',
 
-        // Prefix for the route NAMES: 'analytics' -> route('analytics.overview').
-        'route_name' => 'analytics',
-
-        // Middleware protecting the dashboard. The default suits a single-guard
-        // app; override to match the project (e.g. ['web', 'auth:admin']).
         'middleware' => ['web', 'auth:admin'],
 
-        // Blade layout the screens extend. null uses the package's own shell; set
-        // a host layout name to nest them in the host chrome. Ours bridges the
-        // package's @extends to our <x-layout.admin> component — see
-        // docs/back-office.md.
-        'layout' => 'layouts.analytics-admin',
+        // Marketing · une seconde entité de l'administration, avec son adresse
+        // et sa place dans le menu.
+        'marketing' => [
+            'route_prefix' => 'admin/marketing',
+            'middleware' => ['web', 'auth:admin'],
+        ],
+    ],
 
-        // The section that layout yields. Spelled out rather than left to the
-        // default, because a screen rendered into the wrong section shows up
-        // blank rather than failing. Same key, same value, as booking.
-        'layout_section' => 'content',
+    /*
+    |--------------------------------------------------------------------------
+    | Espace public
+    |--------------------------------------------------------------------------
+    |
+    | Le collecteur poste sur le point d'ingestion, et c'est tout cet espace.
+    | Les routes du paquet sont enregistrées hors des groupes de l'hôte, donc
+    | elles n'héritent de rien et cette pile doit être complète.
+    |
+    | Pas de CSRF ici, et il ne peut pas y en avoir · une balise ne porte pas de
+    | jeton. Le contrôle d'origine et la limite de débit tiennent ce rôle, et
+    | aucun des deux ne peut être retiré · ils sont ajoutés après cette liste.
+    |
+    */
+
+    'web' => [
+        'middleware' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+        ],
     ],
 
     /*

@@ -68,10 +68,12 @@
 
     @stack('body-scripts')
 
-    {{-- First-party audience measurement. Renders nothing while an admin is signed in. --}}
-    {{-- The collector's configuration: the route name changes on every page,
-         and tracking stops while an admin is signed in. Its code lives in
-         resources/js/web.js and is compiled with the rest. --}}
-    @analyticsConfig
+    {{-- La mesure d'audience, chez nous et pas chez un tiers.
+
+         Le paquet livre le collecteur compilé et cette directive le pose · il
+         n'y a plus rien à importer dans notre build. Elle ne rend rien tant
+         qu'une session d'administration est ouverte, donc nos propres visites
+         ne sont jamais comptées. --}}
+    @analyticsCollector
 </body>
 </html>
