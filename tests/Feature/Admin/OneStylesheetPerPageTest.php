@@ -7,19 +7,19 @@ namespace Tests\Feature\Admin;
 use Tests\TestCase;
 
 /**
- * Une page, une feuille Tailwind.
+ * Une page, une feuille Tailwind **de nous**.
  *
- * Le kit et falcon/booking ne compilent pas de CSS. Ils **déclarent** — leurs
- * écrans à lire, leurs couleurs, leurs règles — et `resources/css/admin.css` les
- * importe. Notre build en produit une seule, où chaque classe n'est écrite
- * qu'une fois.
+ * Le kit et les paquets compilent la leur et la livrent déjà compilée ; cette
+ * application en publie une copie et la sert, et c'est `@falconStyles` qui la
+ * pose dans la page. Notre build ne produit que la nôtre, une par espace, où
+ * chaque classe n'est écrite qu'une fois.
  *
- * **Pourquoi cette contrainte mérite des essais.** Deux feuilles Tailwind sur
- * une même page écrivent les mêmes noms de classes, et à poids égal la dernière
- * chargée gagne. La nôtre arrive en dernier : son `.bg-white` tombait après le
- * `dark:bg-gray-800` de booking et l'annulait, sans la moindre erreur. Constaté
- * le 2026-09-06 sur le champ de recherche des prestations, blanc sur blanc en
- * mode sombre.
+ * **Pourquoi cette contrainte mérite des essais.** Deux compilations Tailwind
+ * sans préfixe sur une même page écrivent les mêmes noms de classes, et à poids
+ * égal la dernière chargée gagne · une règle claire tombe alors après une règle
+ * sombre et l'annule, sans la moindre erreur. Les feuilles de la suite ne se
+ * heurtent pas à la nôtre pour cette raison précise : chacune porte son propre
+ * préfixe, et l'ordre des huit couches règle le reste.
  *
  * Le retour en arrière est facile et silencieux · on rajoute un `@vite` « pour
  * que ça marche », et le défaut revient sur un écran qu'on ne regarde pas tous
@@ -63,22 +63,24 @@ final class OneStylesheetPerPageTest extends TestCase
     }
 
     /**
-     * Aucun gabarit ne charge la feuille compilée d'un paquet.
+     * Aucun gabarit ne va chercher lui-même la feuille d'un paquet.
      *
-     * Un paquet peut livrer du CSS **quand ses sélecteurs n'appartiennent qu'à
-     * lui** — FullCalendar et ses `.fc-`, Livewire et ses `[wire:loading]`.
-     * Jamais une compilation Tailwind, dont les classes sont celles de tout le
-     * monde.
+     * Un paquet compile la sienne et la livre ; elle arrive dans la page par
+     * `@falconStyles`, que le kit rend, et non par notre build. Un gabarit qui
+     * la nommerait dans un `@vite` la ferait recompiler ici — c'est-à-dire
+     * remettrait à cette application la charge que le paquet a reprise.
      */
     public function test_no_layout_loads_a_compiled_package_stylesheet(): void
     {
         foreach ($this->layouts() as $path => $contents) {
-            foreach (['packages/falcon-', 'vendor/falcon/', 'vendor/ui-kit/', '@uiKitStyles'] as $foreign) {
+            foreach (['packages/falcon-', 'vendor/falcon/', 'vendor/ui-kit/'] as $foreign) {
                 $this->assertStringNotContainsString(
                     $foreign,
                     $contents,
-                    $path.' charge un CSS de paquet. Les paquets déclarent le leur ; '
-                    .'importez-le dans `resources/css/admin.css` et compilez.',
+                    $path.' va chercher lui-même la feuille d’un paquet. '
+                    .'Le paquet la compile et la livre ; publiez-la avec '
+                    .'`php artisan vendor:publish --tag=laravel-assets --force`, '
+                    .'et laissez `@falconStyles` la poser.',
                 );
             }
         }
@@ -136,28 +138,6 @@ final class OneStylesheetPerPageTest extends TestCase
         }
 
         $this->assertNotSame([], $found, 'Aucun gabarit trouvé.');
-
-        return $found;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function views(): array
-    {
-        $root = resource_path('views');
-        $found = [];
-
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS),
-        );
-
-        foreach ($files as $file) {
-            if (str_ends_with($file->getFilename(), '.blade.php')) {
-                $name = str_replace('\\', '/', substr($file->getPathname(), strlen($root) + 1));
-                $found[$name] = (string) file_get_contents($file->getPathname());
-            }
-        }
 
         return $found;
     }

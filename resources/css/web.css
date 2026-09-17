@@ -1,10 +1,15 @@
-@import 'tailwindcss' source(none);
-
 /* L'ordre des huit couches, qui décide qui l'emporte entre le kit, un paquet
    et nous. La première déclaration que le document rencontre le fixe pour
    toute la page : cette feuille étant seule sur la devanture, elle est la
-   seule à pouvoir le dire ici. */
+   seule à pouvoir le dire ici.
+
+   Elle vient avant le générateur d'utilitaires, et la position décide : lui
+   ouvre sur quatre couches où ne figure aucune de la suite, et les quatre
+   autres ne peuvent alors qu'être ajoutées à la fin, donc au-dessus des
+   nôtres. */
 @import '../../vendor/falcon/ui-kit/resources/css/layers.css';
+
+@import 'tailwindcss' source(none);
 
 /* Rien de falcon/booking ici · il compile sa feuille et la livre, cette
    application en publie une copie et la sert. La page de réservation la reçoit

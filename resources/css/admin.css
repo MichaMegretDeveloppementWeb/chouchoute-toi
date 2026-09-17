@@ -1,14 +1,22 @@
+/* L'ordre des huit couches, qui décide qui l'emporte entre le kit, un paquet
+   et nous. La première déclaration que le document rencontre le fixe pour
+   toute la page : sur une page où rien du kit n'est chargé, cette ligne est la
+   seule à le dire, et sans elle nos règles passeraient derrière les siennes.
+
+   Elle ouvre le fichier, et la position décide. Posée après le générateur
+   d'utilitaires, qui ouvre sur quatre couches où ne figure aucune de la
+   suite, les quatre autres ne pourraient qu'être ajoutées à la fin, donc
+   au-dessus des nôtres. Posée après un import distant, le compilateur n'en
+   garde qu'une déclaration partielle, qu'il place avant les couches qu'il
+   remplit lui-même, et l'ordre se défait de la même façon. */
+@import '../../vendor/falcon/ui-kit/resources/css/layers.css';
+
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+
 @import 'tailwindcss' source(none);
 
 /* Order matters for hand-written rules, the last import winning. It does not
    matter for utilities, which Tailwind orders on its own. */
-
-/* L'ordre des huit couches, qui décide qui l'emporte entre le kit, un paquet
-   et nous. La première déclaration que le document rencontre le fixe pour
-   toute la page : sur une page où rien du kit n'est chargé, cette ligne est la
-   seule à le dire, et sans elle nos règles passeraient derrière les siennes. */
-@import '../../vendor/falcon/ui-kit/resources/css/layers.css';
 
 /* The kit's names, so `bg-surface` and friends work in the markup written here.
    The mapping only — the kit compiles and serves its own components, and its
