@@ -45,9 +45,9 @@
     ],
     "require": {
         "php": "^8.5",
-        "falcon/analytics": "@dev",
-        "falcon/booking": "@dev",
-        "falcon/ui-kit": "^3.0",
+        "falcon/analytics": "^1.0@dev",
+        "falcon/booking": "^1.0@dev",
+        "falcon/ui-kit": "^1.0@dev",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "livewire/livewire": "^4.2"
