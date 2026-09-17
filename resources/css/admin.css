@@ -4,6 +4,12 @@
 /* Order matters for hand-written rules, the last import winning. It does not
    matter for utilities, which Tailwind orders on its own. */
 
+/* L'ordre des huit couches, qui décide qui l'emporte entre le kit, un paquet
+   et nous. La première déclaration que le document rencontre le fixe pour
+   toute la page : sur une page où rien du kit n'est chargé, cette ligne est la
+   seule à le dire, et sans elle nos règles passeraient derrière les siennes. */
+@import '../../vendor/falcon/ui-kit/resources/css/layers.css';
+
 /* The kit's names, so `bg-surface` and friends work in the markup written here.
    The mapping only — the kit compiles and serves its own components, and its
    typeface stays in `typography.css`, which this file deliberately skips: the
