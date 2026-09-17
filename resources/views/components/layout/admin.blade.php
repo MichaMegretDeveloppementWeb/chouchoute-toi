@@ -5,12 +5,12 @@
     barre et le conteneur des notifications. Ce fichier n'apporte que ce qui est
     à nous : la marque, l'arborescence des écrans et le menu du compte.
 
-    `wide` retire la largeur maximale du contenu. La colonne centrée convient à
-    un formulaire ou à une liste, lus sur une ligne courte ; elle est mauvaise
-    pour une grille horaire, où elle laisse près d'un tiers d'un grand écran
-    vide alors que chaque colonne de jour y gagnerait.
+    **Il ne décide d'aucune largeur.** L'espace à côté de la barre est rendu tel
+    quel, et chaque écran — le nôtre comme celui d'un paquet — se cadre sur son
+    propre conteneur. Une propriété `wide` a tenu ce rôle ici, et elle enfermait
+    par défaut tout ce qui ne demandait rien.
 --}}
-@props(['title' => 'Administration', 'wide' => false])
+@props(['title' => 'Administration'])
 
 @php
     // Les noms de routes des paquets sont fixes et s'écrivent en clair · seules
@@ -22,7 +22,7 @@
     $admin = auth()->guard('admin')->user();
 @endphp
 
-<x-ui::layouts.admin :title="$title" :wide="$wide">
+<x-ui::layouts.admin :title="$title">
 
     <x-slot:head>
         {{-- Une surface d'administration privée : tenue hors des moteurs. --}}

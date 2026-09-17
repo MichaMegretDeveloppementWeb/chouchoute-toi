@@ -1,6 +1,6 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-CXoiFKF-.css",
+    "file": "assets/admin-ByZ4RnYl.css",
     "src": "resources/css/admin.css",
     "isEntry": true,
     "name": "admin",
@@ -34,7 +34,7 @@
     "src": "resources/css/pages/reviews/index.css"
   },
   "resources/css/web.css": {
-    "file": "assets/web-Bk3vldZ3.css",
+    "file": "assets/web-BRY8tnvT.css",
     "src": "resources/css/web.css",
     "isEntry": true,
     "name": "web",
