@@ -62,7 +62,7 @@ final class UpdateProfileForm extends Component
 
         $this->admin()->update($validated);
 
-        $this->dispatch('toast', type: 'success', title: 'Profil mis à jour.');
+        $this->dispatch('ui-toast', type: 'success', title: 'Profil mis à jour.');
     }
 
     public function render(): View

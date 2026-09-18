@@ -48,7 +48,7 @@ final class UpdatePasswordForm extends Component
 
         $this->reset(['currentPassword', 'password', 'passwordConfirmation']);
 
-        $this->dispatch('toast', type: 'success', title: 'Mot de passe mis à jour.');
+        $this->dispatch('ui-toast', type: 'success', title: 'Mot de passe mis à jour.');
     }
 
     public function render(): View
