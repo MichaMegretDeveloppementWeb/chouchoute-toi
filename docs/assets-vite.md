@@ -22,18 +22,37 @@ dédié sous `admin/` ou `web/`, enchaîné depuis l'entrée.
 
 ```css
 /* resources/css/admin.css */
+
+/* L'ordre des huit couches, pris au kit. Il ouvre le fichier, et la position
+   décide : la première déclaration que le document rencontre le fixe pour
+   toute la page. */
+@import '../../vendor/falcon/ui-kit/resources/css/layers.css';
+
 @import 'tailwindcss' source(none);
 
-@import '../../vendor/falcon/ui-kit/resources/css/preset.css';
-@import '../../vendor/falcon/booking/resources/css/booking-admin.css';
-@import '../../vendor/falcon/analytics/resources/css/analytics-admin.css';
+/* Les NOMS des jetons du kit, pour que `bg-surface` et ses voisins existent
+   dans nos vues. Le mapping seulement · les valeurs restent chez le kit. */
+@import '../../vendor/falcon/ui-kit/resources/css/theme.css';
+
+@import './app.css';
 
 @source '../views/**/*.blade.php';
 
-@import './app.css';
 @import './admin/theme.css';
 @import './admin/fields.css';
-@import './admin/sidebar.css';
+```
+
+**Et rien des paquets.** Chacun compile sa propre feuille et la livre déjà
+compilée ; cette application en publie une copie sous `public/vendor/falcon/`
+et sert celle-là. Trois `@import` vers leurs sources ont vécu ici et faisaient
+compiler leurs vues par notre build · ils ont disparu avec le passage de chaque
+paquet au modèle publier-et-servir. Ce qui les amène sur une page est
+`@falconStyles`, que la coquille du kit rend avant notre `@vite`.
+
+Ce qu'il reste à faire pour eux tient en une commande, à chaque déploiement ·
+
+```bash
+php artisan vendor:publish --tag=laravel-assets --force
 ```
 
 **Une page ne porte qu'une compilation Tailwind.** Deux feuilles écrivent les
