@@ -43,7 +43,6 @@ return [
 
     'admin' => [
         'route_prefix' => 'admin/agenda',
-        'route_name' => 'booking.admin.',
 
         // Routes are registered outside the host's own groups, so this stack
         // must include the session middleware. Whatever is listed here is also
@@ -64,11 +63,10 @@ return [
     | lets a host take over one level without touching another.
     */
     'public' => [
-        // Where the page answers, and how its routes are named. Changed once,
-        // at installation: an address is what one changes least willingly,
-        // every shared link and bookmark dying at the first rename.
+        // Where the page answers. Changed once, at installation: an address is
+        // what one changes least willingly, every shared link and bookmark
+        // dying at the first rename.
         'route_prefix' => 'reservation',
-        'route_name' => 'booking.public.',
 
         // No `auth` here, unlike the back office: this page is the one place
         // the package speaks to someone who has no account.

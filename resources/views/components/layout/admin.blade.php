@@ -14,11 +14,10 @@
 
 @php
     // Les noms de routes des paquets sont fixes et s'écrivent en clair · seules
-    // leurs adresses se règlent. Booking expose encore son préfixe en
-    // configuration, analytics ne le fait plus.
+    // leurs adresses se règlent.
     $analytics = 'analytics.admin';
     $marketing = 'analytics.admin.marketing';
-    $booking = config('booking.admin.route_name', 'booking.admin.');
+    $booking = 'booking.admin.';
     $admin = auth()->guard('admin')->user();
 @endphp
 
