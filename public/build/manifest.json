@@ -34,7 +34,7 @@
     "src": "resources/css/pages/reviews/index.css"
   },
   "resources/css/web.css": {
-    "file": "assets/web-CDUnIV-7.css",
+    "file": "assets/web-CPisYbZw.css",
     "src": "resources/css/web.css",
     "isEntry": true,
     "name": "web",
@@ -43,7 +43,7 @@
     ]
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-CjSQs3CI.js",
+    "file": "assets/admin-l0sNRNKZ.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true

@@ -95,8 +95,7 @@ resources/
 │   │
 │   ├── admin/                    # les regles du BACK-OFFICE, importees par admin.css
 │   │   ├── theme.css
-│   │   ├── fields.css
-│   │   └── sidebar.css
+│   │   └── fields.css
 │   │
 │   ├── components/               # partages, importes par les pages qui en ont besoin
 │   │   ├── accordion.css
@@ -120,9 +119,6 @@ resources/
     ├── web/
     │   ├── animations.js         #   l'observateur qui pose `is-visible`
     │   └── header.js
-    │
-    ├── admin/
-    │   └── sidebar.js
     │
     ├── components/
     │   └── accordion.js          #   UN accordeon, pour les trois pages qui en ont un
