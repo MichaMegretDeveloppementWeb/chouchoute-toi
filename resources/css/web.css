@@ -11,6 +11,16 @@
 
 @import 'tailwindcss' source(none);
 
+/* Les noms du kit, pour que `bg-surface` et compagnie fonctionnent dans le
+   balisage écrit ici. Le mapping seul · le kit compile et sert ses propres
+   composants, et sa police reste dans `typography.css`, que cette entrée saute
+   délibérément.
+
+   Elle est gratuite tant que personne ne les écrit · un nom que rien n'appelle
+   n'émet aucune règle. Sans elle, en revanche, le premier de ces noms posé sur
+   la devanture ne produirait rien, et aucune erreur ne le dirait. */
+@import '../../vendor/falcon/ui-kit/resources/css/theme.css';
+
 /* Rien de falcon/booking ici · il compile sa feuille et la livre, cette
    application en publie une copie et la sert. La page de réservation la reçoit
    par `@falconStyles`, que la coquille du paquet écrit. */
