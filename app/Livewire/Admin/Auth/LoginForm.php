@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Auth;
 
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -70,7 +71,12 @@ final class LoginForm extends Component
         RateLimiter::clear($this->throttleKey());
 
         // Prevents session fixation: the pre-login session id must not survive.
-        session()->regenerate();
+        //
+        // Through the container and not `request()->session()`: under the
+        // reactive test harness the request carries no session store, and that
+        // form throws « Session store not set on request. » — measured.
+        $session = app(Store::class);
+        $session->regenerate();
 
         $this->redirectIntended(route('admin.dashboard'), navigate: false);
     }

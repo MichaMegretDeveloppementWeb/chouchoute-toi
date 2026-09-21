@@ -1,29 +1,87 @@
-includes:
-    - vendor/larastan/larastan/extension.neon
+# No `includes:` here, and that is deliberate: `phpstan/extension-installer`
+# mounts the installed packages' extensions on its own (larastan, Carbon's, and
+# the strict rules). An `includes:` written by hand would duplicate that, and
+# PHPStan says so — « This file is included multiple times ».
 
 parameters:
-    # Meme palier que le paquet, pour qu'une regle ne soit pas plus lache d'un
-    # cote de la frontiere que de l'autre.
-    level: 7
+    # Level 8: the step that refuses to let a possibly null value travel without
+    # being checked.
+    #
+    # Nothing in the rules corpus asks an application for a level — every such
+    # rule lives in the package family, and governs what we distribute. This is
+    # our own choice, aligned on what the three packages hold, so that a rule is
+    # not looser on one side of the border than on the other.
+    level: 8
 
-    # Deux absences, et chacune a sa raison.
+    # Two absences, and each has its reason.
     #
-    # `config/` : fichiers livres par Laravel, que nous n'ecrivons pas. Les
-    # corriger pour l'analyseur serait a refaire a chaque montee de version. Le
-    # paquet analyse le sien, qui est de nous.
+    # `config/`: files shipped by Laravel, which we do not write. Fixing them
+    # for the analyser would be redone at every upgrade. A package analyses its
+    # own, which is ours.
     #
-    # `database/seeders/` : Laravel documente `Seeder::$command` comme non nul,
-    # ce qui est faux hors d'une commande artisan. Son propre code se protege
-    # par `isset()`, que l'analyseur refuse aussi sur la foi de cette meme
-    # annotation. Aucune ecriture n'y est a la fois correcte et acceptee.
+    # `database/seeders/`: Laravel documents `Seeder::$command` as non-null,
+    # which is false outside an artisan command. Its own code guards with
+    # `isset()`, which the analyser also refuses on the strength of that same
+    # annotation. No writing there is both correct and accepted.
     paths:
         - app
         - database/migrations
         - routes
+        - tests
 
     databaseMigrationsPath:
         - database/migrations
 
-    # Les modeles declarent leurs casts par la methode `casts()` de Laravel 11,
-    # que larastan ne lit pas sans cela.
+    # The Blade templates, read as code: a component that does not exist, a
+    # variable the view never received, a method called on the wrong type. It is
+    # the category this project had no eye on at all.
+    viewDirectories:
+        - resources/views
+
+    # Models declare their casts through Laravel 11's `casts()` method, which
+    # larastan does not read without this.
     parseModelCastsMethod: true
+
+    # ─── The exceptions, and why they exist ─────────────────────────────────
+    #
+    # There is no `phpstan-baseline.neon` here, and there must not be: level 8
+    # found nothing on the application's own code. What follows hides nothing of
+    # ours — these are errors born of two tools meeting, each of which is right.
+    #
+    # Each is bounded to `tests`, and `reportUnmatchedIgnoredErrors` stays on:
+    # the day one stops matching, the analysis says so instead of keeping it out
+    # of inertia.
+    ignoreErrors:
+        # A method the analyser resolves as static, called on an instance —
+        # which is the form the frameworks document for all three of them:
+        # PHPUnit's assertions on `$this`, the test response forwarding to the
+        # real one, and Eloquent's builder forwarding to the query builder.
+        #
+        # **Bounded to `tests` on purpose, and nothing covers `app/`.** The one
+        # occurrence there was the session helper, and it was corrected rather
+        # than hidden.
+        # Removed the day the three declare these as instance methods.
+        -
+            identifier: staticMethod.dynamicCall
+            paths:
+                - tests
+
+        # Livewire's test helper is generic over the component it mounts, and
+        # its template type cannot be resolved from a class-string argument.
+        # This is the documented way to call it, and the one its own
+        # documentation shows.
+        # Removed the day Livewire resolves that template type.
+        -
+            identifier: argument.templateType
+            message: '#^Unable to resolve the template type TComponent in call to method Livewire\\LivewireManager::test\(\)$#'
+            paths:
+                - tests
+
+        # The same generic, seen from a helper of ours that hands the testable
+        # back: naming the component would tie a shared helper to one screen.
+        # Removed with the exception above.
+        -
+            identifier: missingType.generics
+            message: '#Livewire\\Features\\SupportTesting\\Testable does not specify its types: TComponent$#'
+            paths:
+                - tests

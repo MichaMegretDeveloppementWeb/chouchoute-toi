@@ -49,20 +49,21 @@ final class EachPublicScreenCarriesItsOwnAssetsTest extends TestCase
     }
 
     /**
+     * Un rouge ici dit qu'une page a perdu son `@section('assets')`.
+     *
+     * Le jeu de donnees nomme la page, et l'URL manquante nomme l'entree : la
+     * page repond sans erreur et s'affiche sans style, et rien d'autre dans la
+     * suite ne le voit.
+     *
      * @param  list<string>  $entries
      */
     #[DataProvider('pages')]
     public function test_the_screen_renders_and_carries_its_entries(string $route, array $entries): void
     {
-        $page = $this->get(route($route))->assertOk()->getContent() ?: '';
+        $screen = $this->get(route($route))->assertOk();
 
         foreach ($entries as $entry) {
-            $this->assertStringContainsString(
-                Vite::asset($entry),
-                $page,
-                "« {$route} » ne porte plus {$entry}. La page se rend sans erreur et sans style, "
-                .'et rien d’autre ne le dit : verifiez son @section(\'assets\').',
-            );
+            $screen->assertSee(Vite::asset($entry), escape: false);
         }
     }
 
@@ -74,15 +75,11 @@ final class EachPublicScreenCarriesItsOwnAssetsTest extends TestCase
      */
     public function test_the_page_without_a_style_of_its_own_loads_none(): void
     {
-        $page = $this->get(route('legal'))->assertOk()->getContent() ?: '';
+        $screen = $this->get(route('legal'))->assertOk();
 
-        foreach (self::pages() as [$route, $entries]) {
+        foreach (self::pages() as [, $entries]) {
             foreach ($entries as $entry) {
-                $this->assertStringNotContainsString(
-                    Vite::asset($entry),
-                    $page,
-                    "« legal » charge l’entree de « {$route} » : {$entry}.",
-                );
+                $screen->assertDontSee(Vite::asset($entry), escape: false);
             }
         }
     }
