@@ -1,0 +1,5 @@
+Cette suite est declaree dans phpunit.xml et n'a pas encore d'essai.
+
+Elle est vide depuis que l'echafaudage de Laravel en est parti — il affirmait
+que `true` est vrai, et ne gardait rien. Le dossier reste pour que la suite
+existe : PHPUnit refuse de demarrer sur un repertoire declare et absent.

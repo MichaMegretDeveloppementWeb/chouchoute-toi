@@ -76,9 +76,14 @@ déclarez la source, comme `web.css` le fait pour `../js/**/*.js`.
 
 ## Structure des fichiers
 
-Quatre dossiers, et chacun répond à une question différente · `web/` et
-`admin/` portent ce qui vaut pour tout un espace, `pages/` ce qui n'appartient
-qu'à une page, `components/` ce que plusieurs pages partagent.
+Trois dossiers, et chacun répond à une question différente · `web/` et `admin/`
+portent un espace entier, `components/` ce que plusieurs pages partagent.
+
+**La portée d'un fichier se lit à sa profondeur** · plus il est haut, plus il est
+large. `css/web/theme.css` vaut pour tout le site public, `css/web/home/` pour la
+seule page d'accueil. Des fichiers communs **au même niveau** que des dossiers de
+page ne sont donc pas un mélange · c'est le mécanisme, et c'est ce qui rend
+l'arbre lisible sans convention à retenir.
 
 ```
 resources/
@@ -87,29 +92,28 @@ resources/
 │   ├── admin.css                 # ENTREE · le back-office
 │   ├── app.css                   # le commun aux deux, importe par les deux
 │   │
-│   ├── web/                      # les regles du SITE, importees par web.css
+│   ├── web/                      # l'ESPACE public · miroir de views/web/
 │   │   ├── theme.css             #   la police et les six couleurs de la marque
 │   │   ├── animations.css        #   l'apparition au defilement
 │   │   ├── anchors.css           #   le decalage des ancres sous l'en-tete fixe
-│   │   └── header.css            #   l'en-tete, present sur toutes les pages
+│   │   ├── header.css            #   l'en-tete, present sur toutes les pages
+│   │   │
+│   │   ├── home/                 #   une page, un dossier · le glob lit son index
+│   │   │   ├── index.css         #     le point d'entree de la page
+│   │   │   ├── hero.css          #     une section
+│   │   │   └── avant-apres.css
+│   │   ├── about/
+│   │   ├── contact/
+│   │   ├── prestations/
+│   │   └── reviews/
 │   │
 │   ├── admin/                    # les regles du BACK-OFFICE, importees par admin.css
 │   │   ├── theme.css
 │   │   └── fields.css
 │   │
-│   ├── components/               # partages, importes par les pages qui en ont besoin
-│   │   ├── accordion.css
-│   │   └── cta-banner.css
-│   │
-│   └── pages/                    # une page, un dossier · le glob ne lit que ca
-│       ├── home/
-│       │   ├── index.css         #   le point d'entree de la page
-│       │   ├── hero.css          #   une section
-│       │   └── avant-apres.css
-│       ├── about/
-│       ├── contact/
-│       ├── prestations/
-│       └── reviews/
+│   └── components/               # partages, importes par les pages qui en ont besoin
+│       ├── accordion.css
+│       └── cta-banner.css
 │
 └── js/
     ├── web.js                    # ENTREE · collecteur, animations, en-tete
@@ -118,29 +122,32 @@ resources/
     │
     ├── web/
     │   ├── animations.js         #   l'observateur qui pose `is-visible`
-    │   └── header.js
+    │   ├── header.js
+    │   │
+    │   ├── home/
+    │   │   ├── index.js
+    │   │   └── avant-apres.js
+    │   ├── contact/
+    │   └── reviews/
     │
-    ├── components/
-    │   └── accordion.js          #   UN accordeon, pour les trois pages qui en ont un
-    │
-    └── pages/
-        ├── home/
-        │   ├── index.js
-        │   └── avant-apres.js
-        ├── contact/
-        └── reviews/
+    └── components/
+        └── accordion.js          #   UN accordeon, pour les trois pages qui en ont un
 ```
 
-**Le glob ne ramasse que `pages/*/index.css` et `pages/*/index.js`.** Un dossier
-sous `pages/` **est** une page ; rien d'autre n'y vit. Les fichiers de `web/` et
-d'`admin/` sont importés par leur entrée, jamais compilés à part.
+**Le glob ramasse tout `index.css` et tout `index.js`, à n'importe quelle
+profondeur.** Un dossier qui porte un `index` **est** une page. Le motif est
+récursif, et ce n'est pas un détail · un motif à un seul niveau ne verrait pas
+`web/prestations/{slug}/index.css` le jour venu, la page s'afficherait sans son
+style, et rien ne le signalerait. Les autres fichiers de `web/` et d'`admin/`
+sont importés par leur entrée, jamais compilés à part.
 
 ## Règles
 
 ### Une paire par page, et seulement si elle sert
 
 Une page a un `index.css` **et/ou** un `index.js` dans son dossier sous
-`resources/css/pages/{page}/` et `resources/js/pages/{page}/`. Ce fichier est le
+`resources/css/{espace}/{page}/` et `resources/js/{espace}/{page}/`, en miroir de
+`resources/views/{espace}/{page}/`. Ce fichier est le
 **point d'entrée unique** de la page pour Vite.
 
 **Une page qui n'a ni CSS ni JS propre n'a pas de `@section('assets')`** —
@@ -153,14 +160,14 @@ Si le CSS ou le JS d'une page devient volumineux, on le divise en fichiers
 dédiés à chaque section, importés dans l'`index` correspondant.
 
 ```css
-/* resources/css/pages/home/index.css */
+/* resources/css/web/home/index.css */
 @import './hero.css';
 @import './avant-apres.css';
 @import '../../components/accordion.css';
 ```
 
 ```js
-/* resources/js/pages/home/index.js */
+/* resources/js/web/home/index.js */
 import './avant-apres.js';
 import '../../components/accordion.js';
 ```
@@ -193,8 +200,8 @@ Le layout charge l'entrée de l'espace ; la vue de page charge la sienne.
 
 @section('assets')
     @vite([
-        'resources/css/pages/home/index.css',
-        'resources/js/pages/home/index.js',
+        'resources/css/web/home/index.css',
+        'resources/js/web/home/index.js',
     ])
 @endsection
 ```
@@ -229,8 +236,8 @@ export default defineConfig({
                 'resources/css/admin.css',
                 'resources/js/admin.js',
 
-                ...glob.sync('resources/css/pages/*/index.css'),
-                ...glob.sync('resources/js/pages/*/index.js'),
+                ...glob.sync('resources/css/**/index.css'),
+                ...glob.sync('resources/js/**/index.js'),
             ],
             refresh: true,
         }),
@@ -244,8 +251,9 @@ export default defineConfig({
 });
 ```
 
-Un nouveau dossier sous `resources/css/pages/` ou `resources/js/pages/` avec un
-`index` est pris en charge sans toucher à la configuration.
+Un nouveau dossier portant un `index`, sous `resources/css/` ou `resources/js/`
+et à n'importe quelle profondeur, est pris en charge sans toucher à la
+configuration.
 
 ## Résumé
 
@@ -253,6 +261,6 @@ Un nouveau dossier sous `resources/css/pages/` ou `resources/js/pages/` avec un
 |---|---|---|---|
 | Entrée de l'espace | `css/web.css` | `js/web.js` | `@vite` dans le layout |
 | Règle du site entier | `css/web/{sujet}.css` | `js/web/{sujet}.js` | `@import` / `import` dans l'entrée |
-| Page (ex : home) | `css/pages/home/index.css` | `js/pages/home/index.js` | `@vite` dans la vue de la page |
-| Section de page (ex : hero) | `css/pages/home/hero.css` | `js/pages/home/hero.js` | `@import` / `import` dans l'`index` |
+| Page (ex : home) | `css/web/home/index.css` | `js/web/home/index.js` | `@vite` dans la vue de la page |
+| Section de page (ex : hero) | `css/web/home/hero.css` | `js/web/home/hero.js` | `@import` / `import` dans l'`index` |
 | Composant partagé (ex : accordéon) | `css/components/accordion.css` | `js/components/accordion.js` | `@import` / `import` dans l'`index` des pages concernées |

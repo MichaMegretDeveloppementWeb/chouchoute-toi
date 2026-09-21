@@ -20,32 +20,30 @@ app/
 resources/
 ├── css/
 │   ├── web.css                   # Entree du site public
-│   ├── web/                      # Les regles du site entier
-│   │   ├── theme.css
-│   │   └── header.css
-│   ├── components/               # Ce que plusieurs pages partagent
-│   │   └── accordion.css
-│   └── pages/
-│       ├── home/
-│       │   ├── index.css
-│       │   └── hero.css          # Optionnel : style d'une section
-│       ├── about/
-│       │   └── index.css
-│       └── contact/
-│           └── index.css
+│   ├── web/                      # L'espace public · miroir de views/web/
+│   │   ├── theme.css             #   Les regles du site entier
+│   │   ├── header.css
+│   │   ├── home/
+│   │   │   ├── index.css
+│   │   │   └── hero.css          #   Optionnel : style d'une section
+│   │   ├── about/
+│   │   │   └── index.css
+│   │   └── contact/
+│   │       └── index.css
+│   └── components/               # Ce que plusieurs pages partagent
+│       └── accordion.css
 ├── js/
 │   ├── web.js                    # Entree du site public
 │   ├── web/
 │   │   ├── animations.js
-│   │   └── header.js
-│   ├── components/
-│   │   └── accordion.js
-│   └── pages/
-│       ├── home/
-│       │   ├── index.js
-│       │   └── hero.js
-│       └── contact/
-│           └── index.js
+│   │   ├── header.js
+│   │   ├── home/
+│   │   │   ├── index.js
+│   │   │   └── hero.js
+│   │   └── contact/
+│   │       └── index.js
+│   └── components/
+│       └── accordion.js
 └── views/
     ├── layouts/
     │   └── web.blade.php         # Layout commun aux pages publiques
@@ -170,8 +168,8 @@ Chaque page a une vue principale `index.blade.php` qui étend le layout et impor
 
 @section('assets')
     @vite([
-        'resources/css/pages/home/index.css',
-        'resources/js/pages/home/index.js',
+        'resources/css/web/home/index.css',
+        'resources/js/web/home/index.js',
     ])
 @endsection
 
@@ -204,10 +202,10 @@ Les partials ne sont **pas** des composants Blade (pas de classe PHP associée).
 | Vue principale de page | `views/web/{page}/index.blade.php` | Rendue par le controller |
 | Partial de page | `views/web/{page}/partials/{section}.blade.php` | `@include('web.{page}.partials.{section}')` |
 | Controller de page | `Http/Controllers/Web/{Page}Controller.php` | Route dans `web.php` |
-| CSS de page | `css/pages/{page}/index.css` | `@vite` dans la vue |
-| JS de page | `js/pages/{page}/index.js` | `@vite` dans la vue |
-| CSS de section | `css/pages/{page}/{section}.css` | `@import` dans `index.css` |
-| JS de section | `js/pages/{page}/{section}.js` | `import` dans `index.js` |
+| CSS de page | `css/web/{page}/index.css` | `@vite` dans la vue |
+| JS de page | `js/web/{page}/index.js` | `@vite` dans la vue |
+| CSS de section | `css/web/{page}/{section}.css` | `@import` dans `index.css` |
+| JS de section | `js/web/{page}/{section}.js` | `import` dans `index.js` |
 | CSS du site entier | `css/web/{sujet}.css` | `@import` dans `web.css` |
 | JS du site entier | `js/web/{sujet}.js` | `import` dans `web.js` |
 | Composant partagé | `css/components/{nom}.css` · `js/components/{nom}.js` | `@import` / `import` dans l'`index` des pages concernées |

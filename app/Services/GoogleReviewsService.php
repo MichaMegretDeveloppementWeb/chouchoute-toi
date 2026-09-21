@@ -19,7 +19,9 @@ class GoogleReviewsService
         $apiKey = config('services.google.api_key');
         $placeId = config('services.google.place_id');
 
-        if (! $apiKey || ! $placeId) {
+        // Les deux sont typees ici plutot que plus bas : sans cela, ce que la
+        // fermeture envoie a Google reste `mixed` jusqu'a l'appel.
+        if (! is_string($apiKey) || $apiKey === '' || ! is_string($placeId) || $placeId === '') {
             return ['reviews' => [], 'rating' => null, 'total' => null];
         }
 

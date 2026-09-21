@@ -62,7 +62,10 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "2.2",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
@@ -95,6 +98,12 @@
             "@php artisan test"
         ],
         "analyse": "@php vendor/bin/phpstan analyse --memory-limit=2G",
+        "format": "@php vendor/bin/pint",
+        "qa": [
+            "@php vendor/bin/pint --test",
+            "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
+            "@php artisan test"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
@@ -126,7 +135,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
         }
     },
     "minimum-stability": "stable",

@@ -59,7 +59,10 @@ class ContactForm extends Component
     {
         $volume = request()->query('volume');
 
-        if ($volume && $this->isValidVolume($volume)) {
+        // `is_string` et pas seulement la verite de la valeur : la requete peut
+        // rendre un tableau (`?volume[]=…`), que la methode appelee refuserait
+        // par une erreur de type plutot que par une page.
+        if (is_string($volume) && $this->isValidVolume($volume)) {
             $this->volume = $volume;
         }
     }
@@ -74,7 +77,7 @@ class ContactForm extends Component
      */
     public function getServiceOptionsProperty(): array
     {
-        if (! $this->volume || $this->volume === 'indecise') {
+        if ($this->volume === '' || $this->volume === 'indecise') {
             return [];
         }
 
@@ -83,9 +86,9 @@ class ContactForm extends Component
         }
 
         $categories = config('tarifs.categories');
-        $category = $categories[$this->volume] ?? null;
+        $category = is_array($categories) ? ($categories[$this->volume] ?? null) : null;
 
-        if (! $category) {
+        if (! is_array($category) || ! is_array($category['remplissages'] ?? null)) {
             return [];
         }
 
@@ -118,9 +121,9 @@ class ContactForm extends Component
         // Recorded here rather than on the click: only the server knows the mail
         // actually left. Deferred, no-op for excluded traffic, never throws.
         Analytics::record('contact.request.submitted', props: [
-            'volume' => $this->volume ?: null,
-            'service' => $this->service ?: null,
-            'town' => $this->town ?: null,
+            'volume' => $this->volume !== '' ? $this->volume : null,
+            'service' => $this->service !== '' ? $this->service : null,
+            'town' => $this->town !== '' ? $this->town : null,
         ]);
 
         $this->reset(['name', 'email', 'phone', 'town', 'volume', 'service', 'message']);
@@ -139,10 +142,11 @@ class ContactForm extends Component
 
     private function isValidVolume(string $volume): bool
     {
-        $valid = array_keys(config('tarifs.categories'));
+        $categories = config('tarifs.categories');
+        $valid = is_array($categories) ? array_keys($categories) : [];
         $valid[] = 'depose';
         $valid[] = 'indecise';
 
-        return in_array($volume, $valid);
+        return in_array($volume, $valid, strict: true);
     }
 }

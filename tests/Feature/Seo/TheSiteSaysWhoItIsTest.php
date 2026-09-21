@@ -52,7 +52,7 @@ final class TheSiteSaysWhoItIsTest extends TestCase
      */
     private function nodesOf(string $route): array
     {
-        $page = $this->get(route($route))->assertOk()->getContent() ?: '';
+        $page = (string) $this->get(route($route))->assertOk()->getContent();
         $nodes = [];
         $offset = 0;
 
@@ -73,7 +73,9 @@ final class TheSiteSaysWhoItIsTest extends TestCase
 
         $this->assertNotSame([], $nodes, "La page « {$route} » ne porte aucun nœud.");
 
-        return $nodes;
+        // Les blocs sont concatenes dans l'ordre : les cles sont deja 0..n, et
+        // ce reindexage le dit a l'analyse plutot que de la laisser le deduire.
+        return array_values($nodes);
     }
 
     /**
