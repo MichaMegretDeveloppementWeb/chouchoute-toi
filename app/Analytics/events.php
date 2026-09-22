@@ -12,11 +12,11 @@ use Falcon\Analytics\Events\TrackedEvent;
 | Single source of truth for the named events of the site. Keep in sync with
 | the code using `php artisan analytics:events:scan`.
 |
-| Value scale: euros of *potential* revenue, based on the real price list
-| (config/tarifs.php: a first appointment runs 65 to 95 EUR, average 80).
-| A conversion is valued as if it became an appointment, which is optimistic
-| in absolute terms but keeps every channel on the same scale, so comparing
-| sources and campaigns stays correct.
+| Score scale: one point per euro of *potential* revenue, based on the real
+| price list (config/tarifs.php: a first appointment runs 65 to 95 EUR,
+| average 80). A conversion scores as if it became an appointment, which is
+| optimistic in absolute terms but keeps every channel on the same scale, so
+| comparing sources and campaigns stays correct.
 |
 */
 
@@ -27,7 +27,7 @@ use Falcon\Analytics\Events\TrackedEvent;
 TrackedEvent::define(
     'contact.request.submitted',
     'Demande de rendez-vous envoyée',
-    value: 80.0,
+    value: 80,
     conversion: true,
 );
 
@@ -36,14 +36,14 @@ TrackedEvent::define(
 TrackedEvent::define(
     'contact.phone.click',
     'Numéro de téléphone cliqué',
-    value: 60.0,
+    value: 60,
     conversion: true,
 );
 
 TrackedEvent::define(
     'contact.email.click',
     'Adresse email cliquée',
-    value: 40.0,
+    value: 40,
     conversion: true,
 );
 
@@ -53,14 +53,14 @@ TrackedEvent::define(
 TrackedEvent::define(
     'pricing.cta.click',
     'Réservation depuis un tarif',
-    value: 5.0,
+    value: 5,
     conversion: false,
 );
 
 TrackedEvent::define(
     'contact.cta.click',
     'Clic sur un bouton de prise de contact',
-    value: 3.0,
+    value: 3,
     conversion: false,
 );
 
@@ -69,13 +69,13 @@ TrackedEvent::define(
 TrackedEvent::define(
     'social.instagram.click',
     'Vers Instagram',
-    value: 2.0,
+    value: 2,
     conversion: false,
 );
 
 TrackedEvent::define(
     'social.facebook.click',
     'Vers Facebook',
-    value: 1.0,
+    value: 1,
     conversion: false,
 );
