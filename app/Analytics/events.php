@@ -42,7 +42,7 @@ TrackedEvent::define(
 
 TrackedEvent::define(
     'contact.email.click',
-    'Adresse email cliquée',
+    'Adresse e-mail cliquée',
     value: 40,
     conversion: true,
 );

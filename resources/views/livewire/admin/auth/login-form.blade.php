@@ -1,6 +1,6 @@
 <div>
     <form wire:submit="login" class="space-y-4">
-        <x-ui::form-group label="Adresse email" for="email" required>
+        <x-ui::form-group label="Adresse e-mail" for="email" required>
             <x-ui::input
                 type="email"
                 id="email"

@@ -11,14 +11,14 @@
             <x-ui::card>
                 <x-ui::icon-text icon="chart-pie" class="mb-2 text-secondary">Audience</x-ui::icon-text>
                 <p class="text-[13px] text-secondary">
-                    Fréquentation du site, provenance des visiteuses, pages consultées et parcours complets.
+                    Fréquentation du site, provenance des visiteurs, pages consultées et parcours complets.
                 </p>
                 <x-ui::button
                     :href="route('analytics.admin.overview')"
                     variant="secondary"
                     size="compact"
                     class="mt-4">
-                    Ouvrir Analytics
+                    Ouvrir l'audience
                 </x-ui::button>
             </x-ui::card>
 
