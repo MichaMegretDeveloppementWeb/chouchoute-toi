@@ -585,7 +585,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "747e488826e14a66d8791780754daca3fe7e3232"
+                "reference": "aae345108f5bc284ee0dcd3362a5fd051a8e0e95"
             },
             "require": {
                 "ext-intl": "*",
@@ -622,7 +622,9 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Falcon\\Analytics\\": "src/"
+                    "Falcon\\Analytics\\": "src/",
+                    "Falcon\\Analytics\\Database\\Factories\\": "database/factories/",
+                    "Falcon\\Analytics\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "autoload-dev": {
