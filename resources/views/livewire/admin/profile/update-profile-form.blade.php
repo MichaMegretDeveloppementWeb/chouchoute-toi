@@ -11,7 +11,7 @@
         </x-ui::form-group>
 
         <x-ui::form-group
-            label="Adresse email"
+            label="Adresse e-mail"
             for="email"
             hint="C'est aussi l'identifiant de connexion au back-office."
             required>

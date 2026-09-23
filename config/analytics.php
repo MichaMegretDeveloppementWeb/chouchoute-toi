@@ -84,9 +84,9 @@ return [
 
     'identity' => [
         // Guards whose authenticated user is the tracked subject (type = guard name).
-        // `web` is reserved for the future client accounts of the public site: a
-        // signed-in visitor gets stitched to her own profile. Staff is not here.
-        'subject_guards' => ['web'],
+        // None: the public site has no accounts, and the booking client space
+        // opens by an emailed link, not through a guard.
+        'subject_guards' => [],
 
         // Guards whose authenticated user is excluded entirely (internal staff).
         // Nothing is collected while an `admin` session is open, and the collector
