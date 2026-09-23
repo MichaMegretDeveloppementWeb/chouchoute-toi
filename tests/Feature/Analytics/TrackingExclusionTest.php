@@ -15,15 +15,8 @@ use Tests\TestCase;
  * is. The exclusion goes through the `admin` guard alone, never through a
  * global switch that would also blind the public site.
  *
- * **Ce qu'on asserte a changé le 2026-09-06**, pas l'invariant. Le collecteur
- * arrivait par une balise `<script src="…__analytics.js">` ; son code est
- * maintenant dans `resources/js/web.js`, compilé avec le reste, et toujours
- * chargé. Ce qui décide est sa configuration : `@analyticsConfig` ne la pose
- * pas quand nous sommes connectée, et le collecteur sort de lui-même faute de
- * la trouver.
- *
- * Asserter sur l'ancienne balise passerait désormais tout seul — elle n'existe
- * nulle part — et ne dirait plus rien.
+ * `@analyticsCollector` lays the collector and its configuration on a public
+ * page, and lays nothing while an administrator is signed in.
  */
 final class TrackingExclusionTest extends TestCase
 {
@@ -56,15 +49,27 @@ final class TrackingExclusionTest extends TestCase
         $response->assertSee(self::CONFIG, escape: false);
     }
 
-    /**
-     * Le paquet ne sert plus le collecteur · c'est notre build qui le nomme.
-     *
-     * Si la route revenait, deux exemplaires du même collecteur pourraient se
-     * retrouver sur une page et compter chaque visite deux fois.
-     */
+    /** The collector's former address answers nothing · the package serves it as a published file. */
     public function test_the_collector_script_is_no_longer_served_by_the_package(): void
     {
         $this->get('/__analytics.js')->assertNotFound();
+    }
+
+    /**
+     * A public page receives the collector once · the package's file, and the
+     * site's own script carries none. A second copy counts every click twice.
+     */
+    public function test_a_public_page_receives_the_collector_once(): void
+    {
+        $page = (string) $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($page, 'vendor/falcon/analytics/analytics.js'));
+
+        /** @var array<string, array{file: string}> $manifest */
+        $manifest = json_decode((string) file_get_contents(public_path('build/manifest.json')), true);
+        $siteScript = (string) file_get_contents(public_path('build/'.$manifest['resources/js/web.js']['file']));
+
+        $this->assertStringNotContainsString('__falconAnalytics', $siteScript);
     }
 
     public function test_ingestion_stores_an_event_sent_by_a_public_visitor(): void

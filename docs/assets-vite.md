@@ -116,7 +116,7 @@ resources/
 │       └── cta-banner.css
 │
 └── js/
-    ├── web.js                    # ENTREE · collecteur, animations, en-tete
+    ├── web.js                    # ENTREE · animations, en-tete
     ├── admin.js                  # ENTREE
     ├── app.js                    # le commun aux deux
     │
