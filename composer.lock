@@ -680,7 +680,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "b06aa6f294943df8db7921c0a058f9ad81bbae40"
+                "reference": "eccade093abd1dd58b9ab8366ecea6d6c318b16f"
             },
             "require": {
                 "falcon/ui-kit": "^1.0",
