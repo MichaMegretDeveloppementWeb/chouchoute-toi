@@ -145,67 +145,8 @@ return [
     'media' => [
         'disk' => env('BOOKING_MEDIA_DISK', 'booking_media'),
 
-        // A logo fits well within this. What does not is a photograph that
-        // should have been resized before being sent.
-        'max_size_kb' => 2048,
-
-        // How many photographs the gallery holds at most. High enough never to
-        // be met in normal use, low enough that a public page does not become
-        // an endless album.
-        'max_photos' => 20,
-
-        // What the file picker filters.
-        'extensions' => ['png', 'jpg', 'jpeg', 'webp'],
-
-        // And what the file must actually be, guessed from the content and
-        // never read in the name. No SVG: it is a document that can carry
-        // script, served from the host's own domain, and sanitising it would
-        // mean a fifth dependency.
-        'mimes' => [
-            'image/png',
-            'image/jpeg',
-            'image/webp',
-        ],
-
-        /*
-        | What the browser does to an image before sending it: resized within
-        | these bounds, encoded as WebP, and brought under the target weight by
-        | lowering quality first and dimensions if it must. The bounds are the
-        | real display size, not round numbers.
-        |
-        | `ratio` is read only where the page imposes a frame, and that is where
-        | the cropper opens. It must be the ratio the CSS applies, otherwise the
-        | page would crop over what was just framed. Null keeps the proportions.
-        |
-        | `target_kb` is a goal, not a server ceiling: the server receives a
-        | file without knowing where it came from and holds `max_size_kb`.
-        */
-        'images' => [
-            // The band spans the screen, and `.fb-public-cover` carries the
-            // same 3:1.
-            'cover' => [
-                'max_width' => 1920,
-                'max_height' => 640,
-                'ratio' => 3,
-                'target_kb' => 200,
-            ],
-
-            // Displayed 72px tall, but it also serves e-mails and documents.
-            'logo' => [
-                'max_width' => 512,
-                'max_height' => 512,
-                'ratio' => 1,
-                'target_kb' => 200,
-            ],
-
-            // Thumbnails of 130 to 200px, doubled for dense screens.
-            'gallery' => [
-                'max_width' => 800,
-                'max_height' => 800,
-                'ratio' => null,
-                'target_kb' => 200,
-            ],
-        ],
+        // What a phone photograph weighs, the server making its sizes itself.
+        'max_size_kb' => 8192,
     ],
 
     /*
