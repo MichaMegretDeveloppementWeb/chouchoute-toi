@@ -24,7 +24,8 @@ final class UpdatePasswordForm extends Component
             // `current_password:admin` replays the guard, so a stolen session
             // alone is not enough to take the account over.
             'currentPassword' => ['required', 'string', 'current_password:admin'],
-            'password' => ['required', 'string', Password::min(12), 'confirmed:passwordConfirmation'],
+            'password' => ['required', 'string', Password::min(12)],
+            'passwordConfirmation' => ['required', 'string', 'same:password'],
         ];
     }
 
@@ -36,7 +37,8 @@ final class UpdatePasswordForm extends Component
             'currentPassword.current_password' => 'Le mot de passe actuel est incorrect.',
             'password.required' => 'Veuillez indiquer un nouveau mot de passe.',
             'password.min' => 'Le nouveau mot de passe doit faire au moins 12 caractères.',
-            'password.confirmed' => 'La confirmation ne correspond pas au nouveau mot de passe.',
+            'passwordConfirmation.required' => 'Veuillez confirmer le nouveau mot de passe.',
+            'passwordConfirmation.same' => 'La confirmation ne correspond pas au nouveau mot de passe.',
         ];
     }
 

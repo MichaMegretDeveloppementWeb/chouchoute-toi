@@ -60,7 +60,30 @@ final class UpdatePasswordTest extends TestCase
         $this->assertTrue(Hash::check('password', $admin->refresh()->password));
     }
 
-    public function test_mismatched_confirmation_is_rejected(): void
+    public function test_mismatched_confirmation_is_refused_under_the_confirmation(): void
+    {
+        $admin = Admin::factory()->create();
+
+        $form = Livewire::actingAs($admin, 'admin')
+            ->test(UpdatePasswordForm::class)
+            ->set('currentPassword', 'password')
+            ->set('password', 'un-mot-de-passe-solide')
+            ->set('passwordConfirmation', 'autre-chose-entierement')
+            ->call('save')
+            ->assertHasErrors(['passwordConfirmation' => 'La confirmation ne correspond pas au nouveau mot de passe.'])
+            ->assertHasNoErrors('password');
+
+        $this->assertTrue($this->isMarkedRefused($form->html(), 'passwordConfirmation'));
+        $this->assertMatchesRegularExpression(
+            '/<p\s+id="ui-field-passwordConfirmation-message"[^>]*>La confirmation ne correspond pas au nouveau mot de passe\.<\/p>/',
+            $form->html(),
+            'Le refus ne s’affiche pas sous la confirmation.',
+        );
+        $this->assertFalse($this->isMarkedRefused($form->html(), 'password'), 'Le nouveau mot de passe est valide, il ne doit pas rougir.');
+        $this->assertTrue(Hash::check('password', $admin->refresh()->password));
+    }
+
+    public function test_missing_confirmation_is_asked_for(): void
     {
         $admin = Admin::factory()->create();
 
@@ -68,9 +91,8 @@ final class UpdatePasswordTest extends TestCase
             ->test(UpdatePasswordForm::class)
             ->set('currentPassword', 'password')
             ->set('password', 'un-mot-de-passe-solide')
-            ->set('passwordConfirmation', 'autre-chose-entierement')
             ->call('save')
-            ->assertHasErrors(['password' => 'confirmed']);
+            ->assertHasErrors(['passwordConfirmation' => 'Veuillez confirmer le nouveau mot de passe.']);
 
         $this->assertTrue(Hash::check('password', $admin->refresh()->password));
     }
@@ -79,14 +101,23 @@ final class UpdatePasswordTest extends TestCase
     {
         $admin = Admin::factory()->create();
 
-        Livewire::actingAs($admin, 'admin')
+        $form = Livewire::actingAs($admin, 'admin')
             ->test(UpdatePasswordForm::class)
             ->set('currentPassword', 'password')
             ->set('password', 'court')
             ->set('passwordConfirmation', 'court')
             ->call('save')
-            ->assertHasErrors(['password' => 'Le nouveau mot de passe doit faire au moins 12 caractères.']);
+            ->assertHasErrors(['password' => 'Le nouveau mot de passe doit faire au moins 12 caractères.'])
+            ->assertHasNoErrors('passwordConfirmation');
 
+        $this->assertFalse($this->isMarkedRefused($form->html(), 'passwordConfirmation'), 'La confirmation rougit pour une règle qui ne la concerne pas.');
         $this->assertTrue(Hash::check('password', $admin->refresh()->password));
+    }
+
+    private function isMarkedRefused(string $html, string $id): bool
+    {
+        $this->assertSame(1, preg_match('/<input\b[^>]*\bid="'.$id.'"[^>]*>/', $html, $field), "Le champ {$id} est introuvable.");
+
+        return str_contains($field[0], 'aria-invalid="true"');
     }
 }
