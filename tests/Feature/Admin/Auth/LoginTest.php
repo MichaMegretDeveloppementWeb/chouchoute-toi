@@ -20,6 +20,13 @@ final class LoginTest extends TestCase
         $this->get(route('admin.login'))->assertOk();
     }
 
+    public function test_the_remember_box_speaks_in_the_generic_masculine(): void
+    {
+        $this->get(route('admin.login'))
+            ->assertSee('Rester connecté')
+            ->assertDontSee('Rester connectée');
+    }
+
     public function test_signed_in_admin_is_redirected_away_from_the_login_screen(): void
     {
         $this->actingAs(Admin::factory()->create(), 'admin')

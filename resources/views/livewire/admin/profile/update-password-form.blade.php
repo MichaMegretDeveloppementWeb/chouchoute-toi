@@ -30,7 +30,7 @@
                 id="passwordConfirmation"
                 wire:model.blur="passwordConfirmation"
                 autocomplete="new-password"
-                :error="$errors->has('password')"
+                :error="$errors->has('passwordConfirmation')"
             />
         </x-ui::form-group>
 
