@@ -477,8 +477,8 @@ return [
         'slot' => [
             'granularity_minutes' => 15,
 
-            // Slots land on round quarters rather than trailing whatever
-            // precedes them, which keeps the day readable for both sides.
+            // Slots land on the step, counted from the opening of their
+            // window, rather than trailing whatever precedes them.
             'align_to_grid' => true,
         ],
 

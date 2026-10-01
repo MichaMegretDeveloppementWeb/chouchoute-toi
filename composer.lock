@@ -684,7 +684,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "bb518b2168718e0800e33e142bee432d4e085908"
+                "reference": "15640de50be452ec754ec5bacfef3f5a08caf7fa"
             },
             "require": {
                 "ext-gd": "*",
@@ -779,7 +779,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "ff93f3ca8e659dc3a58ee4780ac059755c405cfc"
+                "reference": "73ae1c0dec1631d6340ea27fd928be5df6cfd0d2"
             },
             "require": {
                 "laravel/framework": "^13.12",
