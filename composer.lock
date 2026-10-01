@@ -684,7 +684,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "791c67d0f101ba7b8afa5c18466e8a2de39f49e0"
+                "reference": "852dea8ffd01611a7a86dfa35063ce52ca9feff2"
             },
             "require": {
                 "ext-gd": "*",
