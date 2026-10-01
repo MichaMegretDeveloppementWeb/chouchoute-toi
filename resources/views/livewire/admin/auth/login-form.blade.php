@@ -25,7 +25,7 @@
 
         <x-ui::checkbox id="remember" wire:model="remember" label="Rester connectée" />
 
-        <x-ui::button type="submit" target="login" loading class="w-full justify-center">
+        <x-ui::button type="submit" target="login" loading class="w-full">
             Se connecter
         </x-ui::button>
     </form>
