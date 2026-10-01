@@ -2,149 +2,148 @@
 
 Le back-office est une seule coquille, partagée par nos écrans et par ceux des
 paquets `falcon/booking` et `falcon/analytics`. Cette page dit comment elle est
-faite, et comment un écran de paquet vient s'y accrocher.
+faite, comment un écran de paquet vient s'y loger, et ce que l'espace exige de
+sa configuration.
 
 Pour les assets de l'espace, voir [Gestion des assets avec Vite](assets-vite.md).
 Pour le site public, voir [Structure des fichiers](structure-fichiers.md).
 
-## Trois fichiers, et un seul est la coquille
+## Deux composants
 
 | Fichier | Rôle |
 |---|---|
-| `resources/views/components/layout/admin.blade.php` | **la coquille** · tout le chrome |
-| `resources/views/layouts/booking-admin.blade.php` | l'adaptateur de `falcon/booking` |
-| `resources/views/layouts/analytics-admin.blade.php` | l'adaptateur de `falcon/analytics` |
-
-Les deux adaptateurs font trois lignes chacun. Tout le reste est dans la
-coquille.
+| `resources/views/components/layout/admin.blade.php` | **la coquille** · `<x-layout.admin>`, pour tous les écrans connectés |
+| `resources/views/components/layout/admin-guest.blade.php` | la page de connexion · `<x-layout.admin-guest>`, sans barre latérale |
 
 ## La coquille
 
-C'est un composant Blade, appelé `<x-layout.admin>`. Elle porte la barre
-latérale, l'en-tête, le menu utilisateur, le thème sombre, les notifications, et
-surtout **le seul `@vite` de l'espace** ·
+`<x-layout.admin>` monte la coquille du kit, `<x-ui::layouts.admin>`. **Le kit
+écrit le document**, la classe du thème, la barre latérale, le conteneur des
+notifications, et pose les feuilles et les scripts du kit et des paquets. Notre
+composant n'apporte que ce qui est à nous ·
 
-```blade
-@vite(['resources/css/admin.css', 'resources/js/admin.js'])
-```
+- la marque et l'arborescence des écrans, dans la barre ;
+- le menu du compte, `<x-layout.admin-user-menu>` ;
+- notre feuille et notre script, **après** ceux du kit et des paquets, donc
+  ce sont les nôtres qui gagnent ·
 
-Une page ne porte qu'une feuille Tailwind, et c'est celle-là. Les paquets ne
-compilent rien : ils déclarent leurs vues et leurs règles, et notre build
-produit une feuille unique. Le détail est dans [assets-vite.md](assets-vite.md).
+  ```blade
+  @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+  ```
 
-Elle accepte deux props ·
+- le refus d'indexation, et les marques de Livewire.
+
+Elle accepte une prop ·
 
 | Prop | Défaut | Ce qu'elle fait |
 |---|---|---|
 | `title` | `'Administration'` | le titre de l'onglet et le libellé de la barre du haut |
-| `wide` | `false` | retire la largeur maximale et les marges du contenu |
 
-`wide` existe pour le planning. Une colonne centrée convient à un formulaire ou
-à une liste, qu'on lit sur une ligne courte ; elle est fausse pour une grille
-temporelle, où elle laisse un tiers de l'écran vide alors que chaque colonne de
-jour gagne à respirer.
-
-### Nos propres écrans l'appellent directement
-
-`resources/views/admin/dashboard.blade.php`, `admin/profile.blade.php` et
-`admin/auth/login.blade.php` écrivent simplement ·
+**Elle ne décide d'aucune largeur.** L'espace à côté de la barre est rendu tel
+quel, et chaque écran se cadre sur son propre conteneur. Les nôtres se plafonnent
+ainsi ·
 
 ```blade
 <x-layout.admin title="Tableau de bord">
-    {{-- le contenu de l'écran --}}
+    <div class="mx-auto max-w-[90em] px-4 py-6 sm:px-6 sm:py-8">
+        {{-- le contenu de l'écran --}}
+    </div>
 </x-layout.admin>
 ```
 
-Aucun adaptateur là-dedans. Les adaptateurs n'existent que pour les paquets, et
-la raison suit.
+Le planning de booking, lui, prend toute la largeur sans rien demander · une
+grille horaire perdrait un tiers de l'écran dans une colonne centrée.
 
-## Pourquoi les paquets ont besoin d'un adaptateur
+## Les écrans des paquets s'y logent seuls
 
-Un paquet ne connaît pas nos composants. Il rend une **vue mince** par écran,
-qui étend un gabarit dont il ne sait que le nom, lu dans sa configuration ·
-
-```blade
-{{-- vendor/falcon/analytics/resources/views/dashboard/overview.blade.php --}}
-@extends($analyticsLayout)
-
-@section($analyticsSection)
-    <livewire:analytics-overview />
-@endsection
-```
-
-Il attend donc une vue extensible par `@extends`. Nous offrons un composant.
-L'adaptateur fait la jonction, et il ne fait que ça ·
-
-```blade
-{{-- resources/views/layouts/analytics-admin.blade.php --}}
-<x-layout.admin :title="$analyticsTitle ?? 'Analytics'">
-    @yield('content')
-</x-layout.admin>
-```
-
-Le contrat tient en deux lignes · **le paquet écrit dans une section, l'hôte la
-rend dans le slot du composant.**
-
-## Les clés qui nomment les adaptateurs
+Chaque paquet lit dans sa configuration **le nom du composant** dans lequel
+rendre ses écrans, et l'ouvre comme une balise autour de son contenu, avec son
+titre. Il n'y a ni adaptateur, ni section à nommer.
 
 | Configuration | Valeur | Écrans concernés |
 |---|---|---|
-| `booking.admin.layout` | `layouts.booking-admin` | agenda, prestations, horaires, réglages |
-| `analytics.dashboard.layout` | `layouts.analytics-admin` | vue d'ensemble, visiteurs, sessions, tunnels… |
-| `analytics.marketing.layout` | `layouts.analytics-admin` | campagnes, pubs |
+| `booking.layouts.admin` | `layout.admin` | planning, prestations, catégories, journal, réglages |
+| `booking.layouts.public` | `null` | la page publique de réservation garde la coquille du paquet · elle se suffit, et le site a ses propres pages |
+| `analytics.layouts.admin` | `layout.admin` | audience **et** marketing · c'est la même administration, donc une seule clé |
 
-Chaque bloc porte aussi une clé `layout_section`, à `content` partout. Elle est
-écrite plutôt que laissée au défaut parce qu'**un écran rendu dans la mauvaise
-section paraît vide sans lever la moindre erreur** — Blade rend une section
-absente comme une chaîne vide, et rien ne le signale.
+La valeur s'écrit comme on écrirait la balise · `layout.admin` pour
+`<x-layout.admin>`.
 
-Les deux modules d'analytics ont leur propre clé : rien n'oblige à leur donner
-le même gabarit, ni même à monter les deux.
+## Les assets de l'espace
 
-## Pourquoi deux adaptateurs et pas un
+`resources/css/admin.css` ouvre sur l'ordre des huit couches du kit, puis
+Tailwind, puis les noms du kit (`bg-surface`, `text-muted`…) pour le HTML que
+nous écrivons, puis nos propres règles. **Rien des paquets** · chacun compile et
+livre sa feuille et son script, le site en publie une copie, et le kit les pose
+dans les pages qu'il dessine ·
 
-Ils se ressemblent au point qu'on est tenté de les fusionner. À ne pas faire ·
+```bash
+php artisan vendor:publish --tag=laravel-assets --force
+```
 
-- **le nom de la variable de titre appartient au paquet.** `$bookingTitle` et
-  `$analyticsTitle` sont deux contrats distincts, chacun décidé par son paquet ;
-- **booking passe `wide`, analytics n'a pas cette notion.** Le contrôleur de
-  l'agenda pose `bookingWide => true`, et lui seul ;
-- un fichier unique accumulerait un `?? $xTitre` **par paquet installé** ;
-- le nom du fichier dit quel paquet il sert.
+à chaque mise à jour d'un paquet. `resources/js/admin.js` n'importe, de même,
+que notre script commun.
 
-Trois lignes dupliquées coûtent moins cher qu'un fichier qui grossit à chaque
-paquet.
+## Le garde et la mesure d'audience
+
+**Le back-office a son garde à lui, `admin`**, distinct de celui des clients.
+C'est ce qui permet à analytics d'exclure le trafic interne sans toucher à celui
+du public · `config/analytics.php` porte `exclude_guards => ['admin']`.
+
+- **ne jamais mettre `web` dans `exclude_guards`** · le public cesserait d'être
+  mesuré ;
+- `subject_guards` vaut `[]` · l'espace client de booking s'ouvre par un lien
+  envoyé par e-mail, pas par une connexion ;
+- un nom de garde absent de `config/auth.php` est ignoré sans erreur ·
+  `php artisan analytics:check` le signale ;
+- la mesure se passe de consentement · adresses IP anonymisées
+  (`anonymize_ip => true`), aucun cookie de mesure, donc aucun bandeau sur le
+  site.
+
+## Le premier compte
+
+```bash
+php artisan db:seed --class=AdminSeeder --force
+```
+
+Rejouable sans danger. Le mot de passe initial est `password` · le changer
+aussitôt sur `/admin/profil`.
+
+## La planification
+
+Booking et analytics planifient leurs tâches eux-mêmes · **rien à écrire dans
+`routes/console.php`**. En ligne, une tâche cron lance `schedule:run` chaque
+minute, et sa sortie se lit dans l'interface de l'hébergeur · ne pas y ajouter
+`>> /dev/null 2>&1`, qui ferait disparaître ce diagnostic.
 
 ## Brancher un troisième paquet
 
-1. Créer `resources/views/layouts/<paquet>-admin.blade.php` ·
+1. L'installer, puis publier ses fichiers compilés ·
+   `php artisan vendor:publish --tag=laravel-assets --force`.
+2. Nommer `layout.admin` comme coquille de son administration, dans la clé que
+   sa documentation indique.
+3. Ajouter ses entrées dans la barre latérale de `<x-layout.admin>` · ses noms
+   de routes sont fixes, seules ses adresses se règlent.
+4. Vider et reconstruire les vues compilées (section suivante), puis lancer
+   `php artisan ui-kit:check` **et** le diagnostic du paquet · aucun des deux ne
+   couvre l'autre.
 
-   ```blade
-   <x-layout.admin :title="$monPaquetTitre ?? 'Mon paquet'">
-       @yield('content')
-   </x-layout.admin>
-   ```
-
-2. Nommer ce gabarit dans la configuration du paquet, avec sa section.
-3. Ajouter son entrée dans la barre latérale de la coquille.
-4. Ajouter la ligne d'import du paquet dans `resources/css/admin.css` et
-   `resources/js/admin.js` — son installateur le propose.
-
-Puis `npm run build`, sans quoi les écrans du paquet sortent sans style : notre
-feuille a été fabriquée en lisant ses vues telles qu'elles étaient au dernier
-build.
+Rien n'est à ajouter dans `admin.css` ni dans `admin.js`, et aucun
+`npm run build` n'est nécessaire pour le paquet.
 
 ## Le piège à connaître
 
-Après tout changement d'un gabarit, d'un adaptateur ou d'un composant Blade
-d'un paquet, lancer ·
+Après une mise à jour d'un paquet, ou toute modification d'un gabarit ou d'un
+composant Blade, reconstruire les vues compilées d'un coup ·
 
 ```bash
+php artisan view:clear && rm -f storage/framework/views/*.tmp
 php artisan view:cache
 ```
 
 Sur Windows, un simple `view:clear` suffit à faire tomber la page d'analytics
-avec `rename(...) : Accès refusé`. Ses blocs sont différés, donc plusieurs
-requêtes arrivent en même temps et compilent les mêmes vues ; deux `rename()`
-vers le même fichier se refusent mutuellement. `view:cache` compile tout en un
-seul processus, et la course n'a pas lieu.
+avec `rename(...) : Accès refusé`. Ses blocs se chargent en différé, donc
+plusieurs requêtes arrivent en même temps et compilent les mêmes vues ; deux
+`rename()` vers le même fichier se refusent mutuellement, et des `.tmp`
+orphelins restent derrière. `view:cache` compile tout en un seul processus, et
+la course n'a pas lieu.
