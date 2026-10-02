@@ -18,12 +18,9 @@
                 </p>
 
                 <div class="mb-6 flex flex-wrap gap-3">
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Évian-les-Bains</span>
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Thonon-les-Bains</span>
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Publier</span>
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Amphion</span>
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Maxilly</span>
-                    <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">Neuvecelle</span>
+                    @foreach (\App\Services\BusinessContactService::townsServed() as $town)
+                        <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">{{ $town }}</span>
+                    @endforeach
                 </div>
 
                 <p class="mb-8 text-sm leading-relaxed text-charcoal">

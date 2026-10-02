@@ -10,9 +10,8 @@ return [
     | Read by App\Services\SiteGraphService, which turns these values into the
     | site's Schema.org graph.
     |
-    | The pages read the email address and the phone number here, through
-    | App\Services\BusinessContactService. The legal notice still writes the
-    | address by hand, and several pages the towns served.
+    | The pages read the email address, the phone number, the postal address
+    | and the towns served here, through App\Services\BusinessContactService.
     |
     */
 

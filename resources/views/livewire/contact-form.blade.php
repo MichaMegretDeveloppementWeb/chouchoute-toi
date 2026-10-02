@@ -95,12 +95,9 @@
                             <label for="town" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Commune</label>
                             <select wire:model="town" id="town" class="w-full rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10">
                                 <option value="">Sélectionnez...</option>
-                                <option value="Évian-les-Bains">Évian-les-Bains</option>
-                                <option value="Thonon-les-Bains">Thonon-les-Bains</option>
-                                <option value="Publier">Publier</option>
-                                <option value="Amphion">Amphion</option>
-                                <option value="Maxilly">Maxilly</option>
-                                <option value="Neuvecelle">Neuvecelle</option>
+                                @foreach (\App\Services\BusinessContactService::townsServed() as $servedTown)
+                                    <option value="{{ $servedTown }}">{{ $servedTown }}</option>
+                                @endforeach
                                 <option value="Autre">Autre</option>
                             </select>
                         </div>

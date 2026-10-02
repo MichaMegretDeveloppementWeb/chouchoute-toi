@@ -5,11 +5,25 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * How to reach the business, read from `config/entreprise.php` · the pages
- * call it rather than writing the address or the number out.
+ * How to reach the business, and where it travels, read from
+ * `config/entreprise.php` · the pages call it rather than writing it out.
  */
 final class BusinessContactService
 {
+    /** « 261 rue des Tattes, 74500 Publier ». */
+    public static function address(): string
+    {
+        $address = (array) config('entreprise.adresse');
+
+        return sprintf('%s, %s %s', $address['rue'] ?? '', $address['code_postal'] ?? '', $address['ville'] ?? '');
+    }
+
+    /** @return list<string> */
+    public static function townsServed(): array
+    {
+        return array_values(array_map(strval(...), (array) config('entreprise.villes_desservies')));
+    }
+
     public static function email(): string
     {
         return (string) config('entreprise.email');

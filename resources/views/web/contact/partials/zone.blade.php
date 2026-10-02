@@ -1,14 +1,3 @@
-@php
-    $towns = [
-        'Évian-les-Bains',
-        'Thonon-les-Bains',
-        'Publier',
-        'Amphion',
-        'Maxilly',
-        'Neuvecelle',
-    ];
-@endphp
-
 <section class="mb-[150px] max-md:mb-20" data-animate>
     <div class="mx-auto max-w-[1336px] px-5">
         <p class="mb-3 flex items-center gap-2 text-sm font-normal uppercase tracking-[2px] text-wine">
@@ -28,7 +17,7 @@
                 </p>
 
                 <div class="mb-8 flex flex-wrap gap-3">
-                    @foreach ($towns as $town)
+                    @foreach (\App\Services\BusinessContactService::townsServed() as $town)
                         <span class="rounded-full bg-sand px-4 py-2 text-sm font-medium text-dark">{{ $town }}</span>
                     @endforeach
                 </div>
