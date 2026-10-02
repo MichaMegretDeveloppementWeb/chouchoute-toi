@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "94716d9cc6ee90790bd0b3aefc420d0139b4985b"
+                "reference": "763b7904b1fc1032ae9a362ee5448923d15b7ad9"
             },
             "require": {
                 "ext-intl": "*",
@@ -684,7 +684,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "1c7e8e20323c68117634c9c431cee48a84679755"
+                "reference": "a1813c37d18a729632bc4943e1c6587caa03617e"
             },
             "require": {
                 "ext-gd": "*",
