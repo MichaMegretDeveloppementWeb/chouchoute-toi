@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "b74cfd9cdfeb027f81e2e46c055dbd85bc635ec2"
+                "reference": "94716d9cc6ee90790bd0b3aefc420d0139b4985b"
             },
             "require": {
                 "ext-intl": "*",
@@ -684,7 +684,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "abd13f6c2d64874f24270cfdba13af0c78808a02"
+                "reference": "96923c14b4649265ead9b7157f2b0fe715d418df"
             },
             "require": {
                 "ext-gd": "*",
@@ -779,7 +779,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "73ae1c0dec1631d6340ea27fd928be5df6cfd0d2"
+                "reference": "651431b500d6c6d429e16681118b7b1a26184621"
             },
             "require": {
                 "laravel/framework": "^13.12",
