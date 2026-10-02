@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Mail\ContactMail;
@@ -108,7 +110,7 @@ class ContactForm extends Component
     {
         $this->validate();
 
-        Mail::to('dc.amandine@gmail.com')->send(new ContactMail([
+        Mail::to(config('entreprise.email'))->send(new ContactMail([
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,

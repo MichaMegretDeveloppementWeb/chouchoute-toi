@@ -19,7 +19,7 @@
                         <x-icon.phone class="mt-0.5 text-wine" />
                         <div>
                             <p class="mb-1 text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Téléphone</p>
-                            <a href="tel:+33671637666" class="text-base text-dark transition-colors hover:text-wine">06 71 63 76 66</a>
+                            <a href="tel:{{ \App\Services\BusinessContactService::phone() }}" class="text-base text-dark transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::phoneForDisplay() }}</a>
                         </div>
                     </div>
 
@@ -27,7 +27,7 @@
                         <x-icon.email class="mt-0.5 text-wine" />
                         <div>
                             <p class="mb-1 text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Email</p>
-                            <a href="mailto:dc.amandine@gmail.com" class="text-base text-dark transition-colors hover:text-wine">dc.amandine@gmail.com</a>
+                            <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" class="text-base text-dark transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::email() }}</a>
                         </div>
                     </div>
 

@@ -34,7 +34,7 @@
                 Contact
             </a>
             <span class="h-4 w-px bg-black/15"></span>
-            <a href="tel:+33671637666" data-track-event="contact.phone.click" data-track-section="header" class="text-sm text-black transition-opacity hover:opacity-60">
+            <a href="tel:{{ \App\Services\BusinessContactService::phone() }}" data-track-event="contact.phone.click" data-track-section="header" class="text-sm text-black transition-opacity hover:opacity-60">
                 <x-icon.phone class="h-5 w-5" />
             </a>
             <a href="{{ route('contact') }}" data-track-event="contact.cta.click" data-track-section="header" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-5 py-2.5 text-sm text-white transition-colors hover:bg-dark">
