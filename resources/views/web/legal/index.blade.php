@@ -25,8 +25,8 @@
                     <p><span class="font-medium text-dark">SIRET :</span> 497 879 700 00035</p>
                     <p><span class="font-medium text-dark">Code APE :</span> 9602B · Soins de beauté</p>
                     <p><span class="font-medium text-dark">Adresse :</span> 261 rue des Tattes, 74500 Publier</p>
-                    <p><span class="font-medium text-dark">Téléphone :</span> <a data-track-event="contact.phone.click" data-track-section="mentions-legales" href="tel:+33671637666" class="transition-colors hover:text-wine">06 71 63 76 66</a></p>
-                    <p><span class="font-medium text-dark">Email :</span> <a href="mailto:dc.amandine@gmail.com" class="transition-colors hover:text-wine">dc.amandine@gmail.com</a></p>
+                    <p><span class="font-medium text-dark">Téléphone :</span> <a data-track-event="contact.phone.click" data-track-section="mentions-legales" href="tel:{{ \App\Services\BusinessContactService::phone() }}" class="transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::phoneForDisplay() }}</a></p>
+                    <p><span class="font-medium text-dark">Email :</span> <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" class="transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::email() }}</a></p>
                     <p><span class="font-medium text-dark">TVA :</span> Non assujettie à la TVA (article 293 B du CGI)</p>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                 <div class="space-y-4 text-base leading-[1.7] text-charcoal">
                     <p>
                         Le responsable du traitement des données personnelles est Amandine David-Cruz,
-                        joignable à l'adresse <a href="mailto:dc.amandine@gmail.com" class="font-medium text-dark transition-colors hover:text-wine">dc.amandine@gmail.com</a>.
+                        joignable à l'adresse <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" class="font-medium text-dark transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::email() }}</a>.
                     </p>
                     <p>
                         Les informations recueillies via le formulaire de contact (nom, email, téléphone, commune, message)
@@ -73,7 +73,7 @@
                         Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique
                         et Libertés, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité
                         de vos données. Pour exercer ces droits, adressez votre demande par email à
-                        <a href="mailto:dc.amandine@gmail.com" class="font-medium text-dark transition-colors hover:text-wine">dc.amandine@gmail.com</a>.
+                        <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" class="font-medium text-dark transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::email() }}</a>.
                     </p>
                 </div>
             </div>

@@ -15,13 +15,13 @@
                 <h3 class="mb-4 text-xs font-medium uppercase tracking-wider text-white/40">Contact</h3>
                 <ul class="space-y-3 text-sm">
                     <li>
-                        <a href="tel:+33671637666" data-track-event="contact.phone.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
-                            06 71 63 76 66
+                        <a href="tel:{{ \App\Services\BusinessContactService::phone() }}" data-track-event="contact.phone.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
+                            {{ \App\Services\BusinessContactService::phoneForDisplay() }}
                         </a>
                     </li>
                     <li>
-                        <a href="mailto:dc.amandine@gmail.com" data-track-event="contact.email.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
-                            dc.amandine@gmail.com
+                        <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" data-track-event="contact.email.click" data-track-section="footer" class="text-white/70 transition-colors hover:text-white">
+                            {{ \App\Services\BusinessContactService::email() }}
                         </a>
                     </li>
                     <li class="flex items-center gap-3">

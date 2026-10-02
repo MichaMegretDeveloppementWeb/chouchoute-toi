@@ -10,8 +10,9 @@ return [
     | Read by App\Services\SiteGraphService, which turns these values into the
     | site's Schema.org graph.
     |
-    | The footer prints the phone number and the email address by hand: changing
-    | them here does not change them there.
+    | The pages read the email address and the phone number here, through
+    | App\Services\BusinessContactService. The legal notice still writes the
+    | address by hand, and several pages the towns served.
     |
     */
 
