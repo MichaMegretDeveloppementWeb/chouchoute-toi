@@ -24,7 +24,7 @@
                     <p><span class="font-medium text-dark">Statut :</span> Auto-entrepreneur (micro-entreprise)</p>
                     <p><span class="font-medium text-dark">SIRET :</span> 497 879 700 00035</p>
                     <p><span class="font-medium text-dark">Code APE :</span> 9602B · Soins de beauté</p>
-                    <p><span class="font-medium text-dark">Adresse :</span> 261 rue des Tattes, 74500 Publier</p>
+                    <p><span class="font-medium text-dark">Adresse :</span> {{ \App\Services\BusinessContactService::address() }}</p>
                     <p><span class="font-medium text-dark">Téléphone :</span> <a data-track-event="contact.phone.click" data-track-section="mentions-legales" href="tel:{{ \App\Services\BusinessContactService::phone() }}" class="transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::phoneForDisplay() }}</a></p>
                     <p><span class="font-medium text-dark">Email :</span> <a href="mailto:{{ \App\Services\BusinessContactService::email() }}" class="transition-colors hover:text-wine">{{ \App\Services\BusinessContactService::email() }}</a></p>
                     <p><span class="font-medium text-dark">TVA :</span> Non assujettie à la TVA (article 293 B du CGI)</p>
@@ -128,7 +128,7 @@
                         </p>
                         <p>
                             Les prestations sont réalisées au domicile de la cliente, dans la zone d'intervention
-                            couvrant Thonon-les-Bains, Évian-les-Bains, Publier, Amphion, Maxilly, Neuvecelle
+                            couvrant {{ implode(', ', \App\Services\BusinessContactService::townsServed()) }}
                             et alentours.
                         </p>
                     </div>
