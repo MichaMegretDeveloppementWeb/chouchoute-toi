@@ -685,7 +685,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "6c0e0db924e1e6eddc77e0602b0acf8465c93a58"
+                "reference": "def7ffa9e59668243ecea92d729ddb46fe0e9e8d"
             },
             "require": {
                 "ext-gd": "*",
@@ -740,7 +740,7 @@
                     "@php vendor/bin/paratest --processes=8"
                 ],
                 "test:serial": [
-                    "@php -d memory_limit=1G vendor/bin/phpunit"
+                    "@php vendor/bin/phpunit"
                 ],
                 "format": [
                     "@php vendor/bin/pint"
@@ -758,7 +758,7 @@
                     "@php scripts/check-floor.php",
                     "@php vendor/bin/pint --test --cache-file=.pint.cache",
                     "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
-                    "@php -d memory_limit=1G vendor/bin/phpunit"
+                    "@php vendor/bin/phpunit"
                 ]
             },
             "license": [
