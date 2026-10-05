@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "5f1e44372776ec187d726658b9a66dde6bb25e17"
+                "reference": "5b9ff03c0222d1968d285ede467683dd217de2ca"
             },
             "require": {
                 "ext-intl": "*",
@@ -658,7 +658,8 @@
                     "@php vendor/bin/paratest --processes=4"
                 ],
                 "qa:lowest": [
-                    "@composer update --prefer-lowest --prefer-stable --no-interaction",
+                    "@composer update --prefer-lowest --prefer-stable --no-blocking --no-interaction",
+                    "@php scripts/check-floor.php",
                     "@php vendor/bin/pint --test",
                     "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
                     "@php vendor/bin/phpunit"
@@ -684,7 +685,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "01543aa98332ec3dff5025a63b03f3e3c5922f9a"
+                "reference": "b41c295b53dd07c3242e47d21efa83299fe807c8"
             },
             "require": {
                 "ext-gd": "*",
@@ -753,7 +754,8 @@
                     "@php vendor/bin/paratest --processes=8 --log-junit=.phpunit.cache/junit.xml"
                 ],
                 "qa:lowest": [
-                    "@composer update --prefer-lowest --prefer-stable --no-interaction",
+                    "@composer update --prefer-lowest --prefer-stable --no-blocking --no-interaction",
+                    "@php scripts/check-floor.php",
                     "@php vendor/bin/pint --test --cache-file=.pint.cache",
                     "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
                     "@php -d memory_limit=1G vendor/bin/phpunit"
@@ -779,7 +781,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "5d7995156c3553366c2043d7be36e5b0f11aac2a"
+                "reference": "393c152c776d95fd77b0042648313f09a60a3d7c"
             },
             "require": {
                 "laravel/framework": "^13.12",
@@ -839,7 +841,8 @@
                     "@php vendor/bin/phpunit"
                 ],
                 "qa:lowest": [
-                    "@composer update --prefer-lowest --prefer-stable --no-interaction",
+                    "@composer update --prefer-lowest --prefer-stable --no-blocking --no-interaction",
+                    "@php scripts/check-floor.php",
                     "@php vendor/bin/pint --test",
                     "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
                     "@php vendor/bin/phpunit"
