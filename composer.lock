@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "dde5112659519905649ff1ca17b952d5dd74331c"
+                "reference": "6b35a8e51dbd5dd750e063010a3c415d7dd37f5e"
             },
             "require": {
                 "ext-intl": "*",
@@ -781,7 +781,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "454b86e2ee7f3fb29f0adab0edac2a8d2609c24c"
+                "reference": "49280c49d0cd0cbc66967af9a6b5c6f424d2abbd"
             },
             "require": {
                 "laravel/framework": "^13.12",
