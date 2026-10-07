@@ -99,6 +99,12 @@
                         </x-ui::sidebar.link>
 
                         <x-ui::sidebar.link
+                            :href="route($booking.'settings.practitioners')"
+                            :active="request()->routeIs($booking.'settings.practitioners')">
+                            Praticiens
+                        </x-ui::sidebar.link>
+
+                        <x-ui::sidebar.link
                             :href="route($booking.'schedule')"
                             :active="request()->routeIs($booking.'schedule')">
                             Horaires
