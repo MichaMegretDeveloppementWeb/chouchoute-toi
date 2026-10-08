@@ -178,11 +178,33 @@ return [
     | Data lifecycle
     |--------------------------------------------------------------------------
     |
-    | Raw events are pruned past retention_days. Aggregates are kept forever.
+    | How long the detail is kept, in three settings. Past each, analytics:prune
+    | erases what it covers, a day only once it is counted into the daily
+    | totals, so no figure that adds up is lost.
+    |
+    | retention_days: the ANONYMOUS page views and clicks. Page views on routes
+    | a declared funnel steps through stay. It decides how far back a single
+    | session's page-by-page journey can still be opened.
+    |
+    | session_retention_days: the sessions, and the visitor profiles left with
+    | none. Past it, the figures that add up come from the daily totals, and
+    | those that count distinct people (visitors, new and returning, funnels,
+    | the marketing's visitors and conversions) say they are unavailable. Never
+    | shorter than retention_days, erasing a session erasing its page views.
+    |
+    | event_retention_days: the named events. Never longer than
+    | session_retention_days, an event leaving with its session.
+    |
+    | 760 days is twenty-five months, the CNIL's ceiling for an audience
+    | measurement run without a consent banner.
     |
     */
 
     'retention_days' => 90,
+
+    'session_retention_days' => 760,
+
+    'event_retention_days' => 760,
 
     'session' => [
         // A session is considered ended after this much inactivity. The stored
