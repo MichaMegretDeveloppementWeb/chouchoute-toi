@@ -50,6 +50,20 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
         $this->assertTrue($establishment < $practitioners && $practitioners < $hours, 'Praticiens se range entre Établissement et Horaires, comme dans la barre du paquet.');
     }
 
+    public function test_the_clients_follow_the_planning(): void
+    {
+        $page = Blade::render('<x-layout.admin></x-layout.admin>');
+
+        $planning = strpos($page, 'href="'.route('booking.admin.agenda').'"');
+        $clients = strpos($page, 'href="'.route('booking.admin.clients').'"');
+        $journal = strpos($page, 'href="'.route('booking.admin.journal').'"');
+
+        $this->assertNotFalse($planning);
+        $this->assertNotFalse($clients);
+        $this->assertNotFalse($journal);
+        $this->assertTrue($planning < $clients && $clients < $journal, 'Clients se range juste après Planning, dans l’Agenda, comme dans la barre du paquet.');
+    }
+
     /**
      * Les écrans de l'administration du paquet · ses routes nommées, sans
      * paramètre, et qui ne sont pas un repli.
