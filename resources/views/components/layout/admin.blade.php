@@ -68,6 +68,12 @@
                     </x-ui::sidebar.link>
 
                     <x-ui::sidebar.link
+                        :href="route($booking.'clients')"
+                        :active="request()->routeIs($booking.'clients')">
+                        Clients
+                    </x-ui::sidebar.link>
+
+                    <x-ui::sidebar.link
                         :href="route($booking.'catalogue')"
                         :active="request()->routeIs($booking.'catalogue')">
                         Prestations
@@ -120,12 +126,6 @@
                             :href="route($booking.'settings.booking-window')"
                             :active="request()->routeIs($booking.'settings.booking-window')">
                             Réservation
-                        </x-ui::sidebar.link>
-
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings.clients')"
-                            :active="request()->routeIs($booking.'settings.clients')">
-                            Clients
                         </x-ui::sidebar.link>
 
                         <x-ui::sidebar.link
