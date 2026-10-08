@@ -443,12 +443,14 @@ return [
         | switches do not move.
         */
         'notifications' => [
-            // Whether an appointment entered by hand sends a confirmation. It
-            // commands only the birth of a counter booking; what happens to it
-            // afterwards follows a rule and not a setting, since the counter
-            // only speaks of a visit the client has already heard about, which
-            // `appointments.client_told_at` records.
-            'confirm_counter_bookings' => true,
+            // Whether the form of an appointment entered by hand opens with its
+            // confirmation ticked. The box decides, visit by visit, when it is
+            // saved; it commands only the birth of a counter booking. What happens
+            // to it afterwards follows a rule and not a setting: a move, a
+            // cancellation or a change of what the client knows is always told.
+            // False here: the establishment confirms by phone, and ticks the box
+            // when the client wants the message.
+            'confirm_counter_bookings' => false,
 
             'recipients' => [],
 
