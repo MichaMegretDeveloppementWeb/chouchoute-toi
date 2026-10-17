@@ -6,6 +6,10 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Session\Middleware\StartSession;
 
+// An environment variable left empty counts as an absent one: it reads back as
+// `''`, and that is not a path to a database.
+$geoipDatabase = env('ANALYTICS_GEOIP_DATABASE');
+
 return [
 
     /*
@@ -24,8 +28,10 @@ return [
     | Log channel
     |--------------------------------------------------------------------------
     |
-    | Channel for the package's own logs (ingestion and download errors). An
-    | empty value falls back to the application's default channel.
+    | Channel for every log line the package writes: ingestion, screen reads,
+    | downloads, Search Console, erasures, maintenance, marketing edits. Null
+    | uses the application's default channel. An empty string is not null:
+    | Laravel reads it as an undefined channel and writes to its emergency log.
     |
     */
 
@@ -74,7 +80,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | The package resolves the subject, exclusions and consent from these
-    | declarative values, so a host only needs @analyticsConfig and these
+    | declarative values, so a host only needs @analyticsCollector and these
     | settings. For advanced logic, register closures on the Analytics manager
     | from a service provider (they take precedence):
     |
@@ -105,63 +111,93 @@ return [
         // is used when the name columns are all empty.
         //   'client' => ['label' => 'Client', 'name' => ['first_name', 'last_name']],
         'subjects' => [],
+
+        // What the visitors filter calls the visitors no guard named, beside the
+        // guards above. Null keeps « Non connectés ».
+        'anonymous_label' => null,
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | La coquille dans laquelle chaque espace est rendu
+    | The shell each area is drawn in
     |--------------------------------------------------------------------------
     |
-    | La valeur est un composant Blade · un écran l'ouvre comme une balise et
-    | remplit son slot, donc on le nomme comme on l'écrirait — `layout.admin`
-    | pour `<x-layout.admin>`.
+    | One key per area, named after it. The value is a Blade COMPONENT — a
+    | screen opens it as a tag and fills its slot, so name it the way you would
+    | write it: 'layout.admin' for <x-layout.admin>. null uses the package's own
+    | shell, which is a complete, self-contained administration.
     |
-    | Marketing n'a pas de clé à lui, et c'est voulu · la coquille appartient à
-    | l'espace, et marketing est la même administration.
+    | Marketing has no key of its own: the layout belongs to the AREA, and
+    | marketing is the same administration, drawn in the same chrome.
     |
     */
-
     'layouts' => [
         'admin' => 'layout.admin',
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Espace d'administration
+    | Administration area
     |--------------------------------------------------------------------------
     |
-    | Où les écrans se montent, et derrière quoi. Les NOMS de routes ne sont pas
-    | ici, à dessein · ils sont fixes — `analytics.admin.overview`,
-    | `analytics.admin.marketing.campaigns` — pour qu'un menu ou une redirection
-    | puisse en écrire un. Seules les adresses bougent.
+    | Where the screens mount, and behind what. The route NAMES are not
+    | configurable: they are fixed (analytics.admin.overview,
+    | analytics.admin.marketing.campaigns, ...) so that a menu or a redirect can
+    | write one down. Only the addresses move.
     |
     */
 
     'admin' => [
+        // What appears in the URL for every analytics page (e.g. /admin/analytics).
         'route_prefix' => 'admin/analytics',
 
+        // Middleware protecting the screens. The default suits a single-guard
+        // app; override to match the project (e.g. ['web', 'auth:admin']).
         'middleware' => ['web', 'auth:admin'],
 
-        // Marketing · une seconde entité de l'administration, avec son adresse
-        // et sa place dans le menu.
+        /*
+        | Marketing: a second entity of the administration, with its own
+        | address, its own guard and its own place in the menu — a host can
+        | mount it elsewhere than the analytics screens, or not at all. A
+        | campaign or ad is matched to a session by free conditions on the
+        | URL parameters it arrived with.
+        */
         'marketing' => [
             'route_prefix' => 'admin/marketing',
             'middleware' => ['web', 'auth:admin'],
         ],
+
+        // Extra middleware for one branch of the ability tree, keyed by ability
+        // name (e.g. ['analytics.marketing' => ['password.confirm']]). Every
+        // screen of that branch takes it after the door and its ability, and
+        // every click on those screens replays it. Empty, no screen takes more
+        // than the door. Who may open or do what is not set here: see
+        // docs/autorisation.md.
+        'middleware_for' => [],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Espace public
+    | Public area
     |--------------------------------------------------------------------------
     |
-    | Le collecteur poste sur le point d'ingestion, et c'est tout cet espace.
-    | Les routes du paquet sont enregistrées hors des groupes de l'hôte, donc
-    | elles n'héritent de rien et cette pile doit être complète.
+    | The collector posts to the ingestion endpoint, and that is the whole of
+    | this area. The session stack below is what the package lays in front of
+    | it; the package routes are registered outside the host's route groups, so
+    | they inherit nothing and the stack has to be complete.
     |
-    | Pas de CSRF ici, et il ne peut pas y en avoir · une balise ne porte pas de
-    | jeton. Le contrôle d'origine et la limite de débit tiennent ce rôle, et
-    | aucun des deux ne peut être retiré · ils sont ajoutés après cette liste.
+    | There is no CSRF here, and there cannot be: a beacon carries no token.
+    | The origin check and the rate limit hold that role instead, and neither
+    | can be REMOVED — they are appended after this list, so emptying it takes
+    | away the session and leaves both of them standing. The rate limit's value
+    | is still yours to set, under `throttle`; it is the origin check that has
+    | no setting at all.
+    |
+    | StartSession is swapped by the package for a reading of the session that
+    | does not prolong it: a send writes the session back only when it changed
+    | something in it, so an open tab no longer keeps your users signed in. The
+    | `web` group, or a session middleware of your own, escapes the swap, and
+    | analytics:check says so.
     |
     */
 
@@ -175,42 +211,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Data lifecycle
+    | Periods
     |--------------------------------------------------------------------------
     |
-    | How long the detail is kept, in three settings. Past each, analytics:prune
-    | erases what it covers, a day only once it is counted into the daily
-    | totals, so no figure that adds up is lost.
+    | The periods the screens offer, in days · 'all' offers the whole history.
+    | Strings from the environment are read too. A table names the labels,
+    | [7 => null, 365 => '12 derniers mois', 'all' => null], null keeping the
+    | package's · "7 derniers jours", "Toute la période".
     |
-    | retention_days: the ANONYMOUS page views and clicks. Page views on routes
-    | a declared funnel steps through stay. It decides how far back a single
-    | session's page-by-page journey can still be opened.
+    | They decide how long the detail is kept · twice the longest period, so
+    | a period and the one before it are always read whole · no session is
+    | erased when 'all' is offered. Lengthening a period keeps more at once ·
+    | shortening one erases nothing on its own · analytics:check says the
+    | reduction waits, and analytics:shorten applies it.
     |
-    | session_retention_days: the sessions, and the visitor profiles left with
-    | none. Past it, the figures that add up come from the daily totals, and
-    | those that count distinct people (visitors, new and returning, funnels,
-    | the marketing's visitors and conversions) say they are unavailable. Never
-    | shorter than retention_days, erasing a session erasing its page views.
-    |
-    | event_retention_days: the named events. Never longer than
-    | session_retention_days, an event leaving with its session.
-    |
-    | 760 days is twenty-five months, the CNIL's ceiling for an audience
-    | measurement run without a consent banner.
+    | default_period is the period a screen opens on · one of those offered.
+    | A setting that cannot be read erases no session · analytics:check says
+    | why, and the screens offer 7, 30 and 90 days meanwhile.
     |
     */
 
-    'retention_days' => 90,
+    // Twice the longest is kept · 730 days, within the twenty-five months the
+    // CNIL allows a measurement without a consent banner.
+    'periods' => [7 => null, 30 => null, 90 => null, 365 => '12 derniers mois'],
 
-    'session_retention_days' => 760,
-
-    'event_retention_days' => 760,
+    'default_period' => 30,
 
     'session' => [
-        // A session is considered ended after this much inactivity. The stored
-        // ended_at is last_activity_at + timeout_minutes, never the sweep time.
+        // A session is open while its last activity is less than this many
+        // minutes old · two activities further apart belong to two sessions.
         'timeout_minutes' => 5,
-        // Visibility-gated heartbeat interval that keeps last_activity_at fresh.
+        // At most one activity signal per this many seconds, sent only after a
+        // gesture (mouse, keyboard, wheel, touch) · it keeps last_activity_at fresh.
         'heartbeat_seconds' => 20,
         // How often the collector flushes its buffered event batch to the server.
         'flush_seconds' => 5,
@@ -234,10 +266,12 @@ return [
         // window (the collector heartbeats every heartbeat_seconds).
         'online_seconds' => 60,
 
-        // The "recent" window every realtime block reads (KPIs, feed, charts).
+        // The window the figures, the feed, the charts and the map read · the
+        // list of recent sessions reads the last day.
         'window_minutes' => 30,
 
-        // Hard bound of the activity feed, so a tick never grows with traffic.
+        // Hard bound of the activity feed and of the recent sessions, so a tick
+        // never grows with traffic.
         'feed_limit' => 25,
     ],
 
@@ -260,7 +294,7 @@ return [
         'client_secret' => env('ANALYTICS_GSC_CLIENT_SECRET', ''),
 
         // Absolute redirect URI registered on the OAuth client. Null uses the
-        // package callback route ({dashboard.route_prefix}/integrations/search-console/callback).
+        // package callback route ({admin.route_prefix}/integrations/search-console/callback).
         'redirect' => env('ANALYTICS_GSC_REDIRECT'),
     ],
 
@@ -271,10 +305,9 @@ return [
     */
 
     'privacy' => [
-        // Raw IP is stored by default (locality + connection history). Set true
-        // to store a truncated/anonymised IP instead.
-        // Targets the CNIL consent exemption for first-party audience measurement:
-        // truncated IP, no data ever handed to a third party.
+        // The IP is truncated before it is stored. The country and the city are
+        // read before that, so the screens lose nothing but the exact address.
+        // Set false to store it whole.
         'anonymize_ip' => true,
 
         // Query parameters (case-insensitive) redacted from stored URLs. Tracking
@@ -299,11 +332,13 @@ return [
         'edition' => env('ANALYTICS_GEOIP_EDITION', 'GeoLite2-City'),
 
         // Where analytics:geoip:download writes the extracted .mmdb.
-        'database_path' => env('ANALYTICS_GEOIP_DATABASE') ?: storage_path('app/analytics/GeoLite2-City.mmdb'),
+        'database_path' => is_string($geoipDatabase) && $geoipDatabase !== ''
+            ? $geoipDatabase
+            : storage_path('app/analytics/GeoLite2-City.mmdb'),
 
         // Local development: public IP substituted for private/reserved request
-        // IPs (127.0.0.1 can never be located). Inert in production by design,
-        // since real public IPs are never overridden.
+        // IPs (127.0.0.1 can never be located). Inert in production, since real
+        // public IPs are never overridden.
         'dev_ip' => env('ANALYTICS_GEOIP_DEV_IP'),
 
         // MaxMind permalink ({edition} and {license_key} are substituted).

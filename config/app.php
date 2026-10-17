@@ -65,7 +65,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Every package of the suite shows its hours and counts its days in this zone.
+    'timezone' => 'Europe/Paris',
 
     /*
     |--------------------------------------------------------------------------

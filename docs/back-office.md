@@ -100,6 +100,35 @@ du public · `config/analytics.php` porte `exclude_guards => ['admin']`.
   (`anonymize_ip => true`), aucun cookie de mesure, donc aucun bandeau sur le
   site.
 
+## Ce qu'analytics garde
+
+Les écrans proposent 7, 30 et 90 jours et les 12 derniers mois, et s'ouvrent
+sur 30 jours · `periods` et `default_period` dans `config/analytics.php`.
+**Le paquet garde le détail deux fois la plus longue période**, soit 730 jours,
+sous les vingt-cinq mois que la CNIL admet pour une mesure d'audience sans
+bandeau. Au-delà, tout disparaît. `php artisan analytics:check` dit la durée en
+vigueur, au point « Périodes ».
+
+Allonger une période garde davantage, aussitôt. En raccourcir une n'efface rien seule · le diagnostic dit que la réduction
+attend, et `php artisan analytics:shorten` l'applique.
+
+**`config/analytics.php` est le fichier du paquet**, à six choix près · les deux
+gardes ci-dessus, la coquille `layout.admin`, `auth:admin` sur les deux groupes
+d'écrans, et les périodes. Pour relire ses commentaires à jour après une version
+du paquet, le republier, puis remettre ces six choix ·
+
+```bash
+php artisan vendor:publish --tag=analytics-config --force
+```
+
+## L'heure du site
+
+Le site est réglé sur l'heure de Paris, dans `config/app.php`
+(`'timezone' => 'Europe/Paris'`). Analytics compte ses jours et affiche ses
+heures dans ce fuseau · s'il change, ses jours se redécoupent d'eux-mêmes, en
+arrière-plan. Booking a encore son propre fuseau, dans ses réglages (Identité),
+sur Paris lui aussi.
+
 ## Le premier compte
 
 ```bash
@@ -145,5 +174,10 @@ Sur Windows, un simple `view:clear` suffit à faire tomber la page d'analytics
 avec `rename(...) : Accès refusé`. Ses blocs se chargent en différé, donc
 plusieurs requêtes arrivent en même temps et compilent les mêmes vues ; deux
 `rename()` vers le même fichier se refusent mutuellement, et des `.tmp`
-orphelins restent derrière. `view:cache` compile tout en un seul processus, et
-la course n'a pas lieu.
+orphelins restent derrière. `view:cache` compile tout en un seul processus ·
+sur le serveur, la course n'a plus lieu.
+
+Sous Windows, elle reste possible, rarement · Laravel n'y écrit pas toujours
+l'adresse d'une vue de la même façon quand `view:cache` la compile et quand une
+page l'affiche, et la page recompile alors quand même. Si elle tombe, refaire
+les deux commandes ci-dessus.
