@@ -311,9 +311,9 @@ return [
     */
     'legal' => [
         'host' => [
-            'name' => env('BOOKING_LEGAL_HOST_NAME'),
-            'address' => env('BOOKING_LEGAL_HOST_ADDRESS'),
-            'phone' => env('BOOKING_LEGAL_HOST_PHONE'),
+            'name' => 'Hostinger International Ltd',
+            'address' => '61 Lordou Vironos Street, 6023 Larnaca, Chypre',
+            'phone' => null,
         ],
     ],
 
