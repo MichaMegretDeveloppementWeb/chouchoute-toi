@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\User;
 use Falcon\Analytics\Models\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -74,41 +75,66 @@ final class TrackingExclusionTest extends TestCase
 
     public function test_ingestion_stores_an_event_sent_by_a_public_visitor(): void
     {
-        $this->postJson('/__analytics', $this->batch())->assertNoContent();
+        $this->send($this->batch());
 
         $this->assertSame(1, Event::query()->count());
     }
 
     public function test_ingestion_stores_nothing_while_an_admin_is_signed_in(): void
     {
-        $this->actingAs(Admin::factory()->create(), 'admin')
-            ->postJson('/__analytics', $this->batch())
-            ->assertNoContent();
+        $batch = $this->batch();
+
+        $this->actingAs(Admin::factory()->create(), 'admin')->send($batch);
 
         $this->assertSame(0, Event::query()->count());
     }
 
     public function test_ingestion_stores_the_event_of_a_client_signed_in_on_the_web_guard(): void
     {
-        $this->actingAs(User::factory()->create(), 'web')
-            ->postJson('/__analytics', $this->batch())
-            ->assertNoContent();
+        $batch = $this->batch();
+
+        $this->actingAs(User::factory()->create(), 'web')->send($batch);
 
         $this->assertSame(1, Event::query()->count());
     }
 
     /**
-     * @return array{sent_at: int, referrer: null, events: array<int, array<string, mixed>>}
+     * Posts the batch as a browser does · from the site's origin, the facts
+     * written once the response has left.
+     *
+     * @param  array<string, mixed>  $batch
+     */
+    private function send(array $batch): void
+    {
+        $this->withoutDefer()
+            ->withHeader('Origin', config('app.url'))
+            ->postJson('/__analytics', $batch)
+            ->assertNoContent();
+    }
+
+    /**
+     * A batch as the collector sends it · under the envelope a public page
+     * gives it, each event with an identifier of its own.
+     *
+     * @return array{envelope: string, sent_at: int, referrer: null, events: list<array<string, mixed>>}
      */
     private function batch(): array
     {
+        $page = (string) $this->get(route('home'))->assertOk()->getContent();
+        preg_match('/'.preg_quote(self::CONFIG, '/').'(\{.*?\});/', $page, $found);
+        /** @var array{envelope?: string} $config */
+        $config = json_decode($found[1] ?? '{}', true);
+        $this->assertArrayHasKey('envelope', $config, 'A public page gives the collector its envelope.');
+
         $sentAt = (int) (microtime(true) * 1000);
 
         return [
+            'envelope' => $config['envelope'],
             'sent_at' => $sentAt,
             'referrer' => null,
             'events' => [
                 [
+                    'id' => (string) Str::uuid(),
                     'type' => 'pageview',
                     'ts' => $sentAt,
                     'route' => 'home',
