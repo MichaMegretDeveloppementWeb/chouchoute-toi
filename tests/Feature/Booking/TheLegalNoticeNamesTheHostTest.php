@@ -20,7 +20,7 @@ final class TheLegalNoticeNamesTheHostTest extends TestCase
         $booking = $this->get(route('booking.public.legal'))->assertOk();
         $site = $this->get(route('legal'))->assertOk();
 
-        foreach (['Hostinger International Ltd', '61 Lordou Vironos Street, 6023 Larnaca, Chypre'] as $line) {
+        foreach (['Hostinger International Ltd', '61 Lordou Vironos Street, 6023 Larnaca, Chypre', '+370 645 03378'] as $line) {
             $booking->assertSee($line);
             $site->assertSee($line);
         }
