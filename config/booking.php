@@ -16,11 +16,6 @@ return [
     |
     */
 
-    // Seed value of the establishment's timezone. Once installed it is a
-    // setting, answered from the details screen, and this key is never read
-    // again.
-    'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
-
     'admin' => [
         'route_prefix' => 'admin/agenda',
 
@@ -363,14 +358,6 @@ return [
             */
             'visit_notice' => null,
             'visit_notice_shown' => false,
-
-            // Where the establishment is, which decides the hour an instant is
-            // shown at. A setting and not a configuration key: an establishment
-            // that moves, or a host installing this package for a business in
-            // another region, does not have to redeploy to say so. The seed
-            // value is the `timezone` key at the head of this file, repeated
-            // here because a PHP array cannot quote itself.
-            'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
 
             // The face of the establishment on its public page. Null is a
             // normal case: the page then carries its own neutral drawing rather
