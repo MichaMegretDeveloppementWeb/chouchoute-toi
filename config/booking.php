@@ -287,10 +287,12 @@ return [
     */
     'legal' => [
         // The site is hosted by Hostinger, the same for every environment.
+        // The phone is the one Hostinger declares to the RIPE registry: its
+        // own legal pages publish none.
         'host' => [
             'name' => 'Hostinger International Ltd',
             'address' => '61 Lordou Vironos Street, 6023 Larnaca, Chypre',
-            'phone' => null,
+            'phone' => '+370 645 03378',
         ],
     ],
 

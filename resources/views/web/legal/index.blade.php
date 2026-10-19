@@ -36,6 +36,7 @@
                 <div class="space-y-1 text-base leading-[1.7] text-charcoal">
                     <p><span class="font-medium text-dark">Hébergeur :</span> Hostinger International Ltd</p>
                     <p><span class="font-medium text-dark">Adresse :</span> 61 Lordou Vironos Street, 6023 Larnaca, Chypre</p>
+                    <p><span class="font-medium text-dark">Téléphone :</span> +370 645 03378</p>
                     <p><span class="font-medium text-dark">Site web :</span> <a href="https://www.hostinger.fr" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-wine">www.hostinger.fr</a></p>
                 </div>
             </div>
