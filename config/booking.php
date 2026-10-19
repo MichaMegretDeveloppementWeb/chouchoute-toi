@@ -21,26 +21,6 @@ return [
     // again.
     'timezone' => env('BOOKING_TIMEZONE', 'Europe/Paris'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | La coquille autour de chaque espace
-    |--------------------------------------------------------------------------
-    |
-    | La valeur est un composant Blade · un écran l'ouvre comme une balise et
-    | remplit son slot, donc on le nomme comme on l'écrirait — `layout.admin`
-    | pour `<x-layout.admin>`.
-    |
-    | Le back-office prend le nôtre, avec notre barre et notre compte. La page
-    | publique garde celle du paquet · elle se suffit, et notre site a ses
-    | propres pages.
-    |
-    */
-
-    'layouts' => [
-        'admin' => 'layout.admin',
-        'public' => null,
-    ],
-
     'admin' => [
         'route_prefix' => 'admin/agenda',
 
@@ -55,6 +35,39 @@ return [
         // guard, which is rarely the right one for a back office.
         'guard' => 'admin',
 
+        // Extra middleware for one branch of the ability tree, keyed by ability
+        // name (e.g. ['booking.settings' => ['password.confirm']]). Every
+        // screen of that branch takes it after the door and its ability, and
+        // every click on those screens replays it. Empty, no screen takes more
+        // than the door. Who may open or do what is not set here: see
+        // docs/autorisation.md.
+        'middleware_for' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | The shell around each area
+    |--------------------------------------------------------------------------
+    |
+    | One key per area, named after it. The value is a Blade COMPONENT — a
+    | screen opens it as a tag and fills its slot, so name it the way you would
+    | write it: 'layout.admin' for <x-layout.admin>. Null uses the package's own
+    | shell.
+    |
+    | The back office's is a stopgap and nothing more: a host that has one names
+    | it here. The public page's is not — an establishment with no website has
+    | only that page, and the package draws it whole.
+    |
+    | There is no section to name any more. A component layout has a slot, and a
+    | slot cannot be missed the way a section name could.
+    |
+    */
+    'layouts' => [
+        // The back office takes the site's own shell, with its sidebar and its
+        // account. The public page keeps the package's: the site has its own
+        // pages, and this one is complete on its own.
+        'admin' => 'layout.admin',
+        'public' => null,
     ],
 
     /*
@@ -93,19 +106,22 @@ return [
     ],
 
     /*
-    | Il n'y a plus rien à régler pour les assets, et c'est le but.
+    | There is nothing to set for the assets, and that is the point.
     |
-    | Le paquet compile sa feuille et son script, les livre déjà compilés, et
-    | `vendor:publish` en pose une copie dans `public/vendor/falcon/booking`.
-    | Cette application n'importe rien, ne scanne aucune vue du paquet, et
-    | n'installe aucune dépendance de compilation.
+    | The package compiles its sheet and its script, ships them already
+    | compiled, and `vendor:publish` lays a copy in your public directory. You
+    | import nothing, scan none of the package's views, and install no build
+    | dependency.
     |
-    | La seule chose à faire, et à chaque déploiement ·
+    | The one thing to do, at every deployment:
     |
     |     php artisan vendor:publish --tag=laravel-assets --force
     |
-    | Sans elle, les écrans lèvent en nommant la commande, plutôt que de servir
-    | une feuille périmée en silence.
+    | Without it the screens raise, naming the command, rather than silently
+    | serving a stale sheet.
+    |
+    | Where the copy lands is set at the kit, `ui.assets.path`, for the whole
+    | suite at once.
     */
 
     'seo' => [
@@ -161,39 +177,7 @@ return [
 
         // What a phone photograph weighs today, with room to spare.
         'max_size_kb' => 8192,
-
-        // Per client, the folder being theirs and spanning as many visits as
-        // they make. High enough never to be met in normal use, low enough to
-        // stop a folder growing without anyone deciding it should.
-        'max_per_client' => 100,
-
-        // What can be picked in the file browser.
-        'extensions' => ['jpg', 'jpeg', 'png', 'webp', 'heic', 'pdf'],
-
-        // And what the file must actually be, guessed from the content.
-        'mimes' => [
-            'image/jpeg',
-            'image/png',
-            'image/webp',
-            'image/heic',
-            'image/heif',
-            'application/pdf',
-        ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Providers
-    |--------------------------------------------------------------------------
-    |
-    | Only one SMS driver is active at a time, chosen by the developer. Several
-    | payment drivers may be active at once, and the client picks at checkout.
-    |
-    | Secrets are not read from here: they live encrypted in the settings table
-    | so they can be rotated from the interface. The env values below are only
-    | picked up once, at install time, when that table is still empty.
-    |
-    */
 
     /*
     | Telephone numbers, stored in E.164.
@@ -202,54 +186,51 @@ return [
     | metadata nobody maintains by hand, and this package does not pretend to
     | do it. What it does is refuse a number that cannot be one.
     |
-    | `digits` is the national number, dialling code excluded, and a national
-    | trunk zero is dropped before counting. Add a country by adding a line.
+    | `min` and `max` bound the national number, dialling code excluded, a
+    | trunk zero dropped before counting unless `keeps_zero` says it is part
+    | of the number. Canada shares +1 and lives under `US`. Add a country by
+    | adding a line.
     | The names are shown in the field, which is why they are in French.
     */
     'phone' => [
         'default_country' => env('BOOKING_PHONE_COUNTRY', 'FR'),
 
         'countries' => [
-            'FR' => ['name' => 'France', 'flag' => '🇫🇷', 'code' => '+33', 'digits' => 9],
-            'BE' => ['name' => 'Belgique', 'flag' => '🇧🇪', 'code' => '+32', 'digits' => 9],
-            'CH' => ['name' => 'Suisse', 'flag' => '🇨🇭', 'code' => '+41', 'digits' => 9],
-            'LU' => ['name' => 'Luxembourg', 'flag' => '🇱🇺', 'code' => '+352', 'digits' => 9],
-            'MC' => ['name' => 'Monaco', 'flag' => '🇲🇨', 'code' => '+377', 'digits' => 8],
-            'DE' => ['name' => 'Allemagne', 'flag' => '🇩🇪', 'code' => '+49', 'digits' => 10],
-            'IT' => ['name' => 'Italie', 'flag' => '🇮🇹', 'code' => '+39', 'digits' => 10],
-            'ES' => ['name' => 'Espagne', 'flag' => '🇪🇸', 'code' => '+34', 'digits' => 9],
-            'PT' => ['name' => 'Portugal', 'flag' => '🇵🇹', 'code' => '+351', 'digits' => 9],
-            'GB' => ['name' => 'Royaume-Uni', 'flag' => '🇬🇧', 'code' => '+44', 'digits' => 10],
-            'NL' => ['name' => 'Pays-Bas', 'flag' => '🇳🇱', 'code' => '+31', 'digits' => 9],
-            'AT' => ['name' => 'Autriche', 'flag' => '🇦🇹', 'code' => '+43', 'digits' => 10],
-            'IE' => ['name' => 'Irlande', 'flag' => '🇮🇪', 'code' => '+353', 'digits' => 9],
-            'PL' => ['name' => 'Pologne', 'flag' => '🇵🇱', 'code' => '+48', 'digits' => 9],
-            'RO' => ['name' => 'Roumanie', 'flag' => '🇷🇴', 'code' => '+40', 'digits' => 9],
-            'MA' => ['name' => 'Maroc', 'flag' => '🇲🇦', 'code' => '+212', 'digits' => 9],
-            'DZ' => ['name' => 'Algérie', 'flag' => '🇩🇿', 'code' => '+213', 'digits' => 9],
-            'TN' => ['name' => 'Tunisie', 'flag' => '🇹🇳', 'code' => '+216', 'digits' => 8],
-            'US' => ['name' => 'États-Unis', 'flag' => '🇺🇸', 'code' => '+1', 'digits' => 10],
-            'CA' => ['name' => 'Canada', 'flag' => '🇨🇦', 'code' => '+1', 'digits' => 10],
+            'FR' => ['name' => 'France', 'flag' => '🇫🇷', 'code' => '+33', 'min' => 9, 'max' => 9],
+            'BE' => ['name' => 'Belgique', 'flag' => '🇧🇪', 'code' => '+32', 'min' => 8, 'max' => 9],
+            'CH' => ['name' => 'Suisse', 'flag' => '🇨🇭', 'code' => '+41', 'min' => 9, 'max' => 9],
+            'LU' => ['name' => 'Luxembourg', 'flag' => '🇱🇺', 'code' => '+352', 'min' => 6, 'max' => 9],
+            'MC' => ['name' => 'Monaco', 'flag' => '🇲🇨', 'code' => '+377', 'min' => 8, 'max' => 9],
+            'DE' => ['name' => 'Allemagne', 'flag' => '🇩🇪', 'code' => '+49', 'min' => 6, 'max' => 11],
+            'IT' => ['name' => 'Italie', 'flag' => '🇮🇹', 'code' => '+39', 'min' => 6, 'max' => 11, 'keeps_zero' => true],
+            'ES' => ['name' => 'Espagne', 'flag' => '🇪🇸', 'code' => '+34', 'min' => 9, 'max' => 9],
+            'PT' => ['name' => 'Portugal', 'flag' => '🇵🇹', 'code' => '+351', 'min' => 9, 'max' => 9],
+            'GB' => ['name' => 'Royaume-Uni', 'flag' => '🇬🇧', 'code' => '+44', 'min' => 9, 'max' => 10],
+            'NL' => ['name' => 'Pays-Bas', 'flag' => '🇳🇱', 'code' => '+31', 'min' => 9, 'max' => 9],
+            'AT' => ['name' => 'Autriche', 'flag' => '🇦🇹', 'code' => '+43', 'min' => 7, 'max' => 13],
+            'IE' => ['name' => 'Irlande', 'flag' => '🇮🇪', 'code' => '+353', 'min' => 7, 'max' => 9],
+            'PL' => ['name' => 'Pologne', 'flag' => '🇵🇱', 'code' => '+48', 'min' => 9, 'max' => 9],
+            'RO' => ['name' => 'Roumanie', 'flag' => '🇷🇴', 'code' => '+40', 'min' => 9, 'max' => 9],
+            'MA' => ['name' => 'Maroc', 'flag' => '🇲🇦', 'code' => '+212', 'min' => 9, 'max' => 9],
+            'DZ' => ['name' => 'Algérie', 'flag' => '🇩🇿', 'code' => '+213', 'min' => 8, 'max' => 9],
+            'TN' => ['name' => 'Tunisie', 'flag' => '🇹🇳', 'code' => '+216', 'min' => 8, 'max' => 8],
+            'US' => ['name' => 'États-Unis, Canada', 'flag' => '🇺🇸', 'code' => '+1', 'min' => 10, 'max' => 10],
         ],
     ],
 
-    'sms' => [
-        'driver' => env('BOOKING_SMS_DRIVER', 'log'),
-
-        'drivers' => [
-            'log' => ['channel' => env('BOOKING_SMS_LOG_CHANNEL')],
-            'null' => [],
-            'envoyer_sms_pro' => [
-                'seed_api_key' => env('BOOKING_SMS_API_KEY'),
-                'seed_sender_name' => env('BOOKING_SMS_SENDER'),
-            ],
-        ],
-    ],
-
-    'payment' => [
-        'enabled_drivers' => [],
-        'webhook_prefix' => 'booking/webhooks',
-        'currency' => 'eur',
+    /*
+    | Whether the radius of the home visits is checked, as the crow flies.
+    |
+    | True: the starting point is located when the home visits screen is saved,
+    | and each address is located against it · out of the radius, a booking
+    | online is refused and the counter is warned. The address goes to the
+    | public geocoding service of the IGN, which the privacy page says, and the
+    | server needs an outgoing HTTPS connection to data.geopf.fr.
+    |
+    | False: the radius is only said, as before, and no address leaves.
+    */
+    'home_visits' => [
+        'check_radius' => env('BOOKING_CHECK_TRAVEL_RADIUS', true),
     ],
 
     /*
@@ -293,7 +274,7 @@ return [
     |     * * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
     |
     | False unhooks them, for a host that would rather call `booking:remind` and
-    | `booking:complete-past` on its own terms. The commands stay registered
+    | `booking:send-messages` on its own terms. The commands stay registered
     | either way.
     */
     'scheduler' => [
@@ -310,6 +291,7 @@ return [
     | block appear; address and phone complete what the law asks.
     */
     'legal' => [
+        // The site is hosted by Hostinger, the same for every environment.
         'host' => [
             'name' => 'Hostinger International Ltd',
             'address' => '61 Lordou Vironos Street, 6023 Larnaca, Chypre',
@@ -427,15 +409,11 @@ return [
             'legal_mediator_url' => null,
         ],
 
-        'messages' => [
-            'blocked_client' => null,
-            'home_request' => null,
-        ],
-
         /*
         | Who the establishment warns, and about what. The message to the client
-        | is not here: it always goes out, because it carries the link to move
-        | or cancel, and cutting it would leave the client no way to act.
+        | is not here, but for the one switch below: once a visit exists, what
+        | happens to it is always told, because the client knows every visit of
+        | theirs and the message carries the link to move or cancel.
         |
         | `recipients` is a list of addresses and not of accounts, which is what
         | makes it writable before accounts exist: the day practitioners and
@@ -443,12 +421,14 @@ return [
         | switches do not move.
         */
         'notifications' => [
-            // Whether an appointment entered by hand sends a confirmation. It
-            // commands only the birth of a counter booking; what happens to it
-            // afterwards follows a rule and not a setting, since the counter
-            // only speaks of a visit the client has already heard about, which
-            // `appointments.client_told_at` records.
-            'confirm_counter_bookings' => true,
+            // Whether the form of an appointment entered by hand opens with its
+            // confirmation ticked. The box decides, visit by visit, when it is
+            // saved; it commands only the birth of a counter booking. What happens
+            // to it afterwards follows a rule and not a setting: a move, a
+            // cancellation or a change of what the client knows is always told.
+            // False here: the establishment confirms by phone, and ticks the box
+            // when the client wants the message.
+            'confirm_counter_bookings' => false,
 
             'recipients' => [],
 
@@ -462,10 +442,10 @@ return [
         ],
 
         'reminders' => [
-            // Whether a reminder goes out at all: the switch the establishment
-            // holds, and what an appointment's own `reminder_enabled` follows
-            // when it is null, which is its default. An appointment may
-            // contradict it either way.
+            // Whether an appointment gets a reminder, read when it is
+            // registered: the choice its form opens on, and the value of one
+            // booked online. Each appointment then keeps its own
+            // `reminder_enabled`, whatever this becomes afterwards.
             'enabled' => true,
 
             // Should stay below the minimum booking notice, otherwise a share
@@ -504,18 +484,7 @@ return [
             'max_reschedules' => 1,
         ],
 
-        'payment' => [
-            // How long a slot stays held while the deposit is being paid. Too
-            // short and clients fail to pay in time, too long and the agenda
-            // freezes for nothing.
-            'hold_minutes' => 15,
-        ],
-
         'lifecycle' => [
-            // A scheduled appointment left untouched this long after it ended
-            // is considered honoured, so the takings are right without anyone
-            // having to click through the past week.
-            'auto_complete_after_hours' => 12,
 
             // When a scheduled task of the package last finished. Operational
             // and not a business setting, the only key here that is not one:
