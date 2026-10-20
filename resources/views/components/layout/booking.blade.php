@@ -10,6 +10,9 @@
     s'affiche entière et ne répond à aucun clic.
 
     Le référencement de la page vient du paquet, qui le pose sur la pile `head`.
+
+    Le corps fait au moins un écran, et l'écran du paquet s'étire · une page
+    courte, la page introuvable, garde notre pied en bas.
 --}}
 @props(['title' => null])
 
@@ -38,10 +41,10 @@
 
     @stack('head')
 </head>
-<body class="bg-cream text-charcoal font-sans antialiased">
+<body class="flex min-h-dvh flex-col bg-cream text-charcoal font-sans antialiased">
     <x-layout.header />
 
-    <main class="booking-page">
+    <main class="booking-page flex-1">
         {{ $slot }}
     </main>
 
