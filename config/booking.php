@@ -59,10 +59,10 @@ return [
     */
     'layouts' => [
         // The back office takes the site's own shell, with its sidebar and its
-        // account. The public page keeps the package's: the site has its own
-        // pages, and this one is complete on its own.
+        // account. The public pages take the site's too · its header, its
+        // footer, its face and its colours, set in `css/web/booking.css`.
         'admin' => 'layout.admin',
-        'public' => null,
+        'public' => 'layout.booking',
     ],
 
     /*

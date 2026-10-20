@@ -1,0 +1,50 @@
+/* La page de réservation de booking, aux couleurs du site · les variables que
+   le paquet ouvre sur `.fb-public`, et rien d'autre de lui. Hors couche, donc
+   au-dessus de sa feuille.
+
+   Elles ne valent que là où le paquet pose `.fb-public` · une page du site
+   n'en porte aucune. */
+.fb-public {
+    --fb-public-ground: #F9F6F2;
+    --fb-public-muted: #7f756f;
+    --fb-public-line: #ECE5DE;
+    --fb-public-heading: #512731;
+    --fb-public-heading-weight: 300;
+    --fb-public-name-weight: 400;
+    --fb-public-strong-weight: 500;
+    --fb-public-figure-weight: 300;
+    --fb-public-icon: #512731;
+    --fb-public-surface-ink: #333333;
+    --fb-public-strong-ink: #222222;
+    --fb-public-soft: #F5F0EA;
+    --fb-public-soft-strong: #ECE4DB;
+    --fb-public-recap: #FBF8F5;
+    --fb-public-pick: #512731;
+    --fb-public-action: #000000;
+    --fb-public-action-hover: #222222;
+    --fb-public-action-weight: 400;
+
+    /* Notre en-tête est fixe, et mesure 84 px à toutes les largeurs · la barre
+       des catégories reste dessous. */
+    --fb-public-sticky-top: 84px;
+    --fb-public-sticky-top-phone: 84px;
+}
+
+/* L'écran laisse de l'air avant notre pied · l'en-tête, lui, pose sa propre
+   cale. */
+.booking-page {
+    padding-bottom: 72px;
+}
+
+@media (min-width: 761px) {
+    .booking-page {
+        padding-bottom: 120px;
+    }
+}
+
+/* Le décalage de nos ancres (`anchors.css`) ne connaît que notre en-tête · dans
+   l'écran du paquet, chaque ancre garde celui qu'il calcule, barre des
+   catégories comprise. */
+.fb-public [id] {
+    scroll-margin-top: revert-layer;
+}
