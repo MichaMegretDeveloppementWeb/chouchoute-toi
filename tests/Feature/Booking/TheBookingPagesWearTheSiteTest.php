@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Booking;
 
+use Falcon\Booking\Models\Client;
+use Falcon\Booking\Services\Shared\Client\ClientLinkService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -24,7 +26,30 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
 
     public function test_the_page_has_the_site_header_and_footer(): void
     {
-        $this->page()
+        $this->wearsTheSite($this->page());
+    }
+
+    public function test_the_page_to_find_ones_appointments_wears_the_site_too(): void
+    {
+        $this->wearsTheSite($this->get(route('booking.public.space.find'))->assertOk())
+            ->assertSee('Retrouver mes rendez-vous');
+    }
+
+    public function test_the_clients_space_wears_the_site_too(): void
+    {
+        $links = app(ClientLinkService::class);
+        $link = $links->urlFor($links->issueFor(Client::factory()->create()));
+
+        $this->assertNotNull($link);
+
+        $this->wearsTheSite($this->followingRedirects()->get($link)->assertOk())
+            ->assertSee('Vos rendez-vous');
+    }
+
+    /** The site's header and footer around the package's screen, and not the package's own shell. */
+    private function wearsTheSite(TestResponse $response): TestResponse
+    {
+        return $response
             ->assertSee('data-header', false)
             ->assertSee('<main class="booking-page">', false)
             ->assertSee('class="bg-black text-white"', false)
