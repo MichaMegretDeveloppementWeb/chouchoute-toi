@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Seo;
 
 use App\Services\SiteGraphService;
+use Falcon\Booking\Models\Location;
+use Falcon\Booking\Repositories\Settings\SettingsRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -26,7 +28,8 @@ final class TheSiteSaysWhoItIsTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Les six pages publiques, par leur nom de route.
+     * Les six pages publiques, par leur nom de route, et la page de
+     * réservation de booking, qui en emprunte l'entreprise et le site.
      *
      * @return list<array{string}>
      */
@@ -39,6 +42,7 @@ final class TheSiteSaysWhoItIsTest extends TestCase
             ['contact'],
             ['reviews'],
             ['legal'],
+            ['booking.public.home'],
         ];
     }
 
@@ -287,6 +291,58 @@ final class TheSiteSaysWhoItIsTest extends TestCase
         // Et elle ne redit rien de ce que le gabarit a deja dit.
         $this->assertArrayNotHasKey('address', $addition);
         $this->assertArrayNotHasKey('name', $addition);
+    }
+
+    /**
+     * **La page de réservation emprunte l'entreprise et le site**, et n'en
+     * décrit pas un second.
+     *
+     * Le paquet n'y déclare ni entreprise ni site à lui · ce qu'il ajoute, la
+     * réservation, se rattache à l'entreprise du site, et un moteur qui
+     * fusionne les blocs n'y lit qu'un établissement, réservable.
+     */
+    public function test_the_reservation_page_borrows_the_business_and_the_site(): void
+    {
+        $nodes = $this->nodesOf('booking.public.home');
+        $reservation = route('booking.public.home');
+
+        $this->assertNotContains($reservation.'#business', array_column($nodes, '@id'));
+        $this->assertSame(['WebSite'], array_values(array_filter(
+            array_column($nodes, '@type'),
+            static fn (mixed $type): bool => $type === 'WebSite',
+        )), 'Un seul site doit être déclaré.');
+
+        $business = $this->merged($nodes)[SiteGraphService::id('business')];
+
+        $this->assertSame('BeautySalon', $business['@type']);
+        $this->assertSame(['@id' => $reservation.'#reserve'], $business['potentialAction']);
+    }
+
+    /**
+     * **Un lieu à l'adresse de l'institut n'en fait pas un second.**
+     *
+     * Le lieu se confond avec l'entreprise du site · aucun nœud à lui, et la rue
+     * reste écrite une fois.
+     */
+    public function test_a_place_at_the_salon_is_the_salon(): void
+    {
+        app(SettingsRepository::class)->setMany([
+            'business.address' => config('entreprise.adresse.rue'),
+            'business.postal_code' => config('entreprise.adresse.code_postal'),
+            'business.city' => config('entreprise.adresse.ville'),
+        ]);
+
+        $studio = Location::factory()->create([
+            'name' => 'Le studio',
+            'address' => config('entreprise.adresse.rue'),
+            'postal_code' => config('entreprise.adresse.code_postal'),
+            'city' => config('entreprise.adresse.ville'),
+        ]);
+
+        $nodes = $this->nodesOf('booking.public.home');
+
+        $this->assertNotContains(route('booking.public.home').'#place-'.$studio->id, array_column($nodes, '@id'));
+        $this->assertSame(1, $this->countKey($nodes, 'streetAddress'), 'La rue ne doit être écrite qu’une fois.');
     }
 
     /**

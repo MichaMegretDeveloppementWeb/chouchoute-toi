@@ -42,19 +42,36 @@ final class SiteGraphService
     }
 
     /**
-     * The nodes the layout lays on every page. The founder is among them
-     * although no page asks for her: she is the business's `founder`, and a
-     * reference dangling in the void is a broken graph.
+     * The nodes the layout lays on every page: the site's entities, then the
+     * page itself.
      *
      * @return list<array<string, mixed>>
      */
     public static function siteNodes(string $title, string $description, string $pageType = 'WebPage'): array
     {
         return [
+            ...self::entityNodes(),
+            self::webPage($title, $description, $pageType),
+        ];
+    }
+
+    /**
+     * The business, its founder and the site, which no page changes. The
+     * founder is among them although no page asks for her: she is the
+     * business's `founder`, and a reference dangling in the void is a broken
+     * graph.
+     *
+     * The booking pages carry these alone · the package names its page itself,
+     * and borrows the business and the site by their `@id`.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function entityNodes(): array
+    {
+        return [
             self::business(),
             self::founder(),
             self::website(),
-            self::webPage($title, $description, $pageType),
         ];
     }
 

@@ -121,15 +121,21 @@ return [
 
     'seo' => [
         // When the host already describes its business in JSON-LD, put its @id
-        // here: the package then emits no business node of its own, and its
-        // `Service` nodes point at that entity instead. Two competing
-        // establishments on one page make the result worse, not richer. Only
-        // useful when the funnel renders into the host's own layout.
-        'business_entity_id' => null,
+        // here: the package then emits no business node of its own, its
+        // `Service` nodes point at that entity instead, and a place at the
+        // seat's address is that entity rather than a second one. Two
+        // competing establishments on one page make the result worse, not
+        // richer. A value leading with `#` is read on the application's root,
+        // `url('/')`. Only useful when the funnel renders into the host's own
+        // layout, which then carries the host's description.
+        'business_entity_id' => '#business',
 
-        // The page title, for every public page but the entry. The entry
-        // carries no page name: it is the establishment, and the pattern is
-        // skipped there rather than trimmed.
+        // The same for the host's `WebSite`: the package then declares none,
+        // and its page is part of the host's site.
+        'website_entity_id' => '#website',
+
+        // The page title, for every public page. The entry's page name is
+        // « Réserver en ligne ».
         'title_pattern' => ':page · :business',
     ],
 

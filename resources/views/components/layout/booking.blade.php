@@ -9,7 +9,11 @@
     l'injection automatique étant coupée sur ce site · sans elles, la réservation
     s'affiche entière et ne répond à aucun clic.
 
-    Le référencement de la page vient du paquet, qui le pose sur la pile `head`.
+    Le référencement de la page vient du paquet, qui le pose sur la pile `head` ·
+    notre description de l'entreprise et du site s'y ajoute, dans un bloc à
+    elle · le paquet les emprunte par leur `@id` (`seo.*_entity_id`, dans
+    `config/booking.php`), et sur la page même, rien n'est cité sans être
+    déclaré.
 
     Le corps fait au moins un écran, et l'écran du paquet s'étire · une page
     courte, la page introuvable, garde notre pied en bas.
@@ -40,6 +44,8 @@
     @livewireStyles
 
     @stack('head')
+
+    <x-seo.graph :nodes="\App\Services\SiteGraphService::entityNodes()" />
 </head>
 <body class="flex min-h-dvh flex-col bg-cream text-charcoal font-sans antialiased">
     <x-layout.header />
