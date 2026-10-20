@@ -35,6 +35,20 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
             ->assertSee('Retrouver mes rendez-vous');
     }
 
+    public function test_the_legal_notice_wears_the_site_too(): void
+    {
+        $this->wearsTheSite($this->get(route('booking.public.legal'))->assertOk())
+            ->assertSee('Mentions légales');
+    }
+
+    /** A short page · the body is a screen high at least, and our footer stays at its foot. */
+    public function test_the_missing_page_wears_the_site_and_keeps_the_footer_down(): void
+    {
+        $this->wearsTheSite($this->get('/reservation/nulle-part')->assertNotFound())
+            ->assertSee('Cette page n’existe pas ou plus.')
+            ->assertSee('<body class="flex min-h-dvh flex-col', false);
+    }
+
     public function test_the_clients_space_wears_the_site_too(): void
     {
         $links = app(ClientLinkService::class);
@@ -51,7 +65,7 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
     {
         return $response
             ->assertSee('data-header', false)
-            ->assertSee('<main class="booking-page">', false)
+            ->assertSee('<main class="booking-page flex-1">', false)
             ->assertSee('class="bg-black text-white"', false)
             ->assertDontSee('fb-public-shell', false);
     }
