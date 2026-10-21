@@ -101,4 +101,13 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
         $this->assertStringContainsString("@import './web/booking.css';", (string) file_get_contents(resource_path('css/web.css')));
         $this->assertSame('layout.booking', config('booking.layouts.public'));
     }
+
+    /** A price keeps the package's weight, and an icon the grey of the mentions · neither is ours to colour. */
+    public function test_prices_and_icons_stay_quiet(): void
+    {
+        $sheet = (string) file_get_contents(resource_path('css/web/booking.css'));
+
+        $this->assertStringNotContainsString('--fb-public-figure-weight', $sheet);
+        $this->assertStringNotContainsString('--fb-public-icon', $sheet);
+    }
 }
