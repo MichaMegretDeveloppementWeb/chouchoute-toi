@@ -1,0 +1,229 @@
+/*
+ | The back office's sidebar, drawn by its rows · the kit's bar, reached by its
+ | hook classes, with rows across its whole width, a fine rule between them,
+ | and the current page filled with the action colour.
+ |
+ | In `components`, after the kit's utilities and before ours · the kit's own
+ | classes give way without `!important`, and a utility written in our markup
+ | still has the last word.
+ */
+
+@layer components {
+    /* The establishment's colour, where booking is on the page, and its value
+       where it is not · the dashboard and Audience load nothing of booking. */
+    :root {
+        --admin-sidebar-action: var(--fb-primary, #178079);
+        --admin-sidebar-ink: var(--fb-primary-ink, #176f6a);
+        --admin-sidebar-soft: var(--fb-primary-soft, #d9f5f3);
+    }
+
+    .dark {
+        --admin-sidebar-ink: color-mix(in oklab, var(--admin-sidebar-action) 40%, white);
+        --admin-sidebar-soft: color-mix(in oklab, var(--admin-sidebar-action) 22%, transparent);
+    }
+
+    /* The menu stands on the axis of its icons, 31 pixels from the edge · the
+       middle of the folded bar, a row's 22 and half its 18. The logo and the
+       avatar of the account, 32 wide at 20, step back by 5. */
+    .admin-brand-logo,
+    .admin-account > :first-child {
+        margin-inline-start: -5px;
+    }
+
+    .ui-sidebar-group {
+        margin-inline: -20px;
+    }
+
+    .ui-sidebar-group > ul {
+        margin-inline: 0;
+    }
+
+    .ui-sidebar-group > ul > li {
+        margin-block: 0;
+    }
+
+    .ui-sidebar-link {
+        max-width: none;
+        min-height: 48px;
+        padding: 13px 22px;
+        border-radius: 0;
+        border-bottom: 1px solid var(--ui-border-subtle);
+        color: var(--ui-text-secondary);
+    }
+
+    /* A row across the whole bar, the width the bar takes · it changes at once
+       when the bar folds, so it follows over the time the bar takes. */
+    .ui-sidebar :is(.ui-sidebar-link, .ui-sidebar-collapsible) {
+        width: var(--ui-sidebar-w);
+        transition: width .3s ease-in-out, column-gap .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
+    }
+
+    .ui-sidebar-link:hover {
+        background: var(--admin-sidebar-soft);
+        color: var(--admin-sidebar-ink);
+    }
+
+    .ui-sidebar-link[aria-current='page'] {
+        background: var(--admin-sidebar-action);
+        color: #fff;
+    }
+
+    .ui-sidebar-link .ui-icon {
+        color: inherit;
+        opacity: .75;
+    }
+
+    .ui-sidebar-link[aria-current='page'] .ui-icon {
+        opacity: 1;
+    }
+
+    .ui-sidebar-link:focus-visible {
+        outline: 2px solid var(--admin-sidebar-action);
+        outline-offset: -3px;
+    }
+
+    /* 14 px under the drawer's header, whose border already separates. */
+    .ui-sidebar-drawer > div > nav {
+        overflow-y: auto;
+        padding-top: 14px;
+    }
+
+    /*
+     | A section of the menu, cut like a link · its row, its label and its
+     | chevron, which carry the padding and fill the row, so a click lands on
+     | one of them wherever it falls.
+     |
+     | One of its pages open, the bar says so · open, the label darker and
+     | bolder, and the page itself filled below · folded, the row filled like a
+     | current link, the page being out of sight.
+     */
+    .ui-sidebar-collapsible {
+        max-width: none;
+        min-height: 48px;
+        padding: 0;
+        column-gap: 0;
+        border-radius: 0;
+        border-bottom: 1px solid var(--ui-border-subtle);
+        color: var(--ui-text-secondary);
+        font-weight: 400;
+    }
+
+    .ui-sidebar-collapsible > :is(.ui-sidebar-gap, .ui-sidebar-chevron) {
+        align-self: stretch;
+        min-height: 0;
+        height: auto;
+        margin-block: 0;
+    }
+
+    .ui-sidebar-collapsible > .ui-sidebar-gap {
+        padding: 13px 0 13px 22px;
+    }
+
+    .ui-sidebar-collapsible > .ui-sidebar-chevron {
+        width: auto;
+        padding: 0 22px 0 12px;
+    }
+
+    .ui-sidebar-collapsible .ui-icon {
+        color: inherit;
+        opacity: .75;
+    }
+
+    .ui-sidebar-collapsible.ui-sidebar-badge {
+        color: var(--ui-text-primary);
+        font-weight: 600;
+    }
+
+    .ui-sidebar-collapsible:hover {
+        background: var(--admin-sidebar-soft);
+        color: var(--admin-sidebar-ink);
+    }
+
+    .ui-sidebar-collapsible :focus-visible {
+        outline: 2px solid var(--admin-sidebar-action);
+        outline-offset: -3px;
+    }
+
+    /* Unrolled, the section and its pages are one block · the rule leaves the
+       row for the end of the list. */
+    .ui-sidebar-collapsible:has(.ui-sidebar-chevron[aria-expanded='true']) {
+        border-bottom-color: transparent;
+    }
+
+    /* Its pages, the width of the bar, their text under the section's · forty
+       pixels and no rule between them. */
+    .ui-sidebar-submenu {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-bottom: 1px solid var(--ui-border-subtle);
+    }
+
+    .ui-sidebar-submenu > li {
+        margin-block: 0;
+    }
+
+    .ui-sidebar-submenu .ui-sidebar-link {
+        min-height: 40px;
+        padding: 10px 22px 10px 52px;
+        border-bottom: 0;
+    }
+
+    /* Folded · the row of a current link, the label alone across its width,
+       the chevron out of sight without its padding. */
+    @media (width < 93.75rem) {
+        .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-chevron {
+            padding: 0;
+        }
+
+        .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-collapsible {
+            border-bottom-color: var(--ui-border-subtle);
+        }
+
+        .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-badge {
+            background: var(--admin-sidebar-action);
+            color: #fff;
+        }
+
+        .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-badge .ui-icon {
+            opacity: 1;
+        }
+    }
+
+    .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-chevron {
+        padding: 0;
+    }
+
+    .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-collapsible {
+        border-bottom-color: var(--ui-border-subtle);
+    }
+
+    .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-badge {
+        background: var(--admin-sidebar-action);
+        color: #fff;
+    }
+
+    .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-badge .ui-icon {
+        opacity: 1;
+    }
+
+    /* The panel the rail opens · the same forty pixels, in a box of its own. */
+    .ui-sidebar-panel .ui-sidebar-link {
+        min-height: 40px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border-bottom: 0;
+    }
+
+    .ui-sidebar-panel > p {
+        padding-inline: 12px;
+        font-size: 12px;
+        color: var(--ui-text-secondary);
+        text-transform: none;
+        letter-spacing: 0;
+    }
+
+    .dark .ui-sidebar-link[aria-current='page'] {
+        color: #fff;
+    }
+}

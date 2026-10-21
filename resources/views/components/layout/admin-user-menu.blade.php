@@ -28,7 +28,7 @@
         @click="open = !open"
         :aria-expanded="open"
         aria-haspopup="true"
-        class="ui-sidebar-gap flex w-full items-center px-5 py-3 transition-colors hover:bg-gray-50 lg:px-0 lg:py-3 dark:hover:bg-gray-800"
+        class="admin-account ui-sidebar-gap flex w-full items-center px-5 py-3 transition-colors hover:bg-gray-50 lg:px-0 lg:py-3 dark:hover:bg-gray-800"
     >
         <x-ui::avatar :initials="$initials" size="default" class="shrink-0" />
 
