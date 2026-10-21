@@ -19,6 +19,17 @@
     $marketing = 'analytics.admin.marketing';
     $booking = 'booking.admin.';
     $admin = auth()->guard('admin')->user();
+
+    // Les écrans des réglages de booking · leur section s'allume sur eux, celle
+    // de l'agenda sur le reste du paquet. Praticiens n'en est pas, bien que son
+    // adresse soit sous `settings`.
+    $onTheSettings = request()->routeIs(
+        $booking.'settings',
+        $booking.'schedule',
+        $booking.'settings.slots',
+        $booking.'settings.booking-window',
+        $booking.'settings.notifications',
+    );
 @endphp
 
 <x-ui::layouts.admin :title="$title">
@@ -43,7 +54,14 @@
             Search Console est configurée, donc la section ne peut pas se
             déduire de ce qu'elle contient.
         --}}
-        <x-ui::sidebar brand="Chouchoute-toi" :brand-logo="asset('favicon/favicon.svg')">
+        <x-ui::sidebar brand="Chouchoute-toi">
+            {{-- Le dessin du kit, et une classe à nous · `admin/sidebar.css` le
+                 recule sur l'axe des icônes. --}}
+            <x-slot:logo>
+                <img src="{{ asset('favicon/favicon.svg') }}" alt=""
+                    class="admin-brand-logo h-8 w-8 shrink-0 rounded-lg bg-white object-contain ring-1 ring-black/5 dark:ring-white/10">
+            </x-slot:logo>
+
             <x-ui::sidebar.group>
                 <x-ui::sidebar.link
                     :href="route('admin.dashboard')"
@@ -60,7 +78,7 @@
                     label="Agenda"
                     icon="calendar-days"
                     :href="route($booking.'agenda')"
-                    :active="request()->routeIs($booking.'*')">
+                    :active="request()->routeIs($booking.'*') && ! $onTheSettings">
                     <x-ui::sidebar.link
                         :href="route($booking.'agenda')"
                         :active="request()->routeIs($booking.'agenda')">
@@ -86,54 +104,55 @@
                     </x-ui::sidebar.link>
 
                     <x-ui::sidebar.link
+                        :href="route($booking.'settings.practitioners')"
+                        :active="request()->routeIs($booking.'settings.practitioners')">
+                        Praticiens
+                    </x-ui::sidebar.link>
+
+                    <x-ui::sidebar.link
                         :href="route($booking.'journal')"
                         :active="request()->routeIs($booking.'journal')">
                         Journal
                     </x-ui::sidebar.link>
+                </x-ui::sidebar.collapsible>
 
-                    {{-- Un troisième niveau : les réglages sont une section à
-                         eux, une page par famille, les horaires compris. --}}
-                    <x-ui::sidebar.collapsible
-                        name="settings"
-                        label="Réglages"
+                {{-- Une section à part, au même niveau qu'Agenda : une page par
+                     famille de réglages, les horaires compris. --}}
+                <x-ui::sidebar.collapsible
+                    name="settings"
+                    label="Réglages"
+                    icon="cog-6-tooth"
+                    :href="route($booking.'settings')"
+                    :active="$onTheSettings">
+                    <x-ui::sidebar.link
                         :href="route($booking.'settings')"
-                        :active="request()->routeIs($booking.'settings*') || request()->routeIs($booking.'schedule')">
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings')"
-                            :active="request()->routeIs($booking.'settings')">
-                            Établissement
-                        </x-ui::sidebar.link>
+                        :active="request()->routeIs($booking.'settings')">
+                        Établissement
+                    </x-ui::sidebar.link>
 
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings.practitioners')"
-                            :active="request()->routeIs($booking.'settings.practitioners')">
-                            Praticiens
-                        </x-ui::sidebar.link>
+                    <x-ui::sidebar.link
+                        :href="route($booking.'schedule')"
+                        :active="request()->routeIs($booking.'schedule')">
+                        Horaires
+                    </x-ui::sidebar.link>
 
-                        <x-ui::sidebar.link
-                            :href="route($booking.'schedule')"
-                            :active="request()->routeIs($booking.'schedule')">
-                            Horaires
-                        </x-ui::sidebar.link>
+                    <x-ui::sidebar.link
+                        :href="route($booking.'settings.slots')"
+                        :active="request()->routeIs($booking.'settings.slots')">
+                        Créneaux
+                    </x-ui::sidebar.link>
 
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings.slots')"
-                            :active="request()->routeIs($booking.'settings.slots')">
-                            Créneaux
-                        </x-ui::sidebar.link>
+                    <x-ui::sidebar.link
+                        :href="route($booking.'settings.booking-window')"
+                        :active="request()->routeIs($booking.'settings.booking-window')">
+                        Réservation
+                    </x-ui::sidebar.link>
 
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings.booking-window')"
-                            :active="request()->routeIs($booking.'settings.booking-window')">
-                            Réservation
-                        </x-ui::sidebar.link>
-
-                        <x-ui::sidebar.link
-                            :href="route($booking.'settings.notifications')"
-                            :active="request()->routeIs($booking.'settings.notifications')">
-                            Notifications
-                        </x-ui::sidebar.link>
-                    </x-ui::sidebar.collapsible>
+                    <x-ui::sidebar.link
+                        :href="route($booking.'settings.notifications')"
+                        :active="request()->routeIs($booking.'settings.notifications')">
+                        Notifications
+                    </x-ui::sidebar.link>
                 </x-ui::sidebar.collapsible>
 
                 <x-ui::sidebar.collapsible

@@ -22,7 +22,14 @@ Pour le site public, voir [Structure des fichiers](structure-fichiers.md).
 notifications, et pose les feuilles et les scripts du kit et des paquets. Notre
 composant n'apporte que ce qui est à nous ·
 
-- la marque et l'arborescence des écrans, dans la barre ;
+- la marque et l'arborescence des écrans, dans la barre · Tableau de bord,
+  puis quatre sections · **Agenda** (Planning, Clients, Prestations,
+  Catégories, Praticiens, Journal), **Réglages** (Établissement, Horaires,
+  Créneaux, Réservation, Notifications), **Audience** et **Marketing** ;
+- le dessin de la barre, `resources/css/admin/sidebar.css` · des lignes sur
+  toute sa largeur, un filet entre elles, la page courante pleine de la couleur
+  d'action de booking · il vise les classes crochets du kit, dont il ne copie
+  aucune vue ;
 - le menu du compte, `<x-layout.admin-user-menu>` ;
 - notre feuille et notre script, **après** ceux du kit et des paquets, donc
   ce sont les nôtres qui gagnent ·
