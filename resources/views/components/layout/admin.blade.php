@@ -20,6 +20,10 @@
     $booking = 'booking.admin.';
     $admin = auth()->guard('admin')->user();
 
+    // Les e-mails que booking n'a pas pu envoyer · leur nombre à côté
+    // d'« Envois », qu'un renvoi met à jour sans recharger la page.
+    $notSent = app(\Falcon\Booking\Repositories\Messages\UndeliveredMessageRepository::class);
+
     // Les écrans des réglages de booking · leur sous-menu s'allume sur eux, dans
     // l'agenda qui s'allume sur tout le paquet. Praticiens n'en est pas, bien que
     // son adresse soit sous `settings`.
@@ -112,6 +116,14 @@
                         :href="route($booking.'journal')"
                         :active="request()->routeIs($booking.'journal')">
                         Journal
+                    </x-ui::sidebar.link>
+
+                    <x-ui::sidebar.link
+                        :href="route($booking.'messages')"
+                        :badge="$notSent->count()"
+                        :badge-name="$notSent::SIDEBAR_BADGE"
+                        :active="request()->routeIs($booking.'messages')">
+                        Envois
                     </x-ui::sidebar.link>
 
                     {{-- Les réglages de l'agenda, et de lui seul · un sous-menu
