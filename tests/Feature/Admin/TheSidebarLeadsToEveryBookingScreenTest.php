@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Admin;
 
 use Dom\HTMLDocument;
+use Falcon\Booking\Enums\Appointment\AppointmentActor;
+use Falcon\Booking\Enums\Messages\MessageAudience;
+use Falcon\Booking\Enums\Messages\MessageKind;
+use Falcon\Booking\Enums\Messages\MessageStatus;
+use Falcon\Booking\Models\OutgoingMessage;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RouteDefinition;
 use Illuminate\Support\Facades\Blade;
@@ -23,6 +29,8 @@ use Tests\TestCase;
  */
 final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** Les adresses du paquet qui ne sont pas des écrans de menu. */
     private const NOT_IN_THE_MENU = ['booking.admin.attachment', 'booking.admin.missing'];
 
@@ -40,7 +48,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
     /**
      * L'Agenda · Planning, Clients, Prestations, Catégories, Praticiens, puis
-     * Journal · et les Réglages à la fin, sans les Praticiens.
+     * Journal et Envois · et les Réglages à la fin, sans les Praticiens.
      */
     public function test_the_agenda_holds_the_practitioners_and_the_settings_follow_it(): void
     {
@@ -48,7 +56,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
         $order = array_map(
             fn (string $name): int|false => strpos($page, 'href="'.route('booking.admin.'.$name).'"'),
-            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'journal', 'settings', 'schedule', 'settings.slots', 'settings.booking-window', 'settings.notifications'],
+            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'journal', 'messages', 'settings', 'schedule', 'settings.slots', 'settings.booking-window', 'settings.notifications'],
         );
 
         $this->assertNotContains(false, $order, 'Un écran manque à la barre.');
@@ -84,6 +92,33 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
         $this->assertNotNull($holder, 'Les Réglages sont encore une section à part, au niveau de l’Agenda.');
         $this->assertSame('Agenda', trim((string) $holder->querySelector('.ui-sidebar-label')?->textContent));
+    }
+
+    /**
+     * À côté d'« Envois », le nombre des e-mails que booking n'a pas pu
+     * envoyer, sous le nom qu'un renvoi met à jour.
+     */
+    public function test_envois_carries_the_count_of_emails_not_sent(): void
+    {
+        foreach (['premier', 'second', 'dernier'] as $recipient) {
+            OutgoingMessage::query()->create([
+                'gesture' => str_pad($recipient, 26, '0'),
+                'kind' => MessageKind::Booked,
+                'audience' => MessageAudience::Client,
+                'actor' => AppointmentActor::Client,
+                'recipient' => $recipient.'@exemple.fr',
+                'status' => MessageStatus::Failed,
+                'attempts' => OutgoingMessage::AUTOMATIC_ATTEMPTS,
+                'created_at' => now(),
+            ]);
+        }
+
+        $page = Blade::render('<x-layout.admin></x-layout.admin>');
+
+        $this->assertMatchesRegularExpression(
+            '/href="'.preg_quote(route('booking.admin.messages'), '/').'" data-ui-title="Envois"\s+x-data="'.preg_quote("uiSidebarBadge({ name: 'booking-messages', count: 3 })", '/').'"/',
+            $page,
+        );
     }
 
     /**
