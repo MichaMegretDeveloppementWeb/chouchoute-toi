@@ -451,18 +451,10 @@ return [
 
         'slot' => [
             'granularity_minutes' => 15,
-
-            // Slots land on the step, counted from the opening of their
-            // window, rather than trailing whatever precedes them.
-            'align_to_grid' => true,
         ],
 
         'buffer' => [
             'default_minutes' => 15,
-
-            // An appointment may end at closing time with its buffer spilling
-            // past it. Worth roughly one sellable slot a day.
-            'overflows_closing' => true,
         ],
 
         'booking_window' => [
