@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
+use Dom\HTMLDocument;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RouteDefinition;
 use Illuminate\Support\Facades\Blade;
@@ -39,7 +40,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
     /**
      * L'Agenda · Planning, Clients, Prestations, Catégories, Praticiens, puis
-     * Journal · et les Réglages après lui, sans les Praticiens.
+     * Journal · et les Réglages à la fin, sans les Praticiens.
      */
     public function test_the_agenda_holds_the_practitioners_and_the_settings_follow_it(): void
     {
@@ -60,8 +61,34 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     }
 
     /**
+     * Les Réglages sont un sous-menu de l'Agenda · ils ne règlent que lui, et au
+     * niveau d'Audience et de Marketing ils laissaient croire qu'ils les règlent
+     * aussi.
+     */
+    public function test_the_settings_are_a_submenu_of_the_agenda(): void
+    {
+        $document = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.Blade::render('<x-layout.admin></x-layout.admin>').'</body></html>', LIBXML_NOERROR);
+        $settings = null;
+
+        foreach ($document->querySelectorAll('.ui-sidebar-section') as $section) {
+            if (trim((string) $section->querySelector('.ui-sidebar-label')?->textContent) === 'Réglages') {
+                $settings = $section;
+
+                break;
+            }
+        }
+
+        $this->assertNotNull($settings, 'La section Réglages est introuvable dans la barre.');
+
+        $holder = $settings->parentElement?->closest('.ui-sidebar-section');
+
+        $this->assertNotNull($holder, 'Les Réglages sont encore une section à part, au niveau de l’Agenda.');
+        $this->assertSame('Agenda', trim((string) $holder->querySelector('.ui-sidebar-label')?->textContent));
+    }
+
+    /**
      * La page des Praticiens allume l'Agenda, bien que son adresse soit sous
-     * `settings` · celle des Horaires allume les Réglages.
+     * `settings` · celle des Horaires allume l'Agenda et, dedans, les Réglages.
      */
     public function test_each_page_lights_its_own_section(): void
     {
@@ -73,7 +100,8 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
         $hours = $this->pageAt('booking.admin.schedule');
 
         $this->assertTrue($this->lights($hours, 'Réglages'), 'Sur la page des Horaires, la section Réglages n’est pas allumée.');
-        $this->assertFalse($this->lights($hours, 'Agenda'), 'Sur la page des Horaires, la section Agenda s’allume aussi.');
+        $this->assertTrue($this->lights($hours, 'Agenda'), 'Sur la page des Horaires, la section Agenda qui porte les Réglages n’est pas allumée.');
+        $this->assertFalse($this->lights($this->pageAt('admin.dashboard'), 'Agenda'), 'Sur le tableau de bord, la section Agenda s’allume.');
     }
 
     /** La barre rendue comme sur la page que la route nomme. */

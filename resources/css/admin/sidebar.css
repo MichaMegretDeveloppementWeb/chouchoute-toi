@@ -169,6 +169,26 @@
         border-bottom: 0;
     }
 
+    /* A section inside a section · its row the height of the links beside it,
+       its label on their column, and its own pages one step further in. One
+       rule closes the whole list, not one per level. */
+    .ui-sidebar-submenu .ui-sidebar-collapsible {
+        min-height: 40px;
+        border-bottom: 0;
+    }
+
+    .ui-sidebar-submenu .ui-sidebar-collapsible > .ui-sidebar-gap {
+        padding: 10px 0 10px 52px;
+    }
+
+    .ui-sidebar-submenu .ui-sidebar-submenu {
+        border-bottom: 0;
+    }
+
+    .ui-sidebar-submenu .ui-sidebar-submenu .ui-sidebar-link {
+        padding-left: 66px;
+    }
+
     /* Folded · the row of a current link, the label alone across its width,
        the chevron out of sight without its padding. */
     @media (width < 93.75rem) {
@@ -215,12 +235,45 @@
         border-bottom: 0;
     }
 
-    .ui-sidebar-panel > p {
-        padding-inline: 12px;
-        font-size: 12px;
-        color: var(--ui-text-secondary);
+    /* Its title, the name of the section, over a discreet rule. */
+    .ui-sidebar-panel-title {
+        margin-bottom: 4px;
+        padding: 4px 12px 10px;
+        border-bottom: 1px solid var(--ui-border-subtle);
+        font-size: 14px;
+        color: var(--ui-text-primary);
         text-transform: none;
         letter-spacing: 0;
+    }
+
+    /* A section inside the panel · a sub-title over its pages, which stand one
+       step in. It leads to its first page while we are not in it. */
+    .ui-sidebar-panel .ui-sidebar-collapsible {
+        min-height: 36px;
+        border-bottom: 0;
+        color: var(--ui-text-primary);
+        font-weight: 600;
+    }
+
+    .ui-sidebar-panel .ui-sidebar-collapsible > .ui-sidebar-gap {
+        padding: 8px 12px;
+    }
+
+    .ui-sidebar-panel .ui-sidebar-collapsible:hover {
+        background: transparent;
+        color: var(--ui-text-primary);
+    }
+
+    .ui-sidebar-panel .ui-sidebar-collapsible > a:hover {
+        color: var(--admin-sidebar-ink);
+    }
+
+    .ui-sidebar-panel .ui-sidebar-submenu {
+        border-bottom: 0;
+    }
+
+    .ui-sidebar-panel .ui-sidebar-submenu .ui-sidebar-link {
+        padding-left: 24px;
     }
 
     .dark .ui-sidebar-link[aria-current='page'] {
