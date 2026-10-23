@@ -437,11 +437,15 @@ return [
         ],
 
         'reminders' => [
-            // Whether an appointment gets a reminder, read when it is
-            // registered: the choice its form opens on, and the value of one
-            // booked online. Each appointment then keeps its own
-            // `reminder_enabled`, whatever this becomes afterwards.
-            'enabled' => true,
+            // How an appointment is reminded, read when it is registered: by
+            // e-mail, by text message, both or neither · the choice its form
+            // opens on, and the value of one booked online. Each appointment
+            // then keeps its own, whatever these become afterwards. A text the
+            // client's number cannot receive goes by e-mail instead, for an
+            // appointment booked online; none goes while no SMS account is set
+            // up on the Notifications screen.
+            'email' => true,
+            'sms' => false,
 
             // Should stay below the minimum booking notice, otherwise a share
             // of appointments can never be reminded: the reminder time has
