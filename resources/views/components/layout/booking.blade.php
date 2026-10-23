@@ -3,7 +3,7 @@
     notre police et nos couleurs autour de l'écran du paquet. Nommé par
     `booking.layouts.public`.
 
-    `@falconStyles` passe avant notre feuille · l'ordre des couches se joue à la
+    `@falconStyles` passe avant toute feuille, la police comprise · l'ordre des couches se joue à la
     première feuille lue, et la nôtre, qui habille la page (`web/booking.css`),
     arrive après celle du paquet. Les deux directives de Livewire sont écrites,
     l'injection automatique étant coupée sur ce site · sans elles, la réservation
@@ -35,9 +35,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
 
     @falconStyles
+
+    <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
 
     @vite(['resources/css/web.css', 'resources/js/web.js'])
 

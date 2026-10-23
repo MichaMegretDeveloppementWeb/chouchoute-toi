@@ -83,6 +83,21 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
         $this->assertLessThan($site, $package);
     }
 
+    /**
+     * The kit's sheet is the first the page reads, before the font's too · the
+     * order of the layers is fixed by the first sheet, and the kit's check
+     * cannot tell a font sheet from one that declares layers.
+     */
+    public function test_the_kit_comes_before_any_other_sheet(): void
+    {
+        $head = explode('</head>', (string) $this->page()->getContent())[0];
+
+        preg_match_all('/<link\b[^>]*\brel=["\']stylesheet["\'][^>]*>/i', $head, $sheets);
+
+        $this->assertGreaterThan(2, count($sheets[0]), 'The page carries the kit, the font and our own sheet at least.');
+        $this->assertStringContainsString('vendor/falcon/ui/', $sheets[0][0], 'Another sheet comes before the kit: '.$sheets[0][0]);
+    }
+
     /** Without the runtime written out, the reservation renders whole and answers no click. */
     public function test_the_reactive_runtime_and_the_public_script_are_there(): void
     {
