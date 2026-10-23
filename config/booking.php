@@ -405,10 +405,8 @@ return [
         ],
 
         /*
-        | Who the establishment warns, and about what. The message to the client
-        | is not here, but for the one switch below: once a visit exists, what
-        | happens to it is always told, because the client knows every visit of
-        | theirs and the message carries the link to move or cancel.
+        | Who the establishment warns, and about what · the client, by e-mail
+        | and by text message, then the team.
         |
         | `recipients` is a list of addresses and not of accounts, which is what
         | makes it writable before accounts exist: the day practitioners and
@@ -416,15 +414,36 @@ return [
         | switches do not move.
         */
         'notifications' => [
-            // Whether the form of an appointment entered by hand opens with its
-            // confirmation ticked. The box decides, visit by visit, when it is
-            // saved; it commands only the birth of a counter booking. What happens
-            // to it afterwards follows a rule and not a setting: a move, a
-            // cancellation or a change of what the client knows is always told.
-            // False here: the establishment confirms by phone, and ticks the box
-            // when the client wants the message.
-            'confirm_counter_bookings' => false,
+            // What the client hears, and by which channel. No text message
+            // leaves while no SMS account is set up on the Notifications
+            // screen, nor to a number that does not receive texts.
+            'client' => [
+                // What they do themselves online: the e-mail always leaves, it
+                // carries the link to move or cancel; a text message joins it
+                // where these say so.
+                'online' => [
+                    'booked' => ['sms' => false],
+                    'moved' => ['sms' => false],
+                    'cancelled' => ['sms' => false],
+                ],
 
+                // What the establishment does from the administration: the
+                // boxes a gesture opens on, and what a gesture without boxes
+                // sends. A visit given to another client is a cancellation for
+                // the one it leaves and a booking for the one it goes to.
+                'admin' => [
+                    // Unticked by e-mail here: the establishment confirms by
+                    // phone, and ticks the box when the client wants the message.
+                    'booked' => ['email' => false, 'sms' => false],
+                    // Moved, or a change of what the client knows of it.
+                    'changed' => ['email' => true, 'sms' => false],
+                    // Cancelled, or deleted.
+                    'cancelled' => ['email' => true, 'sms' => false],
+                ],
+            ],
+
+            // Told of what clients do online, never of what is done on the
+            // agenda.
             'recipients' => [],
 
             // The practitioner taking the appointment, at the address on their
