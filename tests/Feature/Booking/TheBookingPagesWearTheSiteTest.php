@@ -6,6 +6,7 @@ namespace Tests\Feature\Booking;
 
 use Falcon\Booking\Models\Client;
 use Falcon\Booking\Services\Shared\Client\ClientLinkService;
+use Falcon\Booking\ValueObjects\Client\SpaceScope;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -52,7 +53,7 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
     public function test_the_clients_space_wears_the_site_too(): void
     {
         $links = app(ClientLinkService::class);
-        $link = $links->urlFor($links->issueFor(Client::factory()->create()));
+        $link = $links->urlFor($links->issueFor(Client::factory()->create(), SpaceScope::whole()));
 
         $this->assertNotNull($link);
 
