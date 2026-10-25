@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "98cb69cfe5a5543182bfc40b4fdff0636baac6dc"
+                "reference": "660241a698c0599af3caa269260fd74e5e4096b8"
             },
             "require": {
                 "ext-intl": "*",
@@ -685,7 +685,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "bc04e13c34c53e489be7bb1bf4a874683fe288f4"
+                "reference": "f55dd2f89399c86d3a02f2446f106da18416afc0"
             },
             "require": {
                 "ext-gd": "*",
@@ -781,7 +781,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "e8fb6e84a9aefd8d57e882b4c3f601fd8f81ac42"
+                "reference": "eb58a0f60ff2822a8661c75166d857a485abfd8d"
             },
             "require": {
                 "laravel/framework": "^13.12",
@@ -2595,16 +2595,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.3.5",
+            "version": "v4.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "7ef4b2a876c71744e86463079dd506b26eeab624"
+                "reference": "8d7f8fc6138274a2f3384c9db354ca012215a259"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/7ef4b2a876c71744e86463079dd506b26eeab624",
-                "reference": "7ef4b2a876c71744e86463079dd506b26eeab624",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/8d7f8fc6138274a2f3384c9db354ca012215a259",
+                "reference": "8d7f8fc6138274a2f3384c9db354ca012215a259",
                 "shasum": ""
             },
             "require": {
@@ -2659,7 +2659,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.3.5"
+                "source": "https://github.com/livewire/livewire/tree/v4.4.8"
             },
             "funding": [
                 {
@@ -2667,7 +2667,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-03T04:09:44+00:00"
+            "time": "2026-10-21T12:53:46+00:00"
         },
         {
             "name": "matomo/device-detector",
