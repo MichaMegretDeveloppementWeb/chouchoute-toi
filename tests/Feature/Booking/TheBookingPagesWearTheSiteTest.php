@@ -9,6 +9,7 @@ use Falcon\Booking\Services\Shared\Client\ClientLinkService;
 use Falcon\Booking\ValueObjects\Client\SpaceScope;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 /**
@@ -20,6 +21,7 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @return TestResponse<Response> */
     private function page(): TestResponse
     {
         return $this->get(route('booking.public.home'))->assertOk();
@@ -61,7 +63,12 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
             ->assertSee('Vos rendez-vous');
     }
 
-    /** The site's header and footer around the package's screen, and not the package's own shell. */
+    /**
+     * The site's header and footer around the package's screen, and not the package's own shell.
+     *
+     * @param  TestResponse<Response>  $response
+     * @return TestResponse<Response>
+     */
     private function wearsTheSite(TestResponse $response): TestResponse
     {
         return $response
@@ -74,7 +81,7 @@ final class TheBookingPagesWearTheSiteTest extends TestCase
     /** The order of the sheets decides who wins · the package's first, then ours. */
     public function test_the_package_styles_come_before_the_sites(): void
     {
-        $html = $this->page()->getContent();
+        $html = (string) $this->page()->getContent();
 
         $package = strpos($html, 'vendor/falcon/booking/booking.css');
         $site = strpos($html, '/build/assets/web-');

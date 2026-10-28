@@ -90,7 +90,7 @@ return [
         // button in an administration screen. `magic_link` sends an address by
         // e-mail that exchanges for a session, so there is nothing to create
         // and no password to store. Another strategy joins as a second
-        // implementation of `Contracts\Public\IdentifiesTheClient`, and only
+        // implementation of `Contracts\Web\Client\IdentifiesTheClient`, and only
         // the chosen one is mounted.
         'identification' => 'magic_link',
 
