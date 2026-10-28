@@ -101,7 +101,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     public function test_envois_carries_the_count_of_emails_not_sent(): void
     {
         foreach (['premier', 'second', 'dernier'] as $recipient) {
-            OutgoingMessage::query()->create([
+            OutgoingMessage::query()->forceCreate([
                 'gesture' => str_pad($recipient, 26, '0'),
                 'kind' => MessageKind::Booked,
                 'audience' => MessageAudience::Client,
