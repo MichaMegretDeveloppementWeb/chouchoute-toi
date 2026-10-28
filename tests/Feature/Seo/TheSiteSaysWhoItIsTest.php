@@ -6,6 +6,9 @@ namespace Tests\Feature\Seo;
 
 use App\Services\SiteGraphService;
 use Falcon\Booking\Models\Location;
+use Falcon\Booking\Models\Practitioner;
+use Falcon\Booking\Models\PractitionerLocation;
+use Falcon\Booking\Models\Service;
 use Falcon\Booking\Repositories\Settings\SettingsRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -299,10 +302,13 @@ final class TheSiteSaysWhoItIsTest extends TestCase
      *
      * Le paquet n'y déclare ni entreprise ni site à lui · ce qu'il ajoute, la
      * réservation, se rattache à l'entreprise du site, et un moteur qui
-     * fusionne les blocs n'y lit qu'un établissement, réservable.
+     * fusionne les blocs n'y lit qu'un établissement, réservable · une
+     * prestation s'y réserve en ligne, sans quoi la page ne promet rien.
      */
     public function test_the_reservation_page_borrows_the_business_and_the_site(): void
     {
+        $this->aTreatmentBookedOnline(Location::factory()->create());
+
         $nodes = $this->nodesOf('booking.public.home');
         $reservation = route('booking.public.home');
 
@@ -363,6 +369,18 @@ final class TheSiteSaysWhoItIsTest extends TestCase
             json_decode($rendered, true)['@graph'][0]['reviewBody'],
             'Le texte doit revenir entier apres decodage.',
         );
+    }
+
+    /** Une prestation réservée en ligne, offerte dans un lieu par quelqu'un qui y reçoit. */
+    private function aTreatmentBookedOnline(Location $at): Service
+    {
+        $practitioner = Practitioner::factory()->create();
+        PractitionerLocation::query()->create(['practitioner_id' => $practitioner->id, 'location_id' => $at->id, 'follows_location' => true]);
+
+        $service = Service::factory()->create();
+        $service->practitioners()->sync([$practitioner->id]);
+
+        return $service;
     }
 
     /**
