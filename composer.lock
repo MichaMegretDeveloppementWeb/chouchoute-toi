@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "660241a698c0599af3caa269260fd74e5e4096b8"
+                "reference": "7faf2bfe8beb1570f4199b9c88239239460f194b"
             },
             "require": {
                 "ext-intl": "*",
@@ -685,9 +685,10 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "a1a2ea6c851ab033a55dd0775fda9281e636cd1a"
+                "reference": "a6128ce3a310f49f370f2c3ae05ad1544178746f"
             },
             "require": {
+                "egulias/email-validator": "^4.0",
                 "ext-gd": "*",
                 "falcon/ui-kit": "^1.0",
                 "intervention/image": "^4.3",
@@ -696,7 +697,10 @@
                 "nesbot/carbon": "^3.8.4",
                 "php": "^8.5",
                 "psr/log": "^3.0",
-                "symfony/http-foundation": "^7.4.0 || ^8.0.0"
+                "symfony/console": "^7.4.7 || ^8.0.7",
+                "symfony/http-foundation": "^7.4.0 || ^8.0.0",
+                "symfony/http-kernel": "^7.4.0 || ^8.0.0",
+                "symfony/mailer": "^7.4.0 || ^8.0.0"
             },
             "require-dev": {
                 "brianium/paratest": "^7.20",
@@ -756,9 +760,7 @@
                 "qa:lowest": [
                     "@composer update --prefer-lowest --prefer-stable --no-blocking --no-interaction",
                     "@php scripts/check-floor.php",
-                    "@php vendor/bin/pint --test --cache-file=.pint.cache",
-                    "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
-                    "@php vendor/bin/phpunit"
+                    "@qa"
                 ]
             },
             "license": [
@@ -781,7 +783,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "eb58a0f60ff2822a8661c75166d857a485abfd8d"
+                "reference": "7cd083a71acf421ed51959007f76eac25d0a8bcc"
             },
             "require": {
                 "laravel/framework": "^13.12",
