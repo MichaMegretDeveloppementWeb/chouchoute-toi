@@ -20,8 +20,8 @@
     $booking = 'booking.admin.';
     $admin = auth()->guard('admin')->user();
 
-    // Les e-mails que booking n'a pas pu envoyer · leur nombre à côté
-    // d'« Envois », qu'un renvoi met à jour sans recharger la page.
+    // Les messages que booking n'a pas pu envoyer · leur nombre en rouge à
+    // côté d'« Envois », que son événement met à jour sans recharger la page.
     $notSent = app(\Falcon\Booking\Repositories\Messages\UndeliveredMessageRepository::class);
 
     // Les écrans des réglages de booking · leur sous-menu s'allume sur eux, dans
@@ -121,7 +121,8 @@
                     <x-ui::sidebar.link
                         :href="route($booking.'messages')"
                         :badge="$notSent->count()"
-                        :badge-name="$notSent::SIDEBAR_BADGE"
+                        badge-color="red"
+                        :badge-event="$notSent::SIDEBAR_EVENT"
                         :active="request()->routeIs($booking.'messages')">
                         Envois
                     </x-ui::sidebar.link>
