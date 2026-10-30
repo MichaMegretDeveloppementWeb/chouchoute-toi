@@ -95,8 +95,8 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     }
 
     /**
-     * À côté d'« Envois », le nombre des e-mails que booking n'a pas pu
-     * envoyer, sous le nom qu'un renvoi met à jour.
+     * À côté d'« Envois », en rouge, le nombre des messages que booking n'a
+     * pas pu envoyer, à l'écoute de l'événement qu'un renvoi émet.
      */
     public function test_envois_carries_the_count_of_emails_not_sent(): void
     {
@@ -116,9 +116,10 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
         $page = Blade::render('<x-layout.admin></x-layout.admin>');
 
         $this->assertMatchesRegularExpression(
-            '/href="'.preg_quote(route('booking.admin.messages'), '/').'" data-ui-title="Envois"\s+x-data="'.preg_quote("uiSidebarBadge({ name: 'booking-messages', count: 3 })", '/').'"/',
+            '/href="'.preg_quote(route('booking.admin.messages'), '/').'" data-ui-title="Envois"\s+x-data="'.preg_quote('uiSidebarBadge({ count: 3 })', '/').'"\s+x-on:fb-messages-not-sent\.window=/',
             $page,
         );
+        $this->assertStringContainsString('ui:bg-red-50 ui:text-red-700', $page, 'Le nombre de ce qui n’est pas parti est rouge.');
     }
 
     /**
