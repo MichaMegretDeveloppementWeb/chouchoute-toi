@@ -183,40 +183,18 @@ return [
     /*
     | Telephone numbers, stored in E.164.
     |
-    | A list rather than a library: validating a number properly is a job for
-    | metadata nobody maintains by hand, and this package does not pretend to
-    | do it. What it does is refuse a number that cannot be one.
+    | libphonenumber judges them, against the numbering plan of every country:
+    | whether a number exists, whether it is a mobile, and how it is written.
     |
-    | `min` and `max` bound the national number, dialling code excluded, a
-    | trunk zero dropped before counting unless `keeps_zero` says it is part
-    | of the number. Canada shares +1 and lives under `US`. Add a country by
-    | adding a line.
-    | The names are shown in the field, which is why they are in French.
+    | `countries` only says which countries the field offers, by their ISO
+    | code, in this order · their name, flag and dialling code come from the
+    | code. A number from any other country is still accepted when it is typed
+    | with its dialling code. Add a country to the field by adding its code.
     */
     'phone' => [
         'default_country' => env('BOOKING_PHONE_COUNTRY', 'FR'),
 
-        'countries' => [
-            'FR' => ['name' => 'France', 'flag' => '🇫🇷', 'code' => '+33', 'min' => 9, 'max' => 9],
-            'BE' => ['name' => 'Belgique', 'flag' => '🇧🇪', 'code' => '+32', 'min' => 8, 'max' => 9],
-            'CH' => ['name' => 'Suisse', 'flag' => '🇨🇭', 'code' => '+41', 'min' => 9, 'max' => 9],
-            'LU' => ['name' => 'Luxembourg', 'flag' => '🇱🇺', 'code' => '+352', 'min' => 6, 'max' => 9],
-            'MC' => ['name' => 'Monaco', 'flag' => '🇲🇨', 'code' => '+377', 'min' => 8, 'max' => 9],
-            'DE' => ['name' => 'Allemagne', 'flag' => '🇩🇪', 'code' => '+49', 'min' => 6, 'max' => 11],
-            'IT' => ['name' => 'Italie', 'flag' => '🇮🇹', 'code' => '+39', 'min' => 6, 'max' => 11, 'keeps_zero' => true],
-            'ES' => ['name' => 'Espagne', 'flag' => '🇪🇸', 'code' => '+34', 'min' => 9, 'max' => 9],
-            'PT' => ['name' => 'Portugal', 'flag' => '🇵🇹', 'code' => '+351', 'min' => 9, 'max' => 9],
-            'GB' => ['name' => 'Royaume-Uni', 'flag' => '🇬🇧', 'code' => '+44', 'min' => 9, 'max' => 10],
-            'NL' => ['name' => 'Pays-Bas', 'flag' => '🇳🇱', 'code' => '+31', 'min' => 9, 'max' => 9],
-            'AT' => ['name' => 'Autriche', 'flag' => '🇦🇹', 'code' => '+43', 'min' => 7, 'max' => 13],
-            'IE' => ['name' => 'Irlande', 'flag' => '🇮🇪', 'code' => '+353', 'min' => 7, 'max' => 9],
-            'PL' => ['name' => 'Pologne', 'flag' => '🇵🇱', 'code' => '+48', 'min' => 9, 'max' => 9],
-            'RO' => ['name' => 'Roumanie', 'flag' => '🇷🇴', 'code' => '+40', 'min' => 9, 'max' => 9],
-            'MA' => ['name' => 'Maroc', 'flag' => '🇲🇦', 'code' => '+212', 'min' => 9, 'max' => 9],
-            'DZ' => ['name' => 'Algérie', 'flag' => '🇩🇿', 'code' => '+213', 'min' => 8, 'max' => 9],
-            'TN' => ['name' => 'Tunisie', 'flag' => '🇹🇳', 'code' => '+216', 'min' => 8, 'max' => 8],
-            'US' => ['name' => 'États-Unis, Canada', 'flag' => '🇺🇸', 'code' => '+1', 'min' => 10, 'max' => 10],
-        ],
+        'countries' => ['FR', 'BE', 'CH', 'LU', 'MC', 'DE', 'IT', 'ES', 'PT', 'GB', 'NL', 'AT', 'IE', 'PL', 'RO', 'MA', 'DZ', 'TN', 'US', 'CA'],
     ],
 
     /*
