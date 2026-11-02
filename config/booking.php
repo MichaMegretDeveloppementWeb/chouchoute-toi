@@ -186,10 +186,16 @@ return [
     | libphonenumber judges them, against the numbering plan of every country:
     | whether a number exists, whether it is a mobile, and how it is written.
     |
+    | `default_country` is the country the field opens on, and the one whose
+    | numbers show in their national form · the others show their dialling
+    | code. Out of `countries`, the first country listed takes its place, and
+    | `booking:check` says so.
+    |
     | `countries` only says which countries the field offers, by their ISO
     | code, in this order · their name, flag and dialling code come from the
     | code. A number from any other country is still accepted when it is typed
-    | with its dialling code. Add a country to the field by adding its code.
+    | with its dialling code. Add a country to the field by adding its code · a
+    | code the library does not know is left out, and `booking:check` names it.
     */
     'phone' => [
         'default_country' => env('BOOKING_PHONE_COUNTRY', 'FR'),
