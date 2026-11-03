@@ -1,6 +1,6 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-CZHYpO_m.css",
+    "file": "assets/admin-BMiPTC0G.css",
     "src": "resources/css/admin.css",
     "isEntry": true,
     "name": "admin",
@@ -9,7 +9,7 @@
     ]
   },
   "resources/css/web.css": {
-    "file": "assets/web-WPEBJvPS.css",
+    "file": "assets/web-BMeZwzmx.css",
     "src": "resources/css/web.css",
     "isEntry": true,
     "name": "web",
@@ -31,7 +31,7 @@
     "src": "resources/css/web/reviews/index.css"
   },
   "resources/css/web/home/index.css": {
-    "file": "assets/index-Do1TOf3p.css",
+    "file": "assets/index-DwhDDyMF.css",
     "src": "resources/css/web/home/index.css"
   },
   "resources/css/web/prestations/index.css": {
