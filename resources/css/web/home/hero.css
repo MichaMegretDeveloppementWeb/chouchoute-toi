@@ -1,5 +1,6 @@
 .hero {
     position: relative;
+    display: flex;
     width: 100%;
     min-height: max(70vh, 30em);
     overflow: hidden;
@@ -33,17 +34,15 @@
 }
 
 .hero__container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 100em;
-    height: 100%;
+    position: relative;
     z-index: 2;
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: center;
+    min-width: 0;
+    max-width: 100em;
+    margin-inline: auto;
 }
 
 .hero__content {

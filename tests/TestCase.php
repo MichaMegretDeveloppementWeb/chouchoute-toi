@@ -6,12 +6,21 @@ namespace Tests;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 abstract class TestCase extends BaseTestCase
 {
     /** The only database the suite may migrate from scratch. */
     public const string DATABASE = 'chouchoute_toi_test';
+
+    /** The suite calls no outside service, which a real key would bill. */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Http::preventStrayRequests();
+    }
 
     /**
      * The application, refused before any test touches it unless it points at
