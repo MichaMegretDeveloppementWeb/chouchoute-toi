@@ -56,7 +56,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
 
         $this->get(route('reviews'))->assertOk();
 
-        $this->assertSame(5, $waits);
+        $this->assertSame(2, $waits);
 
         Http::assertSent(fn (Request $request): bool => str_contains($request->url(), '/v1/places/a-place')
             && $request->hasHeader('X-Goog-FieldMask', 'reviews,rating,userRatingCount'));
@@ -165,6 +165,30 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         $this->get(route('reviews'))
             ->assertDontSee('"aggregateRating"', false)
             ->assertDontSee('"reviewBody"', false);
+    }
+
+    public function test_the_snapshot_kept_is_made_of_real_answers(): void
+    {
+        /** @var array{captured_on: string, rating: float, total: int, reviews: list<array{nom: string, note: int, texte: string, date: string}>} $snapshot */
+        $snapshot = require base_path('config/avis.php');
+
+        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $snapshot['captured_on']);
+        $this->assertGreaterThan(0, $snapshot['total']);
+        $this->assertNotEmpty($snapshot['reviews']);
+
+        foreach ($snapshot['reviews'] as $review) {
+            $this->assertNotSame('', $review['nom']);
+            $this->assertNotSame('', $review['texte']);
+            $this->assertNotSame('', $review['date']);
+            $this->assertGreaterThanOrEqual(4, $review['note']);
+            $this->assertLessThanOrEqual(5, $review['note']);
+        }
+
+        $names = array_column($snapshot['reviews'], 'nom');
+
+        foreach (['Sophie M.', 'Marie L.', 'Camille D.', 'Julie R.', 'Léa B.', 'Nathalie P.'] as $invented) {
+            $this->assertNotContains($invented, $names);
+        }
     }
 
     /**
