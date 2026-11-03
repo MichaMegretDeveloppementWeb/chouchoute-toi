@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Web;
 
+use App\Services\SiteGraphService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -152,10 +153,38 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         $this->aSnapshot();
         Http::fake(['places.googleapis.com/*' => Http::response([], 403)]);
 
-        $this->get(route('reviews'))
-            ->assertSee('"ratingValue":"4.8"', false)
-            ->assertSee('"ratingCount":"27"', false)
-            ->assertSee('"name":"Léa Moreau"', false);
+        $reviewed = $this->reviewedNode();
+        $named = ['@type' => 'BeautySalon', '@id' => SiteGraphService::id('business'), 'name' => config('entreprise.nom')];
+
+        $this->assertSame('4.8', $reviewed['aggregateRating']['ratingValue']);
+        $this->assertSame('27', $reviewed['aggregateRating']['ratingCount']);
+        $this->assertSame($named, $reviewed['aggregateRating']['itemReviewed']);
+
+        $review = $reviewed['review'][0];
+
+        $this->assertSame('Review', $review['@type']);
+        $this->assertSame(['@type' => 'Person', 'name' => 'Léa Moreau'], $review['author']);
+        $this->assertSame('5', $review['reviewRating']['ratingValue']);
+        $this->assertSame('Toujours aussi précise.', $review['reviewBody']);
+        $this->assertSame('2026-10-12', $review['datePublished']);
+        $this->assertSame($named, $review['itemReviewed']);
+    }
+
+    public function test_a_review_read_from_google_says_when_it_was_published(): void
+    {
+        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
+
+        $this->assertSame('2026-09-14', $this->reviewedNode()['review'][0]['datePublished']);
+    }
+
+    public function test_a_review_without_a_known_date_says_none(): void
+    {
+        $answer = $this->googleAnswer();
+        unset($answer['reviews'][0]['publishTime']);
+
+        Http::fake(['places.googleapis.com/*' => Http::response($answer)]);
+
+        $this->assertArrayNotHasKey('datePublished', $this->reviewedNode()['review'][0]);
     }
 
     public function test_the_structured_data_says_nothing_when_nothing_is_shown(): void
@@ -169,7 +198,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
 
     public function test_the_snapshot_kept_is_made_of_real_answers(): void
     {
-        /** @var array{captured_on: string, rating: float, total: int, reviews: list<array{nom: string, note: int, texte: string, date: string}>} $snapshot */
+        /** @var array{captured_on: string, rating: float, total: int, reviews: list<array{nom: string, note: int, texte: string, date: string, publie_le: string}>} $snapshot */
         $snapshot = require base_path('config/avis.php');
 
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $snapshot['captured_on']);
@@ -180,6 +209,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
             $this->assertNotSame('', $review['nom']);
             $this->assertNotSame('', $review['texte']);
             $this->assertNotSame('', $review['date']);
+            $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $review['publie_le']);
             $this->assertGreaterThanOrEqual(4, $review['note']);
             $this->assertLessThanOrEqual(5, $review['note']);
         }
@@ -189,6 +219,27 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         foreach (['Sophie M.', 'Marie L.', 'Camille D.', 'Julie R.', 'Léa B.', 'Nathalie P.'] as $invented) {
             $this->assertNotContains($invented, $names);
         }
+    }
+
+    /**
+     * The node of the graph that carries the reviews, read as a search engine
+     * reads the page.
+     *
+     * @return array<string, mixed>
+     */
+    private function reviewedNode(): array
+    {
+        preg_match_all('#<script type="application/ld\+json">(.*?)</script>#s', (string) $this->get(route('reviews'))->getContent(), $blocks);
+
+        foreach ($blocks[1] as $block) {
+            foreach (json_decode($block, true, flags: JSON_THROW_ON_ERROR)['@graph'] as $node) {
+                if (isset($node['review'])) {
+                    return $node;
+                }
+            }
+        }
+
+        $this->fail('No node of the graph carries the reviews.');
     }
 
     /**
@@ -204,6 +255,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
                 'authorAttribution' => ['displayName' => 'Inès Fauvel'],
                 'text' => ['text' => 'Un accueil très soigné.'],
                 'relativePublishTimeDescription' => 'il y a 2 mois',
+                'publishTime' => '2026-09-14T09:30:00Z',
             ]],
         ];
     }
@@ -219,6 +271,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
                 'note' => 5,
                 'texte' => 'Toujours aussi précise.',
                 'date' => 'octobre 2026',
+                'publie_le' => '2026-10-12',
             ]],
         ]]);
     }

@@ -232,7 +232,7 @@ final class SiteGraphService
     {
         return (string) json_encode(
             ['@context' => 'https://schema.org', '@graph' => $nodes],
-            JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+            JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT,
         );
     }
 }
