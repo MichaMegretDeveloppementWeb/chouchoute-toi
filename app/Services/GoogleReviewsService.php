@@ -16,7 +16,7 @@ class GoogleReviewsService
 {
     private const string CACHE_KEY = 'google_reviews.answer';
 
-    private const int REQUEST_SECONDS = 5;
+    private const int REQUEST_SECONDS = 2;
 
     /**
      * The real reviews of the configured Place ID · Google's answer, kept for a
