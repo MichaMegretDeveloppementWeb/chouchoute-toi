@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * @phpstan-type Review array{nom: string, note: int, texte: string, date: string}
+ * @phpstan-type Review array{nom: string, note: int, texte: string, date: string, publie_le: string|null}
  * @phpstan-type Reviews array{reviews: list<Review>, rating: float|null, total: int|null}
  */
 class GoogleReviewsService
@@ -93,6 +94,9 @@ class GoogleReviewsService
                     'note' => (int) ($review['rating'] ?? 5),
                     'texte' => $review['text']['text'] ?? '',
                     'date' => $review['relativePublishTimeDescription'] ?? '',
+                    'publie_le' => is_string($review['publishTime'] ?? null)
+                        ? Carbon::parse($review['publishTime'])->timezone(config()->string('app.timezone'))->toDateString()
+                        : null,
                 ])
                 ->values()
                 ->all();

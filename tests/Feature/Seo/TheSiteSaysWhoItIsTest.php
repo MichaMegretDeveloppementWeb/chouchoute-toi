@@ -371,6 +371,20 @@ final class TheSiteSaysWhoItIsTest extends TestCase
         );
     }
 
+    /**
+     * Le bloc se lit dans le code source de la page, une clé par ligne, et il
+     * dit la même chose à un moteur.
+     */
+    public function test_the_graph_is_written_to_be_read(): void
+    {
+        $nodes = [['@type' => 'Review', 'author' => ['name' => 'Léa Moreau']]];
+        $rendered = SiteGraphService::render($nodes);
+
+        $this->assertStringContainsString("\n    \"@graph\": [\n", $rendered);
+        $this->assertStringContainsString('Léa Moreau', $rendered);
+        $this->assertSame($nodes, json_decode($rendered, true)['@graph']);
+    }
+
     /** Une prestation réservée en ligne, offerte dans un lieu par quelqu'un qui y reçoit. */
     private function aTreatmentBookedOnline(Location $at): Service
     {

@@ -18,6 +18,7 @@
 @section('schema')
     @php
         $entreprise = ['@id' => \App\Services\SiteGraphService::id('business')];
+        $evalue = \Illuminate\Support\Arr::only(\App\Services\SiteGraphService::business(), ['@type', '@id', 'name']);
 
         if (! empty($googleRating) && ! empty($googleTotal)) {
             $entreprise['aggregateRating'] = [
@@ -26,6 +27,7 @@
                 'bestRating' => '5',
                 'worstRating' => '1',
                 'ratingCount' => (string) $googleTotal,
+                'itemReviewed' => $evalue,
             ];
         }
 
@@ -40,7 +42,8 @@
                     'worstRating' => '1',
                 ],
                 'reviewBody' => $avis['texte'],
-                'itemReviewed' => ['@id' => \App\Services\SiteGraphService::id('business')],
+                ...(empty($avis['publie_le']) ? [] : ['datePublished' => $avis['publie_le']]),
+                'itemReviewed' => $evalue,
             ];
         }
     @endphp
