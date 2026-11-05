@@ -80,7 +80,18 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
   `ActiveAdminUserProvider`, que le garde `admin` emploie · la connexion, une session
   déjà ouverte, le site et les deux paquets se ferment d'un coup, au clic suivant ;
 - **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
-  répond à ce compte.
+  répond à ce compte · elle les pose **sans objet**, donc chaque règle du fournisseur
+  accepte de n'en recevoir aucun ;
+- **la barre ne montre que ce que le compte ouvre** · `app/Services/Team/OpenScreensService.php`
+  pose à chaque écran la capacité que sa route demande, section par section · une
+  section sans écran ouvert disparaît, et son icône mène au premier qui l'est ·
+  le nombre des envois en échec n'est lu que pour qui ouvre Envois · **un écran ajouté
+  à la barre s'ajoute aussi à ce service**, avec la capacité de sa route ;
+- **le tableau de bord** renvoie un compte qui ne l'ouvre pas vers la page de son rôle ;
+- **un écran refusé se dit dans l'administration** · un refus 403 sous `/admin`, pour
+  un compte connecté, rend `admin/forbidden` avec la barre et le retour à sa page
+  (`bootstrap/app.php`) · ailleurs, et pour une demande de données, la réponse
+  ordinaire du cadre reste.
 
 ### Les comptes de l'équipe naissent dans la fiche
 
@@ -95,7 +106,7 @@ de praticien porte donc une adresse, obligatoire, et la rangée « Accès ».
 | corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
 | corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues |
 | « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
-| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était |
+| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend |
 | supprimer | le compte et ses liens partent avec la fiche |
 
 **Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés, suspendus

@@ -40,4 +40,13 @@ enum AdminRole: string
             self::Practitioner => 'booking.admin.agenda',
         };
     }
+
+    /** The button that leads back to the page of the role. */
+    public function backHome(): string
+    {
+        return match ($this) {
+            self::Owner => 'Revenir au tableau de bord',
+            self::Practitioner => 'Revenir au Planning',
+        };
+    }
 }

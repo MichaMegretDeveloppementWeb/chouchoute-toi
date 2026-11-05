@@ -156,7 +156,10 @@ final readonly class SiteTeamAccessService implements ManagesTeamAccess
             return;
         }
 
-        $account->forceFill(['suspended_at' => $archived ? CarbonImmutable::now() : null])->save();
+        // A device kept signed in comes back with no password once the account is restored · its key is changed.
+        $account->forceFill($archived
+            ? ['suspended_at' => CarbonImmutable::now(), 'remember_token' => Str::random(60)]
+            : ['suspended_at' => null])->save();
     }
 
     public function removed(Practitioner $member): void

@@ -17,6 +17,7 @@ use Falcon\Booking\Models\Practitioner;
 use Falcon\Booking\Models\Service;
 use Falcon\Booking\Models\Unavailability;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -174,6 +175,17 @@ final class EachRoleOpensWhatItShouldTest extends TestCase
         $this->assertFalse(Gate::forUser($this->practitioner)->allows(BookingAbility::UnavailabilitiesAssign, $this->camille));
         $this->assertFalse(Gate::forUser($this->practitioner)->allows(BookingAbility::UnavailabilitiesAssign, $place));
         $this->assertTrue(Gate::forUser($this->owner)->allows(BookingAbility::UnavailabilitiesAssign, $place));
+    }
+
+    /** Asked without an object, as the report of abilities asks, every rule answers. */
+    public function test_every_rule_answers_without_an_object(): void
+    {
+        foreach ([$this->owner, $this->practitioner] as $account) {
+            $this->assertSame(0, Artisan::call('booking:abilities', ['--user' => $account->id]));
+        }
+
+        $this->assertTrue(Gate::forUser($this->practitioner)->allows(BookingAbility::AppointmentsAssign));
+        $this->assertTrue(Gate::forUser($this->practitioner)->allows(BookingAbility::UnavailabilitiesAssign));
     }
 
     public function test_an_account_of_the_team_with_no_fiche_changes_nothing_already_written(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Admin;
 use Dom\HTMLDocument;
 use Falcon\Booking\Enums\Appointment\AppointmentActor;
 use Falcon\Booking\Enums\Messages\MessageAudience;
@@ -33,6 +34,14 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
     /** Les adresses du paquet qui ne sont pas des écrans de menu. */
     private const NOT_IN_THE_MENU = ['booking.admin.attachment', 'booking.admin.missing'];
+
+    /** La barre ne montre que ce que le compte ouvre · un propriétaire ouvre tout. */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(Admin::factory()->create(), 'admin');
+    }
 
     public function test_every_screen_of_booking_is_in_the_sidebar(): void
     {
