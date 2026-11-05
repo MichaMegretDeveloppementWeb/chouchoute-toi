@@ -61,6 +61,27 @@ ainsi ·
 Le planning de booking, lui, prend toute la largeur sans rien demander · une
 grille horaire perdrait un tiers de l'écran dans une colonne centrée.
 
+## Les comptes et les rôles
+
+**Un compte a un rôle, et le code dit ce que chacun ouvre.** Les rôles sont dans
+`app/Enums/Team/AdminRole.php`, les règles dans `app/Providers/GateServiceProvider.php`.
+Les paquets nomment leurs capacités et les laissent ouvertes à tout compte connecté ·
+ce fichier ne dit donc que ce qu'un praticien n'a pas.
+
+| Rôle | Ce qu'il ouvre |
+|---|---|
+| **Propriétaire** | tout le back-office |
+| **Praticien** | le Planning, où il voit tout et ne change que les rendez-vous où il réalise une prestation · les Clients, sans effacer ni télécharger les données · son Profil |
+
+- **Un rôle neuf** · un cas dans l'énumération, et ses règles dans le fournisseur ;
+- **`practitioner_id` dit quelle fiche est ce compte** · c'est ce qui fait qu'un
+  rendez-vous est « le sien » ;
+- **un compte suspendu n'est plus personne** · `suspended_at`, lu par
+  `ActiveAdminUserProvider`, que le garde `admin` emploie · la connexion, une session
+  déjà ouverte, le site et les deux paquets se ferment d'un coup, au clic suivant ;
+- **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
+  répond à ce compte.
+
 ## Les écrans des paquets s'y logent seuls
 
 Chaque paquet lit dans sa configuration **le nom du composant** dans lequel

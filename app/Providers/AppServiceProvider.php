@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\Team\ActiveAdminUserProvider;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
         // l'application la liste des methodes statiques de la facade, et la
         // question posee sur l'instance se lit alors comme un appel statique.
         Model::shouldBeStrict(! App::isProduction());
+
+        Auth::provider('active_admins', static fn (Application $app, array $config): ActiveAdminUserProvider => new ActiveAdminUserProvider($app->make('hash'), $config['model']));
 
         /*
          * Nothing to declare for the kit's components.

@@ -6,6 +6,7 @@ namespace Tests\Feature\Admin\Profile;
 
 use App\Livewire\Admin\Profile\UpdateProfileForm;
 use App\Models\Admin;
+use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -52,6 +53,36 @@ final class UpdateProfileTest extends TestCase
             'name' => 'Amandine David Cruz',
             'email' => 'contact@example.test',
         ]);
+    }
+
+    /** The address of an account tied to a fiche is that fiche's too, and changes only from there. */
+    public function test_the_address_of_a_practitioner_stays_as_it_is(): void
+    {
+        $member = Practitioner::factory()->create();
+        $admin = Admin::factory()->practitioner($member->id)->create(['name' => 'Julie', 'email' => 'julie@exemple.fr']);
+
+        $this->actingAs($admin, 'admin');
+
+        Livewire::test(UpdateProfileForm::class)
+            ->assertSee('seul un propriétaire peut la changer')
+            ->set('name', 'Julie Martin')
+            ->set('email', 'autre@exemple.fr')
+            ->call('save')
+            ->assertSet('email', 'julie@exemple.fr');
+
+        $admin->refresh();
+
+        $this->assertSame('Julie Martin', $admin->name);
+        $this->assertSame('julie@exemple.fr', $admin->email);
+    }
+
+    public function test_an_owner_with_a_fiche_is_sent_to_it(): void
+    {
+        $member = Practitioner::factory()->create();
+
+        $this->actingAs(Admin::factory()->create(['practitioner_id' => $member->id]), 'admin');
+
+        Livewire::test(UpdateProfileForm::class)->assertSee('elle se change depuis Praticiens');
     }
 
     public function test_keeping_the_same_email_does_not_trip_the_unique_rule(): void

@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "0a23356160c135aa55b53846127175b0ca19333a"
+                "reference": "13200a74f0edbb61b3faf6eae6c04902789c37e5"
             },
             "require": {
                 "ext-intl": "*",
@@ -683,7 +683,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "7ce3d0c8fc8cbff705306bcb4280195f0f6d18be"
+                "reference": "2a3d0374f59b2235f702331290677928c951370e"
             },
             "require": {
                 "egulias/email-validator": "^4.0",
@@ -10289,5 +10289,5 @@
         "php": "^8.5"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

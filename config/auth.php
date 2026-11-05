@@ -76,8 +76,9 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
 
+        // `eloquent`, less the accounts that were suspended · see ActiveAdminUserProvider.
         'admins' => [
-            'driver' => 'eloquent',
+            'driver' => 'active_admins',
             'model' => Admin::class,
         ],
     ],
