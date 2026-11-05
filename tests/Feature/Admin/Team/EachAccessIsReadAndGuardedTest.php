@@ -15,6 +15,7 @@ use Falcon\Booking\Enums\Team\AccessNotice;
 use Falcon\Booking\Enums\Team\AccessState;
 use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -140,6 +141,23 @@ final class EachAccessIsReadAndGuardedTest extends TestCase
         $restored = $account->fresh();
         $this->assertNull($restored->suspended_at);
         $this->assertSame($account->password, $restored->password);
+    }
+
+    /** A device kept signed in does not come back with the account once it is restored. */
+    public function test_archiving_forgets_the_devices_kept_signed_in(): void
+    {
+        $this->actingAs($this->anOwnerWithAFiche(), 'admin');
+        $member = $this->aMemberWith(['remember_token' => 'un-appareil-garde']);
+        $account = Admin::query()->where('practitioner_id', $member->id)->sole();
+        $accounts = Auth::createUserProvider('admins');
+        $this->assertNotNull($accounts);
+
+        $this->assertNotNull($accounts->retrieveByToken($account->id, 'un-appareil-garde'));
+
+        app(ArchivePractitionerAction::class)->execute($member, true);
+        app(ArchivePractitionerAction::class)->execute($member, false);
+
+        $this->assertNull($accounts->retrieveByToken($account->id, 'un-appareil-garde'));
     }
 
     public function test_removing_a_member_removes_the_account_and_its_links(): void

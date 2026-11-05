@@ -106,7 +106,7 @@ de praticien porte donc une adresse, obligatoire, et la rangée « Accès ».
 | corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
 | corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues |
 | « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
-| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était |
+| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend |
 | supprimer | le compte et ses liens partent avec la fiche |
 
 **Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés, suspendus
