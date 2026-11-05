@@ -116,6 +116,14 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        // The invitation a new member of the team receives: seven days to open it.
+        'admin_invitations' => [
+            'provider' => 'admins',
+            'table' => 'admin_invitation_tokens',
+            'expire' => 10080,
+            'throttle' => 60,
+        ],
     ],
 
     /*

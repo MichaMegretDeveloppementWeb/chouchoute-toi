@@ -23,7 +23,11 @@
             />
         </x-ui::form-group>
 
-        <x-ui::checkbox id="remember" wire:model="remember" label="Rester connecté" />
+        <div class="flex items-center justify-between gap-x-4">
+            <x-ui::checkbox id="remember" wire:model="remember" label="Rester connecté" />
+
+            <a href="{{ route('admin.password.forgot') }}" class="text-[13px] text-secondary underline underline-offset-2 hover:text-primary">Mot de passe oublié ?</a>
+        </div>
 
         <x-ui::button type="submit" target="login" loading class="w-full">
             Se connecter

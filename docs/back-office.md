@@ -82,6 +82,41 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
 - **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
   répond à ce compte.
 
+### Les comptes de l'équipe naissent dans la fiche
+
+Le site remplit le contrat que booking lui tend pour l'équipe ·
+`app/Services/Team/SiteTeamAccessService.php`, lié dans `AppServiceProvider`. Une fiche
+de praticien porte donc une adresse, obligatoire, et la rangée « Accès ».
+
+| Geste dans l'équipe | Ce qui arrive au compte |
+|---|---|
+| créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, et l'invitation part une fois la fiche enregistrée |
+| une fiche à l'adresse d'un compte qu'aucune fiche ne nomme | ce compte est repris, avec son mot de passe, et rien ne part · c'est le cas du compte d'origine |
+| corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
+| corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues |
+| « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
+| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était |
+| supprimer | le compte et ses liens partent avec la fiche |
+
+**Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés, suspendus
+ni supprimés depuis l'équipe.
+
+**Les liens** · l'invitation vit 7 jours (`admin_invitations`, table
+`admin_invitation_tokens`), le mot de passe oublié 60 minutes (`admins`) · chacun ne
+sert qu'une fois. Le lien nomme le compte par son numéro, jamais par son adresse, et se
+bâtit sur `APP_URL`, jamais sur l'adresse de la requête · **`APP_URL` doit donc être
+celle du site en ligne**, ou les liens mèneront ailleurs.
+
+**Les écrans** · `/admin/bienvenue/{compte}/{jeton}`, `/admin/mot-de-passe-oublie` et
+`/admin/mot-de-passe/{compte}/{jeton}`. La réponse au mot de passe oublié est la même
+qu'un compte existe ou non. Une fois le mot de passe choisi, le compte est connecté et
+arrive sur la page de son rôle · le tableau de bord pour un propriétaire, le Planning
+pour un praticien.
+
+**Les messages** partent de `app/Mail/Team/` et de la vue `mail/team/message` ·
+`MAIL_FROM_ADDRESS` les signe. Un envoi qui échoue s'écrit au journal, et la liste de
+l'équipe le dit à la place de l'invitation.
+
 ## Les écrans des paquets s'y logent seuls
 
 Chaque paquet lit dans sa configuration **le nom du composant** dans lequel
