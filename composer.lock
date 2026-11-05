@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "492db24560d70a38525acee95a606a7cbc49165c"
+                "reference": "0a23356160c135aa55b53846127175b0ca19333a"
             },
             "require": {
                 "ext-intl": "*",
@@ -655,14 +655,12 @@
                 "qa": [
                     "@php vendor/bin/pint --test",
                     "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
-                    "@php vendor/bin/paratest --processes=4"
+                    "@test:all"
                 ],
                 "qa:lowest": [
                     "@composer update --prefer-lowest --prefer-stable --no-blocking --no-interaction",
                     "@php scripts/check-floor.php",
-                    "@php vendor/bin/pint --test",
-                    "@php vendor/bin/phpstan analyse --no-progress --memory-limit=2G",
-                    "@php vendor/bin/phpunit"
+                    "@qa"
                 ]
             },
             "license": [
@@ -685,7 +683,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "d5a98fb7baeba8c1117fd667eb12a2a7d9447eb6"
+                "reference": "7ce3d0c8fc8cbff705306bcb4280195f0f6d18be"
             },
             "require": {
                 "egulias/email-validator": "^4.0",
