@@ -55,7 +55,9 @@ final class GateServiceProvider extends ServiceProvider
 
         Gate::define(
             BookingAbility::AppointmentsAssign,
-            static fn (Admin $admin, Practitioner $named): bool => $admin->isOwner() || $named->id === $admin->practitioner_id,
+            static fn (Admin $admin, ?Practitioner $named = null): bool => $admin->isOwner()
+                || $named === null
+                || $named->id === $admin->practitioner_id,
         );
 
         Gate::define(
@@ -67,7 +69,8 @@ final class GateServiceProvider extends ServiceProvider
 
         Gate::define(
             BookingAbility::UnavailabilitiesAssign,
-            static fn (Admin $admin, Practitioner|Location $named): bool => $admin->isOwner()
+            static fn (Admin $admin, Practitioner|Location|null $named = null): bool => $admin->isOwner()
+                || $named === null
                 || ($named instanceof Practitioner && $named->id === $admin->practitioner_id),
         );
     }

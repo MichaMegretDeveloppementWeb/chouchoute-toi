@@ -4,7 +4,10 @@ use App\Models\Admin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -34,5 +37,14 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // A screen of the office refused to an account is said inside the office, with the way back.
+        $exceptions->render(static function (HttpException $refused, Request $request): ?Response {
+            $account = auth()->guard('admin')->user();
+
+            if ($refused->getStatusCode() !== 403 || ! $account instanceof Admin || ! $request->is('admin', 'admin/*') || $request->expectsJson()) {
+                return null;
+            }
+
+            return response()->view('admin.forbidden', ['role' => $account->role], 403);
+        });
     })->create();

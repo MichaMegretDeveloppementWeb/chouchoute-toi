@@ -80,7 +80,18 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
   `ActiveAdminUserProvider`, que le garde `admin` emploie · la connexion, une session
   déjà ouverte, le site et les deux paquets se ferment d'un coup, au clic suivant ;
 - **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
-  répond à ce compte.
+  répond à ce compte · elle les pose **sans objet**, donc chaque règle du fournisseur
+  accepte de n'en recevoir aucun ;
+- **la barre ne montre que ce que le compte ouvre** · `app/Services/Team/OpenScreensService.php`
+  pose à chaque écran la capacité que sa route demande, section par section · une
+  section sans écran ouvert disparaît, et son icône mène au premier qui l'est ·
+  le nombre des envois en échec n'est lu que pour qui ouvre Envois · **un écran ajouté
+  à la barre s'ajoute aussi à ce service**, avec la capacité de sa route ;
+- **le tableau de bord** renvoie un compte qui ne l'ouvre pas vers la page de son rôle ;
+- **un écran refusé se dit dans l'administration** · un refus 403 sous `/admin`, pour
+  un compte connecté, rend `admin/forbidden` avec la barre et le retour à sa page
+  (`bootstrap/app.php`) · ailleurs, et pour une demande de données, la réponse
+  ordinaire du cadre reste.
 
 ### Les comptes de l'équipe naissent dans la fiche
 
