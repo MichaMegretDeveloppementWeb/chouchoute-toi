@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Admin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,7 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // The back-office is the only authenticated area for now. Revisit when
         // the public site opens client accounts on the `web` guard.
         $middleware->redirectGuestsTo(fn (): string => route('admin.login'));
-        $middleware->redirectUsersTo(fn (): string => route('admin.dashboard'));
+        $middleware->redirectUsersTo(static function (): string {
+            $account = auth()->guard('admin')->user();
+
+            return route($account instanceof Admin ? $account->role->home() : 'admin.dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

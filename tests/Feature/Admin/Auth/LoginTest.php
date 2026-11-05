@@ -6,6 +6,7 @@ namespace Tests\Feature\Admin\Auth;
 
 use App\Livewire\Admin\Auth\LoginForm;
 use App\Models\Admin;
+use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
@@ -32,6 +33,21 @@ final class LoginTest extends TestCase
         $this->actingAs(Admin::factory()->create(), 'admin')
             ->get(route('admin.login'))
             ->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_a_practitioner_lands_on_the_planning_wherever_the_sign_in_leads(): void
+    {
+        $member = Admin::factory()->practitioner(Practitioner::factory()->create()->id)->create(['email' => 'julie@example.test']);
+
+        Livewire::test(LoginForm::class)
+            ->set('email', 'julie@example.test')
+            ->set('password', 'password')
+            ->call('login')
+            ->assertRedirect(route('booking.admin.agenda'));
+
+        $this->actingAs($member, 'admin')
+            ->get(route('admin.login'))
+            ->assertRedirect(route('booking.admin.agenda'));
     }
 
     public function test_valid_credentials_authenticate_on_the_admin_guard_only(): void

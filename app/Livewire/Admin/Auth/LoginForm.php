@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Auth;
 
+use App\Models\Admin;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -78,7 +79,9 @@ final class LoginForm extends Component
         $session = app(Store::class);
         $session->regenerate();
 
-        $this->redirectIntended(route('admin.dashboard'), navigate: false);
+        $account = Auth::guard('admin')->user();
+
+        $this->redirectIntended(route($account instanceof Admin ? $account->role->home() : 'admin.dashboard'), navigate: false);
     }
 
     public function render(): View
