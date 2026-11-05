@@ -12,6 +12,7 @@ use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,7 +25,8 @@ final class ChoosingAPasswordTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const string PASSWORD = 'un-mot-de-passe-solide';
+    /** Drawn for each test · a password written out in a test reads as a secret to a scanner. */
+    private string $password;
 
     private Admin $member;
 
@@ -32,6 +34,7 @@ final class ChoosingAPasswordTest extends TestCase
     {
         parent::setUp();
 
+        $this->password = bin2hex(random_bytes(8));
         $fiche = Practitioner::factory()->create(['email' => 'julie@exemple.fr']);
         $this->member = Admin::factory()->practitioner($fiche->id)->create([
             'email' => 'julie@exemple.fr',
@@ -52,15 +55,15 @@ final class ChoosingAPasswordTest extends TestCase
     public function test_choosing_the_password_signs_in_and_leads_to_the_page_of_the_role(): void
     {
         $this->theForm($this->anInvitation())
-            ->set('password', self::PASSWORD)
-            ->set('passwordConfirmation', self::PASSWORD)
+            ->set('password', $this->password)
+            ->set('passwordConfirmation', $this->password)
             ->call('choose')
             ->assertHasNoErrors()
             ->assertRedirect(route('booking.admin.agenda'));
 
         $account = $this->member->fresh();
 
-        $this->assertTrue(Hash::check(self::PASSWORD, (string) $account?->password));
+        $this->assertTrue(Hash::check($this->password, (string) $account?->password));
         $this->assertNotNull($account?->email_verified_at);
         $this->assertSame($this->member->id, Auth::guard('admin')->id());
     }
@@ -69,7 +72,7 @@ final class ChoosingAPasswordTest extends TestCase
     {
         $token = $this->anInvitation();
 
-        $this->theForm($token)->set('password', self::PASSWORD)->set('passwordConfirmation', self::PASSWORD)->call('choose');
+        $this->theForm($token)->set('password', $this->password)->set('passwordConfirmation', $this->password)->call('choose');
 
         $this->theForm($token)->assertSet('usable', false)->assertSee('Ce lien a expiré ou a déjà servi.');
     }
@@ -92,8 +95,8 @@ final class ChoosingAPasswordTest extends TestCase
 
         $this->theForm($token)
             ->assertSet('usable', false)
-            ->set('password', self::PASSWORD)
-            ->set('passwordConfirmation', self::PASSWORD)
+            ->set('password', $this->password)
+            ->set('passwordConfirmation', $this->password)
             ->call('choose');
 
         $this->assertFalse(Auth::guard('admin')->check());
@@ -112,19 +115,19 @@ final class ChoosingAPasswordTest extends TestCase
     public function test_a_forgotten_password_keeps_the_day_the_account_came_into_service(): void
     {
         $since = CarbonImmutable::parse('2026-09-01 10:00:00');
-        $this->member->forceFill(['email_verified_at' => $since, 'remember_token' => 'souvenir-d-un-appareil'])->save();
+        $this->member->forceFill(['email_verified_at' => $since, 'remember_token' => $remembered = Str::random(60)])->save();
         $token = app(TeamMessagesService::class)->links(TeamMessagesService::PASSWORD_RESETS)->createToken($this->member);
 
         Livewire::test(ChoosePasswordForm::class, ['account' => $this->member->id, 'token' => $token, 'purpose' => 'reset'])
             ->assertSee('Choisissez un nouveau mot de passe')
-            ->set('password', self::PASSWORD)
-            ->set('passwordConfirmation', self::PASSWORD)
+            ->set('password', $this->password)
+            ->set('passwordConfirmation', $this->password)
             ->call('choose')
             ->assertRedirect(route('booking.admin.agenda'));
 
         $this->assertEquals($since, $this->member->fresh()?->email_verified_at);
-        $this->assertNotSame('souvenir-d-un-appareil', $this->member->fresh()?->remember_token);
-        $this->assertTrue(Hash::check(self::PASSWORD, (string) $this->member->fresh()?->password));
+        $this->assertNotSame($remembered, $this->member->fresh()?->remember_token);
+        $this->assertTrue(Hash::check($this->password, (string) $this->member->fresh()?->password));
     }
 
     public function test_the_password_holds_twelve_characters_typed_twice(): void
@@ -134,7 +137,7 @@ final class ChoosingAPasswordTest extends TestCase
             ->set('passwordConfirmation', 'trop-court')
             ->call('choose')
             ->assertHasErrors(['password' => 'Le mot de passe doit faire au moins 12 caractères.'])
-            ->set('password', self::PASSWORD)
+            ->set('password', $this->password)
             ->set('passwordConfirmation', 'un-autre-mot-de-passe')
             ->call('choose')
             ->assertHasErrors(['passwordConfirmation' => 'La confirmation ne correspond pas au mot de passe.']);
@@ -144,7 +147,7 @@ final class ChoosingAPasswordTest extends TestCase
 
     public function test_a_link_tried_too_often_waits(): void
     {
-        $form = $this->theForm('not-the-token')->set('password', self::PASSWORD)->set('passwordConfirmation', self::PASSWORD);
+        $form = $this->theForm('not-the-token')->set('password', $this->password)->set('passwordConfirmation', $this->password);
 
         for ($attempt = 0; $attempt < 5; $attempt++) {
             $form->call('choose')->assertHasNoErrors();
