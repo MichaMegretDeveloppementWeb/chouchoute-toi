@@ -13,13 +13,14 @@
         <x-ui::form-group
             label="Adresse e-mail"
             for="email"
-            hint="C'est aussi l'identifiant de connexion au back-office."
+            :hint="$this->whyTheAddressStays() ?? 'C\'est aussi l\'identifiant de connexion au back-office.'"
             required>
             <x-ui::input
                 type="email"
                 id="email"
                 wire:model.blur="email"
                 autocomplete="username"
+                :disabled="$this->whyTheAddressStays() !== null"
                 :error="$errors->has('email')"
             />
         </x-ui::form-group>

@@ -29,6 +29,18 @@ final class UpdateProfileForm extends Component
         $this->email = $admin->email;
     }
 
+    /** Why the address cannot change here, for an account tied to a fiche · it is that fiche's address too. */
+    public function whyTheAddressStays(): ?string
+    {
+        $admin = $this->admin();
+
+        return match (true) {
+            $admin->practitioner_id === null => null,
+            $admin->isOwner() => 'C’est aussi l’adresse de votre fiche, et elle se change depuis Praticiens.',
+            default => 'C’est aussi l’adresse de votre fiche, et seul un propriétaire peut la changer.',
+        };
+    }
+
     /** @return array<string, array<int, mixed>> */
     protected function rules(): array
     {
@@ -60,7 +72,9 @@ final class UpdateProfileForm extends Component
     {
         $validated = $this->validate();
 
-        $this->admin()->update($validated);
+        $this->admin()->update($this->whyTheAddressStays() === null ? $validated : ['name' => $validated['name']]);
+
+        $this->email = $this->admin()->email;
 
         $this->dispatch('ui-toast', type: 'success', title: 'Profil mis à jour.');
     }
