@@ -106,13 +106,15 @@ final class ForgottenPasswordTest extends TestCase
         $link = (string) Mail::sent(PasswordLinkMail::class)->map(static fn (PasswordLinkMail $mail): string => $mail->link)->first();
         $this->assertSame(1, preg_match('#/admin/mot-de-passe/(\d+)/([^/]+)$#', $link, $parts));
 
+        $password = bin2hex(random_bytes(8));
+
         Livewire::test(ChoosePasswordForm::class, ['account' => (int) $parts[1], 'token' => $parts[2], 'purpose' => 'reset'])
-            ->set('password', 'un-mot-de-passe-solide')
-            ->set('passwordConfirmation', 'un-mot-de-passe-solide')
+            ->set('password', $password)
+            ->set('passwordConfirmation', $password)
             ->call('choose')
             ->assertRedirect(route('admin.dashboard'));
 
-        $this->assertTrue(Hash::check('un-mot-de-passe-solide', (string) $this->owner->fresh()?->password));
+        $this->assertTrue(Hash::check($password, (string) $this->owner->fresh()?->password));
     }
 
     public function test_the_message_reads_as_a_message_of_the_site(): void
