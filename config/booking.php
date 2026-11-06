@@ -22,8 +22,9 @@ return [
         // Routes are registered outside the host's own groups, so this stack
         // must include the session middleware. Whatever is listed here is also
         // registered as Livewire persistent middleware, otherwise it would not
-        // apply to component updates.
-        'middleware' => ['web', 'auth:admin'],
+        // apply to component updates. `auth.session` closes a session whose
+        // password changed elsewhere, as on the site's own screens.
+        'middleware' => ['web', 'auth:admin', 'auth.session'],
 
         // The guard the screens run behind, used to name the actor of a change
         // in the audit journal. Null falls back to the application's default

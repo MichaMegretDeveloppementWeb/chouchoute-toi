@@ -141,4 +141,18 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Password Link Timebox
+    |--------------------------------------------------------------------------
+    |
+    | How long, in microseconds, asking for a password link takes whatever the
+    | address · above what hashing a new link costs, so an address that opens
+    | an account answers no later than one that does not. The message leaves
+    | after the answer.
+    |
+    */
+
+    'timebox_duration' => 500000,
+
 ];

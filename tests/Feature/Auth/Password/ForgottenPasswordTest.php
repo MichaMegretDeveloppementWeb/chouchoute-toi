@@ -10,6 +10,7 @@ use App\Mail\Auth\PasswordLinkMail;
 use App\Models\Admin;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Defer\DeferredCallbackCollection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -36,6 +37,12 @@ final class ForgottenPasswordTest extends TestCase
 
         config(['app.url' => 'https://chouchoute-toi.fr']);
         Mail::fake();
+
+        // The message leaves after the answer · run at once here, and on its own in the test that says so.
+        $this->withoutDefer();
+
+        // The time every answer takes · a millisecond here, the shipped one in the test that measures it.
+        config(['auth.timebox_duration' => 1000]);
 
         $this->owner = Admin::factory()->create(['email' => 'amandine@exemple.fr']);
     }
@@ -103,6 +110,35 @@ final class ForgottenPasswordTest extends TestCase
         $this->aRequestFor('amandine@exemple.fr')->assertHasErrors('email')->assertSee('Trop de demandes.');
 
         Mail::assertNothingSent();
+    }
+
+    /** The answer leaves before the message · an address that opens an account answers no later than one that does not. */
+    public function test_the_message_leaves_after_the_answer(): void
+    {
+        $this->withDefer();
+
+        $this->aRequestFor('amandine@exemple.fr')->assertSet('sent', true)->assertSee(self::ANSWER);
+
+        Mail::assertNothingSent();
+
+        app(DeferredCallbackCollection::class)->invoke();
+
+        Mail::assertSent(PasswordLinkMail::class, static fn (PasswordLinkMail $mail): bool => $mail->hasTo('amandine@exemple.fr'));
+    }
+
+    /** Both answers take the same time at least, above what hashing a new link costs. */
+    public function test_a_known_and_an_unknown_address_answer_after_the_same_time(): void
+    {
+        $shipped = (require base_path('config/auth.php'))['timebox_duration'];
+        $this->assertSame(500000, $shipped);
+        config(['auth.timebox_duration' => $shipped]);
+
+        foreach (['amandine@exemple.fr', 'personne@exemple.fr'] as $address) {
+            $started = hrtime(true);
+            $this->aRequestFor($address);
+
+            $this->assertGreaterThanOrEqual(0.5, (hrtime(true) - $started) / 1e9, $address);
+        }
     }
 
     public function test_a_failure_while_sending_is_written_down_and_says_nothing_more(): void
