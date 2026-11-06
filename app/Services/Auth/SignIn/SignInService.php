@@ -28,6 +28,24 @@ final readonly class SignInService
         return $account instanceof Admin ? $account : null;
     }
 
+    /** The account signed in on the back-office, or null. */
+    public function signedIn(): ?Admin
+    {
+        $account = Auth::guard('admin')->user();
+
+        return $account instanceof Admin ? $account : null;
+    }
+
+    /** Signs the account out · the session forgotten, its form key renewed. */
+    public function signOut(): void
+    {
+        Auth::guard('admin')->logout();
+
+        $session = app(Store::class);
+        $session->invalidate();
+        $session->regenerateToken();
+    }
+
     /** Signs this account in, as a link that has just chosen its password does. */
     public function signIn(Admin $account): void
     {

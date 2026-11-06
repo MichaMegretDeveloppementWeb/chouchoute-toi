@@ -49,8 +49,18 @@ adresse, les oublier — dans `PasswordLinksService`.
 | `/admin/deconnexion` | `auth.logout` | la déconnexion, en `POST` |
 
 **Les adresses restent sous `/admin`**, où un visiteur les cherche · seul le code a
-quitté l'administration. Les quatre premières ne s'ouvrent qu'à un visiteur non
-connecté (`guest:admin`).
+quitté l'administration. La connexion et la demande d'un lien ne s'ouvrent qu'à un
+visiteur non connecté (`guest:admin`).
+
+**Les deux liens s'ouvrent aussi à un compte connecté**, qui lit sous quel nom il
+l'est, et « Se déconnecter et ouvrir le lien » · le cas ordinaire est l'ordinateur
+de l'institut, où une session est restée ouverte quand un nouveau membre ouvre son
+invitation. Le bouton passe par `POST /admin/lien/{usage}/{compte}/{jeton}`
+(`auth.link.sign-out`), qui déconnecte puis ouvre le lien.
+
+**Ouvrir un lien vérifie son secret**, ce qui coûte un hachage · trente visites par
+minute et par visiteur (`AuthServiceProvider::LINK_VISITS_PER_MINUTE`), puis le site
+répond 429.
 
 ## Le gabarit
 
@@ -95,11 +105,28 @@ nomme le compte par son numéro, jamais par son adresse, et se bâtit sur `APP_U
 jamais sur l'adresse de la requête · **`APP_URL` doit donc être celle du site en
 ligne**, ou les liens mèneront ailleurs.
 
-**La réponse au mot de passe oublié est la même qu'un compte existe ou non.** Trois
-demandes par minute et par visiteur.
+**La réponse au mot de passe oublié est la même qu'un compte existe ou non**, et elle
+prend le même temps · une demi-seconde, `auth.timebox_duration` dans
+`config/auth.php`, au-dessus de ce que coûte le hachage d'un lien neuf · le courriel
+part **après** la réponse (`defer()`), si bien qu'un envoi lent ne trahit pas une
+adresse. Trois demandes par minute et par visiteur.
 
 Une fois le mot de passe choisi, le compte est connecté et arrive sur le tableau de
-bord, comme à la connexion · les appareils gardés connectés doivent se reconnecter.
+bord, comme à la connexion.
+
+## Un mot de passe changé ferme les autres sessions
+
+**Choisi par un lien ou changé depuis le Profil**, le mot de passe neuf ferme toute
+autre session du compte à son clic suivant, appareils gardés connectés compris ·
+c'est le geste de qui craint qu'on ait pris son mot de passe. La session qui l'a
+changé reste ouverte.
+
+**Ce qui le tient** · `auth.session` après `auth:admin`, sur les écrans du site
+(`bootstrap/app.php`) et sur ceux des paquets (`booking.admin.middleware`,
+`analytics.admin.middleware`, `analytics.admin.marketing.middleware`) · Laravel garde
+dans la session l'empreinte du mot de passe, et une empreinte qui ne correspond plus
+déconnecte. `AuthServiceProvider` le déclare aussi à Livewire, pour qu'un clic le
+rejoue. **Un écran neuf du back-office** porte la même pile.
 
 ## Les comptes que booking demande
 
@@ -126,7 +153,10 @@ passe qu'il range est tiré au hasard, jamais donné. Elle porte la rangée « A
 | supprimer | le compte et ses liens partent avec la fiche |
 
 **Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés,
-suspendus ni supprimés depuis l'équipe.
+suspendus ni supprimés depuis l'équipe · et deux propriétaires qui se retirent l'un
+l'autre au même instant ne laissent pas le back-office sans propriétaire ·
+`OwnerLockService` tient les propriétaires en service, un par un par numéro croissant,
+le temps de l'écriture, et le second geste refuse sous ce verrou.
 
 ## Les messages
 

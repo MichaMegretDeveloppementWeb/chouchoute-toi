@@ -7,6 +7,7 @@ namespace App\Booking;
 use App\Enums\Account\Role;
 use App\Models\Admin;
 use App\Services\Auth\Account\AccountMailService;
+use App\Services\Auth\Account\OwnerLockService;
 use App\Services\Auth\Password\PasswordLinksService;
 use Carbon\CarbonImmutable;
 use Falcon\Booking\Contracts\Admin\Account\ProvidesAccounts;
@@ -19,6 +20,7 @@ use Falcon\Booking\Models\Practitioner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * The accounts booking asks the site for · an account of the back-office,
@@ -31,6 +33,7 @@ final readonly class Accounts implements ProvidesAccounts
     public function __construct(
         private AccountMailService $mail,
         private PasswordLinksService $links,
+        private OwnerLockService $owners,
     ) {}
 
     public function asksForAPassword(): bool
@@ -64,6 +67,7 @@ final readonly class Accounts implements ProvidesAccounts
 
     public function create(AccountData $account): int
     {
+        $owners = $this->owners->holdTheOwners();
         $admin = $this->lockedFirst($this->accountAt($account->email))
             ?? (new Admin)->forceFill(['password' => Str::password(64), 'email_verified_at' => null]);
 
@@ -72,10 +76,13 @@ final readonly class Accounts implements ProvidesAccounts
             $admin->email_verified_at ??= CarbonImmutable::now();
         }
 
+        $role = Role::tryFrom((string) $account->role) ?? ($admin->exists ? $admin->role : Role::Collaborator);
+        $this->assertAnOwnerStays($admin, $role, $owners);
+
         $admin->forceFill([
             'name' => $account->name,
             'email' => $account->email,
-            'role' => Role::tryFrom((string) $account->role) ?? ($admin->exists ? $admin->role : Role::Collaborator),
+            'role' => $role,
         ])->save();
 
         return (int) $admin->getKey();
@@ -83,6 +90,7 @@ final readonly class Accounts implements ProvidesAccounts
 
     public function update(int $accountId, AccountData $account): void
     {
+        $owners = $this->owners->holdTheOwners();
         $admin = $this->lockedFirst(Admin::query()->whereKey($accountId));
 
         if ($admin === null) {
@@ -94,18 +102,22 @@ final readonly class Accounts implements ProvidesAccounts
             $admin->invited_at = $admin->email_verified_at === null ? null : $admin->invited_at;
         }
 
+        $role = Role::tryFrom((string) $account->role) ?? $admin->role;
+        $this->assertAnOwnerStays($admin, $role, $owners);
+
         $admin->forceFill([
             'name' => $account->name,
             'email' => $account->email,
-            'role' => Role::tryFrom((string) $account->role) ?? $admin->role,
+            'role' => $role,
         ])->save();
     }
 
     public function suspended(int $accountId, bool $suspended): void
     {
-        $admin = Admin::query()->find($accountId);
+        $owners = $this->owners->holdTheOwners();
+        $admin = $this->lockedFirst(Admin::query()->whereKey($accountId));
 
-        if ($admin === null || ($suspended && $this->staysOpen($admin, $this->soleOwnerId()))) {
+        if ($admin === null || ($suspended && $this->staysOpen($admin, $this->soleOf($owners)))) {
             return;
         }
 
@@ -117,9 +129,10 @@ final readonly class Accounts implements ProvidesAccounts
 
     public function removed(int $accountId): void
     {
-        $admin = Admin::query()->find($accountId);
+        $owners = $this->owners->holdTheOwners();
+        $admin = $this->lockedFirst(Admin::query()->whereKey($accountId));
 
-        if ($admin === null || $this->staysOpen($admin, $this->soleOwnerId())) {
+        if ($admin === null || $this->staysOpen($admin, $this->soleOf($owners))) {
             return;
         }
 
@@ -270,6 +283,32 @@ final readonly class Accounts implements ProvidesAccounts
         $query->getQuery()->lockForUpdate();
 
         return $query->first();
+    }
+
+    /**
+     * Refuses, under the owners' lock, a role that would leave no owner in
+     * service · what the fiche asked before saving held two, and another
+     * write took one meanwhile.
+     *
+     * @param  list<int>  $owners
+     *
+     * @throws RuntimeException
+     */
+    private function assertAnOwnerStays(Admin $account, Role $role, array $owners): void
+    {
+        if ($role !== Role::Owner && $owners === [$account->id]) {
+            throw new RuntimeException('Account '.$account->id.' is the last owner in service, and keeps the role.');
+        }
+    }
+
+    /**
+     * The only owner of these, or null when there are several.
+     *
+     * @param  list<int>  $owners
+     */
+    private function soleOf(array $owners): ?int
+    {
+        return count($owners) === 1 ? $owners[0] : null;
     }
 
     /** The only owner still in service, or null when there are several. */

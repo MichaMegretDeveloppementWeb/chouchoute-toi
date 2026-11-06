@@ -23,7 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('auth.')
                 ->group(base_path('routes/auth.php'));
 
-            Route::middleware(['web', 'auth:admin'])
+            // `auth.session` after the guard · a password changed elsewhere closes this session at its next click.
+            Route::middleware(['web', 'auth:admin', 'auth.session'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));

@@ -153,7 +153,8 @@ return [
 
         // Middleware protecting the screens. The default suits a single-guard
         // app; override to match the project (e.g. ['web', 'auth:admin']).
-        'middleware' => ['web', 'auth:admin'],
+        // `auth.session` closes a session whose password changed elsewhere.
+        'middleware' => ['web', 'auth:admin', 'auth.session'],
 
         /*
         | Marketing: a second entity of the administration, with its own
@@ -164,7 +165,7 @@ return [
         */
         'marketing' => [
             'route_prefix' => 'admin/marketing',
-            'middleware' => ['web', 'auth:admin'],
+            'middleware' => ['web', 'auth:admin', 'auth.session'],
         ],
 
         // Extra middleware for one branch of the ability tree, keyed by ability
