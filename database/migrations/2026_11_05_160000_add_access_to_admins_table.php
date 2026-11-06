@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Schema;
 /**
  * What a back-office account may open, and which member of the team it is.
  *
- * The role defaults to the owner because the accounts this finds were all
- * created before roles existed · every new one writes its role.
+ * The accounts this finds were all created before roles existed, and become
+ * the owner · the column then keeps no default, so a row written since names
+ * its role or is refused.
  */
 return new class extends Migration
 {
@@ -32,6 +33,10 @@ return new class extends Migration
         });
 
         DB::statement("ALTER TABLE admins ADD CONSTRAINT admins_role_chk CHECK (role IN ('owner', 'practitioner'))");
+
+        Schema::table('admins', function (Blueprint $table): void {
+            $table->string('role', 20)->change();
+        });
     }
 
     public function down(): void

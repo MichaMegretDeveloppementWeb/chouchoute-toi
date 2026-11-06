@@ -35,12 +35,12 @@ class Admin extends Authenticatable
 
     /**
      * The same defaults as the columns carry · an account just created is read
-     * by the rules before anyone reloads it.
+     * by the rules before anyone reloads it. The role has none · whoever writes
+     * an account names it.
      *
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'role' => 'owner',
         'practitioner_id' => null,
         'invited_at' => null,
         'invitation_failed_at' => null,

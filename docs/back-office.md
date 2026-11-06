@@ -71,7 +71,7 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
 | Rôle | Ce qu'il ouvre |
 |---|---|
 | **Propriétaire** | tout le back-office |
-| **Praticien** | le Planning, où il voit tout et ne change que les rendez-vous où il réalise une prestation · les Clients, sans effacer ni télécharger les données · son Profil |
+| **Praticien** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil |
 
 - **Un rôle neuf** · un cas dans l'énumération, et ses règles dans le fournisseur ;
 - **`practitioner_id` dit quelle fiche est ce compte** · c'est ce qui fait qu'un

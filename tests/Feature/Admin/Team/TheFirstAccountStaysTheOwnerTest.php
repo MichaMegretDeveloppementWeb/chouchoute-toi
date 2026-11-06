@@ -6,28 +6,48 @@ namespace Tests\Feature\Admin\Team;
 
 use App\Enums\Team\AdminRole;
 use App\Models\Admin;
+use Database\Seeders\AdminSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
- * The account a row of the table already holds stays the owner once roles
- * exist: no migration fills data, so the column's own default carries it.
+ * The original account is the owner, and every account written since names
+ * its role · the base refuses one that does not, the model offering none.
  */
 final class TheFirstAccountStaysTheOwnerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_a_row_that_names_no_role_is_the_owner(): void
+    public function test_the_original_account_is_written_as_the_owner(): void
     {
-        $id = DB::table('admins')->insertGetId([
+        $this->seed(AdminSeeder::class);
+
+        $this->assertSame(AdminRole::Owner, Admin::query()->where('email', 'amandine@chouchoute-toi.com')->sole()->role);
+    }
+
+    public function test_a_row_written_without_a_role_is_refused(): void
+    {
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('role');
+
+        DB::table('admins')->insert([
             'name' => 'Amandine',
             'email' => 'amandine@exemple.fr',
-            'password' => 'not-a-hash',
+            'password' => bin2hex(random_bytes(8)),
         ]);
+    }
 
-        $this->assertSame(AdminRole::Owner, Admin::query()->findOrFail($id)->role);
+    public function test_an_account_written_without_a_role_is_refused(): void
+    {
+        $this->expectException(QueryException::class);
+
+        (new Admin)->forceFill([
+            'name' => 'Julie',
+            'email' => 'julie@exemple.fr',
+            'password' => bin2hex(random_bytes(8)),
+        ])->save();
     }
 
     public function test_the_schema_refuses_a_role_nobody_knows(): void
@@ -38,7 +58,7 @@ final class TheFirstAccountStaysTheOwnerTest extends TestCase
         DB::table('admins')->insert([
             'name' => 'Amandine',
             'email' => 'amandine@exemple.fr',
-            'password' => 'not-a-hash',
+            'password' => bin2hex(random_bytes(8)),
             'role' => 'superuser',
         ]);
     }
