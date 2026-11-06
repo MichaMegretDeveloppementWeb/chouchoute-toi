@@ -24,8 +24,9 @@ use RuntimeException;
 use Tests\TestCase;
 
 /**
- * The fiche gives a member of the team an account: it is written with the fiche,
- * the invitation leaves once the fiche is saved, and an address stays one person's.
+ * The fiche gives a member of the team an account: booking asks the site to
+ * create it and keeps its number, the invitation leaves once the fiche is
+ * saved, and an address stays one person's.
  */
 final class TheTeamIsInvitedTest extends TestCase
 {
@@ -44,6 +45,11 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->actingAs($this->owner, 'admin');
     }
 
+    public function test_the_fiche_asks_for_no_first_password(): void
+    {
+        $this->aFilledFiche()->assertDontSee('Mot de passe provisoire');
+    }
+
     public function test_a_new_member_receives_an_invitation_that_names_no_address(): void
     {
         $this->aFilledFiche()
@@ -51,10 +57,9 @@ final class TheTeamIsInvitedTest extends TestCase
             ->assertReturned(true)
             ->assertDispatched('ui-toast', type: 'success', title: 'Praticien enregistré', description: 'L’invitation est partie à julie@exemple.fr.');
 
-        $member = Practitioner::query()->sole();
-        $account = Admin::query()->where('practitioner_id', $member->id)->sole();
+        $account = $this->accountOf(Practitioner::query()->sole());
 
-        $this->assertSame(Role::Practitioner, $account->role);
+        $this->assertSame(Role::Collaborator, $account->role);
         $this->assertSame(['Julie Martin', 'julie@exemple.fr'], [$account->name, $account->email]);
         $this->assertNull($account->email_verified_at);
         $this->assertNotNull($account->invited_at);
@@ -64,6 +69,13 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->assertStringStartsWith('https://chouchoute-toi.fr/admin/bienvenue/'.$account->id.'/', $link);
         $this->assertStringNotContainsString('julie', $link);
         Mail::assertSent(InvitationMail::class, static fn (InvitationMail $mail): bool => $mail->days === 7);
+    }
+
+    public function test_the_role_chosen_on_the_fiche_is_the_account_s(): void
+    {
+        $this->aFilledFiche()->set('accessRole', 'owner')->call('savePractitioner')->assertReturned(true);
+
+        $this->assertSame(Role::Owner, $this->accountOf(Practitioner::query()->sole())->role);
     }
 
     /** A host name the request carries never reaches the link, whatever the server answers to. */
@@ -95,7 +107,7 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->aFilledFiche()
             ->call('savePractitioner')
             ->assertReturned(true)
-            ->assertDispatched('ui-toast', type: 'error', title: 'Praticien enregistré, mais l’invitation n’a pas pu partir.');
+            ->assertDispatched('ui-toast', type: 'error', title: 'Praticien enregistré', description: 'L’invitation n’a pas pu partir. Renvoyez-la depuis le menu de sa ligne.');
 
         $account = Admin::query()->where('email', 'julie@exemple.fr')->sole();
 
@@ -107,16 +119,16 @@ final class TheTeamIsInvitedTest extends TestCase
     /** The minute between two invitations does not hold for one that never left. */
     public function test_an_invitation_that_did_not_leave_can_leave_again_at_once(): void
     {
-        $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr']);
-        $account = Admin::factory()->practitioner($member->id)->create([
+        $account = Admin::factory()->collaborator()->create([
             'email' => 'julie@exemple.fr',
             'email_verified_at' => null,
             'invited_at' => CarbonImmutable::now(),
             'invitation_failed_at' => CarbonImmutable::now(),
         ]);
+        $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr', 'account_id' => $account->id]);
 
         Livewire::test(PractitionerIndex::class)
-            ->call('sendTheInvitationAgain', $member->id)
+            ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'success', title: 'L’invitation est repartie à julie@exemple.fr.');
 
         $this->assertNull($account->fresh()?->invitation_failed_at);
@@ -130,7 +142,7 @@ final class TheTeamIsInvitedTest extends TestCase
         $first = $this->linkSentTo('julie@exemple.fr');
 
         Livewire::test(PractitionerIndex::class)
-            ->call('sendTheInvitationAgain', $member->id)
+            ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'info', title: 'Une invitation vient de partir. Réessayez dans une minute.');
 
         Mail::assertSentCount(1);
@@ -138,7 +150,7 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->travel(61)->seconds();
 
         Livewire::test(PractitionerIndex::class)
-            ->call('sendTheInvitationAgain', $member->id)
+            ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'success', title: 'L’invitation est repartie à julie@exemple.fr.');
 
         Mail::assertSentCount(2);
@@ -147,26 +159,26 @@ final class TheTeamIsInvitedTest extends TestCase
 
     public function test_an_account_already_in_service_is_not_invited_again(): void
     {
-        $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr']);
-        Admin::factory()->practitioner($member->id)->create(['email' => 'julie@exemple.fr']);
+        $account = Admin::factory()->collaborator()->create(['email' => 'julie@exemple.fr']);
+        $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr', 'account_id' => $account->id]);
 
-        Livewire::test(PractitionerIndex::class)->call('sendTheInvitationAgain', $member->id);
+        Livewire::test(PractitionerIndex::class)
+            ->call('sendTheAccessAgain', $member->id)
+            ->assertDispatched('ui-toast', type: 'info', title: 'Ce compte n’attend aucune invitation.');
 
         Mail::assertNothingSent();
     }
 
     public function test_saving_a_member_again_writes_the_name_and_sends_nothing(): void
     {
-        $waiting = Practitioner::factory()->create(['name' => 'Julie Martin', 'email' => 'julie@exemple.fr']);
-        Admin::factory()->practitioner($waiting->id)->create(['email' => 'julie@exemple.fr', 'email_verified_at' => null, 'invited_at' => CarbonImmutable::now()]);
-        $inService = Practitioner::factory()->create(['name' => 'Camille Arnaud', 'email' => 'camille@exemple.fr']);
-        Admin::factory()->practitioner($inService->id)->create(['email' => 'camille@exemple.fr']);
+        $waiting = $this->aMemberWithAnAccount('Julie Martin', 'julie@exemple.fr', ['email_verified_at' => null, 'invited_at' => CarbonImmutable::now()]);
+        $inService = $this->aMemberWithAnAccount('Camille Arnaud', 'camille@exemple.fr');
 
         $this->theFicheOf($waiting)->set('name', 'Julie Petit')->call('savePractitioner')->assertReturned(true);
         $this->theFicheOf($inService)->call('savePractitioner')->assertReturned(true);
 
         Mail::assertNothingSent();
-        $this->assertSame('Julie Petit', Admin::query()->where('practitioner_id', $waiting->id)->value('name'));
+        $this->assertSame('Julie Petit', $this->accountOf($waiting)->name);
     }
 
     /** The account that signed in before any fiche named it keeps its password, and nothing leaves. */
@@ -177,13 +189,14 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->aNewFiche()
             ->set('name', 'Amandine David')
             ->set('email', 'amandine@exemple.fr')
-            ->set('accessLevel', 'owner')
+            ->set('giveAnAccess', true)
+            ->set('accessRole', 'owner')
             ->call('savePractitioner')
             ->assertReturned(true);
 
         $account = Admin::query()->sole();
 
-        $this->assertSame(Practitioner::query()->sole()->id, $account->practitioner_id);
+        $this->assertSame($account->id, Practitioner::query()->sole()->getAttribute('account_id'));
         $this->assertSame([Role::Owner, $password], [$account->role, $account->password]);
         $this->assertNotNull($account->email_verified_at);
         Mail::assertNothingSent();
@@ -196,7 +209,8 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->aNewFiche()
             ->set('name', 'Camille Arnaud')
             ->set('email', 'camille@exemple.fr')
-            ->set('accessLevel', 'owner')
+            ->set('giveAnAccess', true)
+            ->set('accessRole', 'owner')
             ->call('savePractitioner')
             ->assertReturned(true);
 
@@ -204,15 +218,16 @@ final class TheTeamIsInvitedTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    public function test_the_owner_cannot_take_up_the_own_account_as_a_practitioner(): void
+    public function test_the_owner_cannot_take_up_the_own_account_as_a_collaborator(): void
     {
         $this->aNewFiche()
             ->set('name', 'Amandine David')
             ->set('email', 'amandine@exemple.fr')
-            ->set('accessLevel', 'practitioner')
+            ->set('giveAnAccess', true)
+            ->set('accessRole', 'collaborator')
             ->call('savePractitioner')
             ->assertReturned(false)
-            ->assertHasErrors('accessLevel')
+            ->assertHasErrors('accessRole')
             ->assertSee('Vous ne pouvez pas changer votre propre accès.');
 
         $this->assertSame(Role::Owner, $this->owner->fresh()?->role);
@@ -234,8 +249,7 @@ final class TheTeamIsInvitedTest extends TestCase
 
     public function test_an_address_another_account_holds_is_refused_by_name(): void
     {
-        $member = Practitioner::factory()->create(['name' => 'Julie Martin', 'email' => 'julie@exemple.fr']);
-        Admin::factory()->practitioner($member->id)->create(['email' => 'julie@exemple.fr']);
+        $member = $this->aMemberWithAnAccount('Julie Martin', 'julie@exemple.fr');
 
         $this->theFicheOf($member)
             ->set('email', 'amandine@exemple.fr')
@@ -254,7 +268,8 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->theFicheOf($member)
             ->set('email', 'julie.martin@exemple.fr')
             ->call('savePractitioner')
-            ->assertReturned(true);
+            ->assertReturned(true)
+            ->assertDispatched('ui-toast', type: 'success', title: 'Praticien enregistré', description: 'L’invitation est partie à julie.martin@exemple.fr.');
 
         $this->assertFalse($this->linkServes($old));
         $this->assertTrue($this->linkServes($this->linkSentTo('julie.martin@exemple.fr')));
@@ -263,19 +278,36 @@ final class TheTeamIsInvitedTest extends TestCase
 
     public function test_correcting_the_address_of_an_account_in_service_tells_both(): void
     {
-        $member = Practitioner::factory()->create(['name' => 'Julie Martin', 'email' => 'julie@exemple.fr']);
-        $account = Admin::factory()->practitioner($member->id)->create(['email' => 'julie@exemple.fr']);
+        $member = $this->aMemberWithAnAccount('Julie Martin', 'julie@exemple.fr');
+        $account = $this->accountOf($member);
         app(PasswordLinksService::class)->links(PasswordLinksService::PASSWORD_RESETS)->createToken($account);
 
         $this->theFicheOf($member)
             ->set('email', 'julie.martin@exemple.fr')
             ->call('savePractitioner')
-            ->assertReturned(true);
+            ->assertReturned(true)
+            ->assertDispatched('ui-toast', type: 'success', title: 'Praticien enregistré', description: 'Ses deux adresses sont prévenues · il se connecte désormais avec julie.martin@exemple.fr.');
 
         Mail::assertSent(AddressChangedMail::class, static fn (AddressChangedMail $mail): bool => $mail->hasTo('julie@exemple.fr') && $mail->hasTo('julie.martin@exemple.fr'));
         Mail::assertNotSent(InvitationMail::class);
         $this->assertSame(['julie.martin@exemple.fr', $account->password], [$account->fresh()?->email, $account->fresh()?->password]);
         $this->assertDatabaseMissing('admin_password_reset_tokens', ['email' => 'julie@exemple.fr']);
+    }
+
+    /** The message of a new address that does not leave is said, with the address to sign in with. */
+    public function test_a_new_address_that_cannot_be_told_is_said(): void
+    {
+        $member = $this->aMemberWithAnAccount('Julie Martin', 'julie@exemple.fr');
+        Log::spy();
+        Mail::shouldReceive('to')->once()->andThrow(new RuntimeException('The relay refused the message.'));
+
+        $this->theFicheOf($member)
+            ->set('email', 'julie.martin@exemple.fr')
+            ->call('savePractitioner')
+            ->assertReturned(true)
+            ->assertDispatched('ui-toast', type: 'error', title: 'Praticien enregistré', description: 'Le message qui le prévient du changement d’adresse n’a pas pu partir. Dites-lui de se connecter avec julie.martin@exemple.fr.');
+
+        $this->assertSame('julie.martin@exemple.fr', $this->accountOf($member)->email);
     }
 
     public function test_the_message_of_a_new_address_offers_no_link(): void
@@ -297,12 +329,30 @@ final class TheTeamIsInvitedTest extends TestCase
         return $this->aNewFiche()
             ->set('name', 'Julie Martin')
             ->set('email', 'julie@exemple.fr')
-            ->set('accessLevel', 'practitioner');
+            ->set('giveAnAccess', true)
+            ->set('accessRole', 'collaborator');
     }
 
     private function theFicheOf(Practitioner $member): Testable
     {
         return Livewire::test(PractitionerForm::class)->call('editPractitioner', $member->id);
+    }
+
+    /**
+     * A member whose fiche keeps a collaborator's account at the same address.
+     *
+     * @param  array<string, mixed>  $account
+     */
+    private function aMemberWithAnAccount(string $name, string $email, array $account = []): Practitioner
+    {
+        $admin = Admin::factory()->collaborator()->create(['name' => $name, 'email' => $email, ...$account]);
+
+        return Practitioner::factory()->create(['name' => $name, 'email' => $email, 'account_id' => $admin->id]);
+    }
+
+    private function accountOf(Practitioner $member): Admin
+    {
+        return Admin::query()->findOrFail((int) $member->fresh()?->getAttribute('account_id'));
     }
 
     /** The link of the last invitation sent to this address. */

@@ -65,7 +65,7 @@ final class LoginForm extends Component
 
         RateLimiter::clear($this->throttleKey());
 
-        $this->redirectIntended($signIn->homeOf($account), navigate: false);
+        $this->redirectIntended($signIn->home(), navigate: false);
     }
 
     public function render(): View

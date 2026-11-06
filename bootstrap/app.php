@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Admin;
+use App\Services\Admin\Navigation\OpenScreensService;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -32,11 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // The back-office is the only authenticated area for now. Revisit when
         // the public site opens client accounts on the `web` guard.
         $middleware->redirectGuestsTo(fn (): string => route('auth.login'));
-        $middleware->redirectUsersTo(static function (): string {
-            $account = auth()->guard('admin')->user();
-
-            return route($account instanceof Admin ? $account->role->home() : 'admin.dashboard');
-        });
+        $middleware->redirectUsersTo(fn (): string => route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // A screen of the office refused to an account is said inside the office, with the way back.
@@ -47,6 +44,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            return response()->view('admin.forbidden', ['role' => $account->role], 403);
+            return response()->view('admin.forbidden', ['home' => app(OpenScreensService::class)->homeOf($account)], 403);
         });
     })->create();

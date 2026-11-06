@@ -84,6 +84,23 @@ final readonly class OpenScreensService
     }
 
     /**
+     * The screen an account arrives on · the first its bar shows, null when it
+     * opens none.
+     *
+     * @return array{route: string, title: string}|null
+     */
+    public function homeOf(?Admin $account): ?array
+    {
+        foreach ($this->screensOpenTo($account) as $screens) {
+            if ($screens !== []) {
+                return ['route' => $screens[0]['route'], 'title' => $screens[0]['title']];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * The route names that light a section, whichever of its screens the account opens.
      *
      * @return list<string>

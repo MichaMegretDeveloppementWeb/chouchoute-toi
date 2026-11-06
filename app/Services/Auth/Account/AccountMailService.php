@@ -46,13 +46,17 @@ final readonly class AccountMailService
         return true;
     }
 
-    /** Tells both addresses that the one to sign in with changed · the password stays. */
-    public function tellOfTheNewAddress(Admin $account, string $formerAddress): void
+    /** Tells both addresses that the one to sign in with changed · the password stays · and says whether it left. */
+    public function tellOfTheNewAddress(Admin $account, string $formerAddress): bool
     {
         try {
             Mail::to([$account->email, $formerAddress])->send(new AddressChangedMail($account->name, $account->email));
         } catch (Throwable $failure) {
             Log::error('Telling of a new address failed.', ['admin_id' => $account->id, 'exception' => $failure]);
+
+            return false;
         }
+
+        return true;
     }
 }

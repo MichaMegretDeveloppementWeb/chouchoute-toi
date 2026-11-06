@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Booking\Accounts;
-use Falcon\Booking\Contracts\Admin\Team\ManagesTeamAccess;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
@@ -17,8 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // The accounts booking asks for are the site's · booking reaches them through this.
-        $this->app->bind(ManagesTeamAccess::class, Accounts::class);
+        //
     }
 
     /**

@@ -37,9 +37,9 @@ class AdminFactory extends Factory
         ];
     }
 
-    /** An account of the team, for this member. */
-    public function practitioner(int $practitionerId): self
+    /** A collaborator's account. */
+    public function collaborator(): self
     {
-        return $this->state(['role' => Role::Practitioner, 'practitioner_id' => $practitionerId]);
+        return $this->state(['role' => Role::Collaborator]);
     }
 }

@@ -30,7 +30,7 @@ assets, voir [Gestion des assets avec Vite](assets-vite.md).
 | les services | `app/Services/Auth/{SignIn,Password,Account}/` |
 | les courriels | `app/Mail/Auth/`, une seule vue, `resources/views/mail/auth/message.blade.php` |
 | le démarrage | `app/Providers/AuthServiceProvider.php` |
-| les rôles | `app/Enums/Account/Role.php` |
+| les rôles | `app/Enums/Account/Role.php` · ce qu'ils ouvrent, `app/Booking/Roles.php` et `app/Analytics/Roles.php` |
 | ce que le site donne à booking | `app/Booking/Accounts.php` |
 
 **Un composant ne fait que valider et appeler un service.** La connexion vit dans
@@ -70,8 +70,8 @@ la couleur de la marque et les champs · `resources/css/shared/office-theme.css`
 
 L'adresse et le mot de passe, et « Rester connecté ». **Cinq essais ratés** par
 adresse et par visiteur, puis le formulaire attend · le message dit combien de
-secondes. La session est renouvelée à chaque connexion, et le compte arrive sur la
-page de son rôle.
+secondes. La session est renouvelée à chaque connexion, et le compte arrive sur le
+tableau de bord, qui mène un compte qu'il n'ouvre pas au premier écran de sa barre.
 
 ## Un compte suspendu n'est plus personne
 
@@ -98,22 +98,29 @@ ligne**, ou les liens mèneront ailleurs.
 **La réponse au mot de passe oublié est la même qu'un compte existe ou non.** Trois
 demandes par minute et par visiteur.
 
-Une fois le mot de passe choisi, le compte est connecté et arrive sur la page de son
-rôle · les appareils gardés connectés doivent se reconnecter.
+Une fois le mot de passe choisi, le compte est connecté et arrive sur le tableau de
+bord, comme à la connexion · les appareils gardés connectés doivent se reconnecter.
 
 ## Les comptes que booking demande
 
 Booking crée des praticiens, et leur donne un accès en demandant au site de leur
 créer un compte · `app/Booking/Accounts.php` répond à ce que booking lui demande,
-lié dans `AppServiceProvider`. Une fiche de praticien porte donc une adresse,
-obligatoire, et la rangée « Accès ».
+**à l'emplacement que booking attend** (`booking.accounts`), sans rien à lier. Booking
+ne lui passe jamais un praticien · des numéros de compte, un nom, une adresse et un
+rôle · et garde lui-même quel compte est celui de quelle fiche. Le site écrit les
+phrases que la fiche et la liste montrent de chaque compte.
+
+**La fiche ne demande aucun mot de passe** · le site invite par e-mail, et le mot de
+passe qu'il range est tiré au hasard, jamais donné. Elle porte la rangée « Accès » ·
+« Donner un accès », puis le rôle, Propriétaire ou Collaborateur.
 
 | Geste dans l'équipe | Ce qui arrive au compte |
 |---|---|
-| créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, et l'invitation part une fois la fiche enregistrée |
-| une fiche à l'adresse d'un compte qu'aucune fiche ne nomme | ce compte est repris, avec son mot de passe, et rien ne part · c'est le cas du compte d'origine |
+| créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, avec le rôle choisi, et l'invitation part une fois la fiche enregistrée |
+| donner un accès à l'adresse d'un compte qui existe déjà | ce compte est repris, avec son mot de passe, et rien ne part · c'est le cas du compte d'origine |
+| changer le rôle | le compte prend le rôle choisi · le sien, et celui du dernier propriétaire, ne changent pas, et la fiche dit pourquoi |
 | corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
-| corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues |
+| corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues · un message qui ne part pas se dit, avec l'adresse de connexion |
 | « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
 | archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend |
 | supprimer | le compte et ses liens partent avec la fiche |

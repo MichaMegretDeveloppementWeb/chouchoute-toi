@@ -70,7 +70,6 @@ final class TheFirstAccountStaysTheOwnerTest extends TestCase
         $admin->fill(['name' => 'Julie']);
 
         $this->assertNotContains('role', $admin->getFillable());
-        $this->assertNotContains('practitioner_id', $admin->getFillable());
         $this->assertNotContains('suspended_at', $admin->getFillable());
     }
 }
