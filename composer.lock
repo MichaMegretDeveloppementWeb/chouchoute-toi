@@ -783,7 +783,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "11b1f62aab19a17e70a76453e868e10985826e7d"
+                "reference": "e21b4390883c22bed4eea337beda09f83999cad6"
             },
             "require": {
                 "laravel/framework": "^13.12",
