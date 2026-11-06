@@ -42,6 +42,6 @@
    system setting, and the kit's screens would not. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@import './admin/theme.css';
-@import './admin/fields.css';
+@import './shared/office-theme.css';
+@import './shared/fields.css';
 @import './admin/sidebar.css';

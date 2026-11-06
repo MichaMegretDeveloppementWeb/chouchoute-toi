@@ -77,7 +77,7 @@
         </div>
 
         <div class="mt-12 flex justify-end">
-            <a href="{{ route('admin.login') }}"
+            <a href="{{ route('auth.login') }}"
                aria-label="Espace d'administration"
                class="block h-1.5 w-1.5 rounded-full bg-white/10 transition-colors hover:bg-white/50"></a>
         </div>

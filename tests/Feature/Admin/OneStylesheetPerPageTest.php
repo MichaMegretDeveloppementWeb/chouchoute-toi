@@ -111,7 +111,7 @@ final class OneStylesheetPerPageTest extends TestCase
             .'Deux feuilles écrivent les mêmes classes, et la dernière chargée gagne.',
         );
 
-        foreach (['resources/css/admin.css', 'resources/css/web.css'] as $entry) {
+        foreach (['resources/css/admin.css', 'resources/css/web.css', 'resources/css/auth.css'] as $entry) {
             $this->assertStringContainsString(
                 "@import './app.css';",
                 $this->contentsOf($entry),

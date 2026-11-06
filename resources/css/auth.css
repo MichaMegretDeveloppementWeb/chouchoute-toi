@@ -1,0 +1,22 @@
+/* The sign-in space · its own entry, beside the site's and the back-office's.
+   The nine layers open it, as in every entry, before the utilities generator. */
+@import '../../vendor/falcon/ui-kit/resources/css/layers.css';
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+
+@import 'tailwindcss' source(none);
+
+/* The kit's names, so the tokens written in its views produce something. */
+@import '../../vendor/falcon/ui-kit/resources/css/theme.css';
+
+@import './app.css';
+
+@source '../views/**/*.blade.php';
+
+/* `dark:` follows the theme the page carries, as in the back-office. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* What the sign-in screens share with the back-office · its typeface, its brand
+   and its fields. */
+@import './shared/office-theme.css';
+@import './shared/fields.css';

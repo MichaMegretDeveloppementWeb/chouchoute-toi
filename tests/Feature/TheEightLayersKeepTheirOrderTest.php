@@ -36,7 +36,7 @@ final class TheEightLayersKeepTheirOrderTest extends TestCase
 
     public function test_both_entries_declare_the_eight_layers_in_the_agreed_order(): void
     {
-        foreach (['resources/css/admin.css', 'resources/css/web.css'] as $entry) {
+        foreach (['resources/css/admin.css', 'resources/css/web.css', 'resources/css/auth.css'] as $entry) {
             $this->assertSame(
                 self::CONTRACT,
                 array_values(array_intersect($this->layersDeclaredIn($entry), self::CONTRACT)),

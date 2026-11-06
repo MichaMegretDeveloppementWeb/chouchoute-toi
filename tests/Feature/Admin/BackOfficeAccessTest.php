@@ -44,7 +44,7 @@ final class BackOfficeAccessTest extends TestCase
     #[DataProvider('provideProtectedRoutes')]
     public function test_guest_is_redirected_to_the_login_screen(string $route): void
     {
-        $this->get(route($route))->assertRedirect(route('admin.login'));
+        $this->get(route($route))->assertRedirect(route('auth.login'));
     }
 
     #[DataProvider('provideProtectedRoutes')]
@@ -52,7 +52,7 @@ final class BackOfficeAccessTest extends TestCase
     {
         $this->actingAs(User::factory()->create(), 'web')
             ->get(route($route))
-            ->assertRedirect(route('admin.login'));
+            ->assertRedirect(route('auth.login'));
     }
 
     #[DataProvider('provideProtectedRoutes')]
@@ -83,7 +83,7 @@ final class BackOfficeAccessTest extends TestCase
         $response->assertSee('Amandine', escape: false);
         $response->assertSee('amandine@example.test', escape: false);
         $response->assertSee(route('admin.profile'), escape: false);
-        $response->assertSee(route('admin.logout'), escape: false);
+        $response->assertSee(route('auth.logout'), escape: false);
         $response->assertSee(route('home'), escape: false);
     }
 }

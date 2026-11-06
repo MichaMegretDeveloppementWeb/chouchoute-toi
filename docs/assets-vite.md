@@ -8,17 +8,21 @@ n'appartient qu'à elle.
 
 ## Les trois espaces
 
-Au-dessus du découpage par page, le projet a **trois espaces**, chacun avec sa
-paire d'entrées.
+Au-dessus du découpage par page, le projet a **trois espaces**, chacun avec ses
+entrées.
 
 | Fichier | Ce qu'il porte | Entrée Vite ? |
 |---|---|---|
 | `resources/css/web.css` · `resources/js/web.js` | le site public | oui |
 | `resources/css/admin.css` · `resources/js/admin.js` | le back-office | oui |
-| `resources/css/app.css` · `resources/js/app.js` | le commun aux deux | **non** · les deux autres l'importent |
+| `resources/css/auth.css` | l'espace Auth · la connexion, le mot de passe, l'invitation · voir [L'espace Auth](auth.md) | oui · **sans script**, il n'en a pas encore à lui |
+| `resources/css/app.css` · `resources/js/app.js` | le commun à tous | **non** · les entrées l'importent |
+| `resources/css/shared/` | ce que plusieurs espaces partagent sans que tous le portent · la police, la marque et les champs, communs au back-office et à l'espace Auth | **non** · `admin.css` et `auth.css` l'importent |
 
 **Une entrée importe, elle ne contient pas.** Les règles vont dans un fichier
-dédié sous `admin/` ou `web/`, enchaîné depuis l'entrée.
+dédié sous `admin/`, `web/` ou `shared/`, enchaîné depuis l'entrée. **Une entrée
+naît le jour où elle a quelque chose à porter** · l'espace Auth n'a pas de script
+d'entrée, un fichier vide n'en serait pas un.
 
 ```css
 /* resources/css/admin.css */
@@ -38,8 +42,8 @@ dédié sous `admin/` ou `web/`, enchaîné depuis l'entrée.
 
 @source '../views/**/*.blade.php';
 
-@import './admin/theme.css';
-@import './admin/fields.css';
+@import './shared/office-theme.css';
+@import './shared/fields.css';
 ```
 
 **Et rien des paquets.** Chacun compile sa propre feuille et la livre déjà

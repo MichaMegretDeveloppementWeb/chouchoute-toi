@@ -12,7 +12,7 @@
 
 @php
     $admin = auth()->guard('admin')->user();
-    $screens = app(\App\Services\Team\OpenScreensService::class);
+    $screens = app(\App\Services\Admin\Navigation\OpenScreensService::class);
 
     // What this account opens, section by section · a link or a section shows
     // only when it leads somewhere, and a section leads to its first open screen.

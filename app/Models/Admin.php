@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Team\AdminRole;
+use App\Enums\Account\Role;
 use Carbon\CarbonImmutable;
 use Database\Factories\AdminFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +21,7 @@ use Illuminate\Notifications\Notifiable;
  * Its role, its practitioner and its access never come from a form as such ·
  * they are not fillable, and whoever writes them does it by name.
  *
- * @property AdminRole $role
+ * @property Role $role
  * @property int|null $practitioner_id
  * @property CarbonImmutable|null $email_verified_at
  * @property CarbonImmutable|null $invited_at
@@ -75,12 +75,12 @@ class Admin extends Authenticatable
             'invitation_failed_at' => 'immutable_datetime',
             'suspended_at' => 'immutable_datetime',
             'password' => 'hashed',
-            'role' => AdminRole::class,
+            'role' => Role::class,
         ];
     }
 
     public function isOwner(): bool
     {
-        return $this->role === AdminRole::Owner;
+        return $this->role === Role::Owner;
     }
 }

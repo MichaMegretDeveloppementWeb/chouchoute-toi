@@ -31,6 +31,6 @@ final class TheAccountMenuIsTheKitsTest extends TestCase
         $this->assertNotNull($panel);
         $this->assertNotNull($panel->querySelector('a[href="'.route('admin.profile').'"]'));
         $this->assertNotNull($panel->querySelector('a[href="'.route('home').'"]'));
-        $this->assertNotNull($panel->querySelector('form[action="'.route('admin.logout').'"] button[type="submit"]'));
+        $this->assertNotNull($panel->querySelector('form[action="'.route('auth.logout').'"] button[type="submit"]'));
     }
 }
