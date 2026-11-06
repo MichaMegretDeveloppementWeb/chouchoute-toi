@@ -4,7 +4,7 @@
 
 Le projet suit une architecture segmentée : chaque page a son propre dossier de vues, ses propres assets, et son propre controller. Les pages sont découpées en partials pour la lisibilité, et les éléments communs (header, footer) sont de vrais composants Blade inclus dans un layout partagé.
 
-Cette page décrit le **site public**. Le back-office suit d'autres règles, parce qu'il héberge aussi les écrans de `falcon/booking` et de `falcon/analytics` : voir [Le back-office](back-office.md).
+Cette page décrit le **site public**. Le back-office suit d'autres règles, parce qu'il héberge aussi les écrans de `falcon/booking` et de `falcon/analytics` : voir [Le back-office](back-office.md). L'espace Auth, qui fait entrer dans le back-office, a sa page : voir [L'espace Auth](auth.md).
 
 ## Arborescence générale
 

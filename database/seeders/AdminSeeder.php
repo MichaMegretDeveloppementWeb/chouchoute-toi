@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Enums\Team\AdminRole;
+use App\Enums\Account\Role;
 use App\Models\Admin;
 use Illuminate\Database\Seeder;
 
@@ -30,7 +30,7 @@ final class AdminSeeder extends Seeder
             'name' => 'Amandine',
             'password' => 'password',
             'email_verified_at' => now(),
-            'role' => AdminRole::Owner,
+            'role' => Role::Owner,
         ])->save();
 
         $this->command?->info("Compte administrateur créé : {$admin->email} (mot de passe : password).");

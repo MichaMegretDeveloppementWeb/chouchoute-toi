@@ -19,8 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function (): void {
             Route::middleware('web')
                 ->prefix('admin')
-                ->name('admin.')
-                ->group(base_path('routes/admin-auth.php'));
+                ->name('auth.')
+                ->group(base_path('routes/auth.php'));
 
             Route::middleware(['web', 'auth:admin'])
                 ->prefix('admin')
@@ -31,7 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // The back-office is the only authenticated area for now. Revisit when
         // the public site opens client accounts on the `web` guard.
-        $middleware->redirectGuestsTo(fn (): string => route('admin.login'));
+        $middleware->redirectGuestsTo(fn (): string => route('auth.login'));
         $middleware->redirectUsersTo(static function (): string {
             $account = auth()->guard('admin')->user();
 

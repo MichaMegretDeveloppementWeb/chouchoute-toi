@@ -49,7 +49,7 @@
     <x-ui::dropdown-item separator />
 
     {{-- Signing out is a POST, so it carries its own form. --}}
-    <form method="POST" action="{{ route('admin.logout') }}">
+    <form method="POST" action="{{ route('auth.logout') }}">
         @csrf
         <button
             type="submit"

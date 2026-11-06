@@ -6,14 +6,17 @@ faite, comment un écran de paquet vient s'y loger, et ce que l'espace exige de
 sa configuration.
 
 Pour les assets de l'espace, voir [Gestion des assets avec Vite](assets-vite.md).
-Pour le site public, voir [Structure des fichiers](structure-fichiers.md).
+Pour le site public, voir [Structure des fichiers](structure-fichiers.md). Pour la
+connexion et les comptes, voir [L'espace Auth](auth.md).
 
-## Deux composants
+## Un composant
 
 | Fichier | Rôle |
 |---|---|
 | `resources/views/components/layout/admin.blade.php` | **la coquille** · `<x-layout.admin>`, pour tous les écrans connectés |
-| `resources/views/components/layout/admin-guest.blade.php` | la page de connexion · `<x-layout.admin-guest>`, sans barre latérale |
+
+La page de connexion n'en fait pas partie · elle vit dans l'espace Auth, avec son
+propre gabarit, `<x-layout.auth>` · voir [L'espace Auth](auth.md).
 
 ## La coquille
 
@@ -64,7 +67,7 @@ grille horaire perdrait un tiers de l'écran dans une colonne centrée.
 ## Les comptes et les rôles
 
 **Un compte a un rôle, et le code dit ce que chacun ouvre.** Les rôles sont dans
-`app/Enums/Team/AdminRole.php`, les règles dans `app/Providers/GateServiceProvider.php`.
+`app/Enums/Account/Role.php`, les règles dans `app/Providers/GateServiceProvider.php`.
 Les paquets nomment leurs capacités et les laissent ouvertes à tout compte connecté ·
 ce fichier ne dit donc que ce qu'un praticien n'a pas.
 
@@ -76,13 +79,13 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
 - **Un rôle neuf** · un cas dans l'énumération, et ses règles dans le fournisseur ;
 - **`practitioner_id` dit quelle fiche est ce compte** · c'est ce qui fait qu'un
   rendez-vous est « le sien » ;
-- **un compte suspendu n'est plus personne** · `suspended_at`, lu par
-  `ActiveAdminUserProvider`, que le garde `admin` emploie · la connexion, une session
-  déjà ouverte, le site et les deux paquets se ferment d'un coup, au clic suivant ;
+- **un compte suspendu n'est plus personne** · `suspended_at`, que le fournisseur de
+  comptes du garde `admin` écarte · la connexion, une session déjà ouverte, le site et
+  les deux paquets se ferment d'un coup, au clic suivant · voir [L'espace Auth](auth.md) ;
 - **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
   répond à ce compte · elle les pose **sans objet**, donc chaque règle du fournisseur
   accepte de n'en recevoir aucun ;
-- **la barre ne montre que ce que le compte ouvre** · `app/Services/Team/OpenScreensService.php`
+- **la barre ne montre que ce que le compte ouvre** · `app/Services/Admin/Navigation/OpenScreensService.php`
   tient la liste de ses écrans, section par section · chacun avec la capacité que sa
   route demande, son titre et ce qui allume son lien · la coquille la parcourt · une
   section sans écran ouvert disparaît, et son icône mène au premier qui l'est ·
@@ -100,38 +103,10 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
 
 ### Les comptes de l'équipe naissent dans la fiche
 
-Le site remplit le contrat que booking lui tend pour l'équipe ·
-`app/Services/Team/SiteTeamAccessService.php`, lié dans `AppServiceProvider`. Une fiche
-de praticien porte donc une adresse, obligatoire, et la rangée « Accès ».
-
-| Geste dans l'équipe | Ce qui arrive au compte |
-|---|---|
-| créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, et l'invitation part une fois la fiche enregistrée |
-| une fiche à l'adresse d'un compte qu'aucune fiche ne nomme | ce compte est repris, avec son mot de passe, et rien ne part · c'est le cas du compte d'origine |
-| corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
-| corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues |
-| « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
-| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend |
-| supprimer | le compte et ses liens partent avec la fiche |
-
-**Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés, suspendus
-ni supprimés depuis l'équipe.
-
-**Les liens** · l'invitation vit 7 jours (`admin_invitations`, table
-`admin_invitation_tokens`), le mot de passe oublié 60 minutes (`admins`) · chacun ne
-sert qu'une fois. Le lien nomme le compte par son numéro, jamais par son adresse, et se
-bâtit sur `APP_URL`, jamais sur l'adresse de la requête · **`APP_URL` doit donc être
-celle du site en ligne**, ou les liens mèneront ailleurs.
-
-**Les écrans** · `/admin/bienvenue/{compte}/{jeton}`, `/admin/mot-de-passe-oublie` et
-`/admin/mot-de-passe/{compte}/{jeton}`. La réponse au mot de passe oublié est la même
-qu'un compte existe ou non. Une fois le mot de passe choisi, le compte est connecté et
-arrive sur la page de son rôle · le tableau de bord pour un propriétaire, le Planning
-pour un praticien.
-
-**Les messages** partent de `app/Mail/Team/` et de la vue `mail/team/message` ·
-`MAIL_FROM_ADDRESS` les signe. Un envoi qui échoue s'écrit au journal, et la liste de
-l'équipe le dit à la place de l'invitation.
+Un praticien qui reçoit un accès dans booking reçoit un compte du site · comment il
+naît, ses liens et leurs durées, et ce que chaque geste de l'équipe fait à son
+compte sont décrits dans [L'espace Auth](auth.md), « Les comptes que booking
+demande ».
 
 ## Les écrans des paquets s'y logent seuls
 
@@ -150,9 +125,10 @@ La valeur s'écrit comme on écrirait la balise · `layout.admin` pour
 
 ## Les assets de l'espace
 
-`resources/css/admin.css` ouvre sur l'ordre des huit couches du kit, puis
+`resources/css/admin.css` ouvre sur l'ordre des couches du kit, puis
 Tailwind, puis les noms du kit (`bg-surface`, `text-muted`…) pour le HTML que
-nous écrivons, puis nos propres règles. **Rien des paquets** · chacun compile et
+nous écrivons, puis nos propres règles · la police, la marque et les champs,
+partagés avec l'espace Auth (`resources/css/shared/`), et la barre. **Rien des paquets** · chacun compile et
 livre sa feuille et son script, le site en publie une copie, et le kit les pose
 dans les pages qu'il dessine ·
 
@@ -210,12 +186,7 @@ sur Paris lui aussi.
 
 ## Le premier compte
 
-```bash
-php artisan db:seed --class=AdminSeeder --force
-```
-
-Rejouable sans danger. Le mot de passe initial est `password` · le changer
-aussitôt sur `/admin/profil`.
+Voir [L'espace Auth](auth.md), « Le premier compte ».
 
 ## La planification
 

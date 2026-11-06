@@ -24,7 +24,7 @@ final class UpdateProfileTest extends TestCase
 
     public function test_profile_screen_is_closed_to_a_guest(): void
     {
-        $this->get(route('admin.profile'))->assertRedirect(route('admin.login'));
+        $this->get(route('admin.profile'))->assertRedirect(route('auth.login'));
     }
 
     public function test_form_is_prefilled_with_the_current_identity(): void

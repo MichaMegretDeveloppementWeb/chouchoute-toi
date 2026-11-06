@@ -8,12 +8,14 @@ export default defineConfig({
         laravel({
             input: [
                 // One space, one pair of entries. app.css and app.js carry what
-                // both share and are not entries themselves: web and admin
-                // import them, each into its own compilation.
+                // every space shares and are not entries themselves: each space
+                // imports them, into its own compilation.
                 'resources/css/web.css',
                 'resources/js/web.js',
                 'resources/css/admin.css',
                 'resources/js/admin.js',
+                // The sign-in space has a sheet and no script of its own yet.
+                'resources/css/auth.css',
 
                 // The per-page CSS and JS, loaded by a `@vite` in their own
                 // view. They never carry Tailwind: only our rules, whose
