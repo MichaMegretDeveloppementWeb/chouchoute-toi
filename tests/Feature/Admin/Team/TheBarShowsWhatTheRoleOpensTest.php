@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace Tests\Feature\Admin\Team;
 
 use App\Models\Admin;
+use App\Services\Team\OpenScreensService;
+use BackedEnum;
 use Dom\HTMLDocument;
 use Falcon\Analytics\Enums\Authorization\Ability as AnalyticsAbility;
 use Falcon\Booking\Enums\Authorization\Ability as BookingAbility;
 use Falcon\Booking\Models\OutgoingMessage;
 use Falcon\Booking\Models\Practitioner;
+use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use ReflectionClassConstant;
 use Tests\TestCase;
+use UnitEnum;
 
 /**
  * The bar shows only what the account opens, the dashboard sends a practitioner
@@ -40,13 +45,13 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         'booking.admin.settings.slots' => 'Créneaux',
         'booking.admin.settings.booking-window' => 'Réservation',
         'booking.admin.settings.notifications' => 'Notifications',
-        'analytics.admin.overview' => 'Vue d\'ensemble',
+        'analytics.admin.overview' => 'Vue d’ensemble',
         'analytics.admin.realtime' => 'Temps réel',
         'analytics.admin.visitors' => 'Visiteurs',
         'analytics.admin.sessions' => 'Sessions',
         'analytics.admin.events' => 'Événements',
         'analytics.admin.funnels' => 'Tunnels',
-        'analytics.admin.marketing.dashboard' => 'Vue d\'ensemble',
+        'analytics.admin.marketing.dashboard' => 'Vue d’ensemble',
         'analytics.admin.marketing.campaigns' => 'Campagnes',
         'analytics.admin.marketing.ads' => 'Publicités',
     ];
@@ -63,7 +68,43 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         $this->actingAs($this->aPractitioner(), 'admin');
 
         $this->assertSame($this->linksTo(['booking.admin.agenda', 'booking.admin.clients']), $this->theLinksOfTheBar());
-        $this->assertSame([], array_intersect(['Réglages', 'Audience', 'Marketing'], $this->theSectionsOfTheBar()));
+        $this->assertSame([], array_intersect(['Réglages', 'Audience', 'Marketing'], array_keys($this->theSectionsOfTheBar())));
+    }
+
+    /**
+     * The ability the bar asks of each screen is the one its route asks · the
+     * dashboard is left out, its controller sending a closed account elsewhere.
+     */
+    public function test_each_screen_of_the_bar_asks_what_its_route_asks(): void
+    {
+        /** @var array<string, list<array{route: string, ability: string|UnitEnum, title: string, lights: list<string>}>> $sections */
+        $sections = (new ReflectionClassConstant(OpenScreensService::class, 'SECTIONS'))->getValue();
+        $asked = 0;
+
+        foreach (array_merge(...array_values($sections)) as $screen) {
+            if ($screen['route'] === 'admin.dashboard') {
+                continue;
+            }
+
+            $route = Route::getRoutes()->getByName($screen['route']);
+            $this->assertNotNull($route, "No route is named {$screen['route']}.");
+
+            $ability = match (true) {
+                is_string($screen['ability']) => $screen['ability'],
+                $screen['ability'] instanceof BackedEnum => (string) $screen['ability']->value,
+                default => $screen['ability']->name,
+            };
+
+            $this->assertContains(
+                Authorize::class.':'.$ability,
+                Route::gatherRouteMiddleware($route),
+                "The bar asks {$ability} of {$screen['route']}, which its route does not ask.",
+            );
+
+            $asked++;
+        }
+
+        $this->assertSame(count(self::SCREENS), $asked, 'Every screen of the bar but the dashboard, with Integrations, which the bar hides without the Search Console.');
     }
 
     public function test_a_bar_drawn_for_nobody_leads_nowhere(): void
@@ -88,13 +129,13 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         $this->assertSame(route('analytics.admin.realtime'), $sections['Audience'] ?? null);
     }
 
-    /** What Envois counts is read for whoever opens Envois, and for nobody else. */
+    /** What Envois counts is read once for whoever opens Envois, and never for anybody else. */
     public function test_the_count_of_messages_not_sent_is_read_only_for_who_opens_them(): void
     {
         $table = (new OutgoingMessage)->getTable();
 
-        $this->assertTrue($this->readsTable($table, Admin::factory()->create()));
-        $this->assertFalse($this->readsTable($table, $this->aPractitioner()));
+        $this->assertSame(1, $this->readsOf($table, Admin::factory()->create()));
+        $this->assertSame(0, $this->readsOf($table, $this->aPractitioner()));
     }
 
     public function test_the_dashboard_leads_a_practitioner_to_the_planning(): void
@@ -124,10 +165,10 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
 
     public function test_a_refusal_outside_the_office_or_asked_as_data_keeps_the_ordinary_answer(): void
     {
-        Route::middleware('web')->get('/essai-refus', static fn () => abort(403));
+        Route::middleware('web')->get('/refused-for-the-test', static fn () => abort(403));
         $member = $this->aPractitioner();
 
-        $this->actingAs($member, 'admin')->get('/essai-refus')
+        $this->actingAs($member, 'admin')->get('/refused-for-the-test')
             ->assertForbidden()
             ->assertDontSee('Cet écran ne fait pas partie de votre accès');
 
@@ -195,16 +236,17 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         return HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.Blade::render('<x-layout.admin></x-layout.admin>').'</body></html>', LIBXML_NOERROR);
     }
 
-    private function readsTable(string $table, Admin $account): bool
+    /** How many statements a page of the office sends to this table, for this account. */
+    private function readsOf(string $table, Admin $account): int
     {
         DB::flushQueryLog();
         DB::enableQueryLog();
 
         $this->actingAs($account, 'admin')->get(route('admin.profile'))->assertOk();
 
-        $read = collect(DB::getQueryLog())->contains(static fn (array $query): bool => str_contains($query['query'], $table));
+        $reads = collect(DB::getQueryLog())->filter(static fn (array $query): bool => str_contains($query['query'], $table))->count();
         DB::disableQueryLog();
 
-        return $read;
+        return $reads;
     }
 }

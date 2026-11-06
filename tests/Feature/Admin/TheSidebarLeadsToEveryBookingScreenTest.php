@@ -35,7 +35,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     /** Les adresses du paquet qui ne sont pas des écrans de menu. */
     private const NOT_IN_THE_MENU = ['booking.admin.attachment', 'booking.admin.missing'];
 
-    /** La barre ne montre que ce que le compte ouvre · un propriétaire ouvre tout. */
+    /** The bar shows only what the account opens · an owner opens everything. */
     protected function setUp(): void
     {
         parent::setUp();

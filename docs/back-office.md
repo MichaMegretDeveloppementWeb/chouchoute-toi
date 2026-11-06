@@ -83,15 +83,20 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
   répond à ce compte · elle les pose **sans objet**, donc chaque règle du fournisseur
   accepte de n'en recevoir aucun ;
 - **la barre ne montre que ce que le compte ouvre** · `app/Services/Team/OpenScreensService.php`
-  pose à chaque écran la capacité que sa route demande, section par section · une
+  tient la liste de ses écrans, section par section · chacun avec la capacité que sa
+  route demande, son titre et ce qui allume son lien · la coquille la parcourt · une
   section sans écran ouvert disparaît, et son icône mène au premier qui l'est ·
-  le nombre des envois en échec n'est lu que pour qui ouvre Envois · **un écran ajouté
-  à la barre s'ajoute aussi à ce service**, avec la capacité de sa route ;
+  le nombre des envois en échec n'est lu qu'une fois, et seulement pour qui ouvre
+  Envois · **un écran ajouté à la barre s'ajoute à cette liste, et à elle seule** ·
+  un essai compare chaque capacité de la liste à celle que sa route demande ;
 - **le tableau de bord** renvoie un compte qui ne l'ouvre pas vers la page de son rôle ;
 - **un écran refusé se dit dans l'administration** · un refus 403 sous `/admin`, pour
   un compte connecté, rend `admin/forbidden` avec la barre et le retour à sa page
   (`bootstrap/app.php`) · ailleurs, et pour une demande de données, la réponse
-  ordinaire du cadre reste.
+  ordinaire du cadre reste · **un geste refusé sur un écran déjà ouvert** (le rôle a
+  changé entre-temps) recharge la page, qui dit alors le refus de la même façon ·
+  `resources/js/admin/refusals.js`, une fois · un second refus aussitôt garde la
+  réponse de Livewire.
 
 ### Les comptes de l'équipe naissent dans la fiche
 
