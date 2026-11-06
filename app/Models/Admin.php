@@ -18,11 +18,10 @@ use Illuminate\Notifications\Notifiable;
  * accounts): falcon/analytics excludes internal traffic by guard name, so the
  * administration needs a guard of its own.
  *
- * Its role, its practitioner and its access never come from a form as such ·
- * they are not fillable, and whoever writes them does it by name.
+ * Its role and its access never come from a form as such · they are not
+ * fillable, and whoever writes them does it by name.
  *
  * @property Role $role
- * @property int|null $practitioner_id
  * @property CarbonImmutable|null $email_verified_at
  * @property CarbonImmutable|null $invited_at
  * @property CarbonImmutable|null $invitation_failed_at
@@ -41,7 +40,6 @@ class Admin extends Authenticatable
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'practitioner_id' => null,
         'invited_at' => null,
         'invitation_failed_at' => null,
         'suspended_at' => null,

@@ -56,10 +56,10 @@ final class UpdateProfileTest extends TestCase
     }
 
     /** The address of an account tied to a fiche is that fiche's too, and changes only from there. */
-    public function test_the_address_of_a_practitioner_stays_as_it_is(): void
+    public function test_the_address_of_an_account_a_fiche_keeps_stays_as_it_is(): void
     {
-        $member = Practitioner::factory()->create();
-        $admin = Admin::factory()->practitioner($member->id)->create(['name' => 'Julie', 'email' => 'julie@exemple.fr']);
+        $admin = Admin::factory()->collaborator()->create(['name' => 'Julie', 'email' => 'julie@exemple.fr']);
+        Practitioner::factory()->create(['email' => 'julie@exemple.fr', 'account_id' => $admin->id]);
 
         $this->actingAs($admin, 'admin');
 
@@ -78,9 +78,10 @@ final class UpdateProfileTest extends TestCase
 
     public function test_an_owner_with_a_fiche_is_sent_to_it(): void
     {
-        $member = Practitioner::factory()->create();
+        $owner = Admin::factory()->create();
+        Practitioner::factory()->create(['email' => $owner->email, 'account_id' => $owner->id]);
 
-        $this->actingAs(Admin::factory()->create(['practitioner_id' => $member->id]), 'admin');
+        $this->actingAs($owner, 'admin');
 
         Livewire::test(UpdateProfileForm::class)->assertSee('elle se change depuis Praticiens');
     }

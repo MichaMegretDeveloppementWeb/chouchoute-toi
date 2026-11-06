@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Profile;
 
+use App\Booking\Accounts;
 use App\Models\Admin;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -21,6 +22,13 @@ final class UpdateProfileForm extends Component
 
     public string $email = '';
 
+    private Accounts $accounts;
+
+    public function boot(Accounts $accounts): void
+    {
+        $this->accounts = $accounts;
+    }
+
     public function mount(): void
     {
         $admin = $this->admin();
@@ -35,7 +43,7 @@ final class UpdateProfileForm extends Component
         $admin = $this->admin();
 
         return match (true) {
-            $admin->practitioner_id === null => null,
+            ! $this->accounts->aFicheKeeps($admin->id) => null,
             $admin->isOwner() => 'C’est aussi l’adresse de votre fiche, et elle se change depuis Praticiens.',
             default => 'C’est aussi l’adresse de votre fiche, et seul un propriétaire peut la changer.',
         };

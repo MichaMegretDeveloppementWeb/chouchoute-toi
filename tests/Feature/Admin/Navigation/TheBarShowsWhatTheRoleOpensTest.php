@@ -11,7 +11,6 @@ use Dom\HTMLDocument;
 use Falcon\Analytics\Enums\Authorization\Ability as AnalyticsAbility;
 use Falcon\Booking\Enums\Authorization\Ability as BookingAbility;
 use Falcon\Booking\Models\OutgoingMessage;
-use Falcon\Booking\Models\Practitioner;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Blade;
@@ -23,8 +22,9 @@ use Tests\TestCase;
 use UnitEnum;
 
 /**
- * The bar shows only what the account opens, the dashboard sends a practitioner
- * to the planning, and a refused screen says so inside the office.
+ * The bar shows only what the account opens, the dashboard sends an account it
+ * does not open to the first screen of its bar, and a refused screen says so
+ * inside the office.
  */
 final class TheBarShowsWhatTheRoleOpensTest extends TestCase
 {
@@ -63,9 +63,9 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         $this->assertSame($this->linksTo(array_keys(self::SCREENS)), $this->theLinksOfTheBar());
     }
 
-    public function test_a_practitioner_sees_the_planning_and_the_clients_and_nothing_else(): void
+    public function test_a_collaborator_sees_the_planning_and_the_clients_and_nothing_else(): void
     {
-        $this->actingAs($this->aPractitioner(), 'admin');
+        $this->actingAs($this->aCollaborator(), 'admin');
 
         $this->assertSame($this->linksTo(['booking.admin.agenda', 'booking.admin.clients']), $this->theLinksOfTheBar());
         $this->assertSame([], array_intersect(['Réglages', 'Audience', 'Marketing'], array_keys($this->theSectionsOfTheBar())));
@@ -135,12 +135,12 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         $table = (new OutgoingMessage)->getTable();
 
         $this->assertSame(1, $this->readsOf($table, Admin::factory()->create()));
-        $this->assertSame(0, $this->readsOf($table, $this->aPractitioner()));
+        $this->assertSame(0, $this->readsOf($table, $this->aCollaborator()));
     }
 
-    public function test_the_dashboard_leads_a_practitioner_to_the_planning(): void
+    public function test_the_dashboard_leads_a_collaborator_to_the_first_screen_of_the_bar(): void
     {
-        $this->actingAs($this->aPractitioner(), 'admin')
+        $this->actingAs($this->aCollaborator(), 'admin')
             ->get(route('admin.dashboard'))
             ->assertRedirect(route('booking.admin.agenda'));
 
@@ -151,14 +151,14 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
 
     public function test_a_refused_screen_is_said_inside_the_office_with_the_way_back(): void
     {
-        $member = $this->aPractitioner();
+        $member = $this->aCollaborator();
 
         foreach (['booking.admin.journal', 'analytics.admin.overview', 'analytics.admin.marketing.dashboard'] as $route) {
             $this->actingAs($member, 'admin')
                 ->get(route($route))
                 ->assertForbidden()
                 ->assertSee('Cet écran ne fait pas partie de votre accès')
-                ->assertSee('Revenir au Planning')
+                ->assertSee('Revenir à l’écran Planning')
                 ->assertSee('data-ui-title="Clients"', false);
         }
     }
@@ -166,7 +166,7 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
     public function test_a_refusal_outside_the_office_or_asked_as_data_keeps_the_ordinary_answer(): void
     {
         Route::middleware('web')->get('/refused-for-the-test', static fn () => abort(403));
-        $member = $this->aPractitioner();
+        $member = $this->aCollaborator();
 
         $this->actingAs($member, 'admin')->get('/refused-for-the-test')
             ->assertForbidden()
@@ -177,9 +177,9 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
             ->assertDontSee('Cet écran ne fait pas partie de votre accès');
     }
 
-    private function aPractitioner(): Admin
+    private function aCollaborator(): Admin
     {
-        return Admin::factory()->practitioner(Practitioner::factory()->create()->id)->create();
+        return Admin::factory()->collaborator()->create();
     }
 
     /**

@@ -6,7 +6,9 @@
                 icon="lock-closed"
                 title="Cet écran ne fait pas partie de votre accès"
                 description="S’il vous le faut, demandez-le au propriétaire.">
-                <x-ui::button :href="route($role->home())">{{ $role->backHome() }}</x-ui::button>
+                @if ($home !== null)
+                    <x-ui::button :href="route($home['route'])">Revenir à l’écran {{ $home['title'] }}</x-ui::button>
+                @endif
             </x-ui::empty-state>
         </x-ui::card>
     </div>

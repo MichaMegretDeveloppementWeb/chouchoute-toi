@@ -94,7 +94,7 @@ final class ChoosePasswordForm extends Component
 
         $signIn->signIn($holder);
 
-        $this->redirect($signIn->homeOf($holder), navigate: false);
+        $this->redirect($signIn->home(), navigate: false);
     }
 
     public function render(): View

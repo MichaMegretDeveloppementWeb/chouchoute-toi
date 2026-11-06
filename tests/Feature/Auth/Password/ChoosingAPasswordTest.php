@@ -8,7 +8,6 @@ use App\Livewire\Auth\Password\ChoosePasswordForm;
 use App\Models\Admin;
 use App\Services\Auth\Password\PasswordLinksService;
 use Carbon\CarbonImmutable;
-use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -35,8 +34,7 @@ final class ChoosingAPasswordTest extends TestCase
         parent::setUp();
 
         $this->password = bin2hex(random_bytes(8));
-        $fiche = Practitioner::factory()->create(['email' => 'julie@exemple.fr']);
-        $this->member = Admin::factory()->practitioner($fiche->id)->create([
+        $this->member = Admin::factory()->collaborator()->create([
             'email' => 'julie@exemple.fr',
             'email_verified_at' => null,
             'invited_at' => CarbonImmutable::now(),
@@ -52,14 +50,14 @@ final class ChoosingAPasswordTest extends TestCase
             ->assertSee('<meta name="referrer" content="no-referrer">', false);
     }
 
-    public function test_choosing_the_password_signs_in_and_leads_to_the_page_of_the_role(): void
+    public function test_choosing_the_password_signs_in_and_leads_to_the_dashboard(): void
     {
         $this->theForm($this->anInvitation())
             ->set('password', $this->password)
             ->set('passwordConfirmation', $this->password)
             ->call('choose')
             ->assertHasNoErrors()
-            ->assertRedirect(route('booking.admin.agenda'));
+            ->assertRedirect(route('admin.dashboard'));
 
         $account = $this->member->fresh();
 
@@ -123,7 +121,7 @@ final class ChoosingAPasswordTest extends TestCase
             ->set('password', $this->password)
             ->set('passwordConfirmation', $this->password)
             ->call('choose')
-            ->assertRedirect(route('booking.admin.agenda'));
+            ->assertRedirect(route('admin.dashboard'));
 
         $this->assertEquals($since, $this->member->fresh()?->email_verified_at);
         $this->assertNotSame($remembered, $this->member->fresh()?->remember_token);

@@ -66,25 +66,30 @@ grille horaire perdrait un tiers de l'écran dans une colonne centrée.
 
 ## Les comptes et les rôles
 
-**Un compte a un rôle, et le code dit ce que chacun ouvre.** Les rôles sont dans
-`app/Enums/Account/Role.php`, les règles dans `app/Providers/GateServiceProvider.php`.
-Les paquets nomment leurs capacités et les laissent ouvertes à tout compte connecté ·
-ce fichier ne dit donc que ce qu'un praticien n'a pas.
+**Un compte a un rôle, et chaque paquet lit ce qu'il ouvre dans un fichier du site.**
+Les rôles sont dans `app/Enums/Account/Role.php` · ce que chacun ouvre est déclaré à
+l'emplacement que chaque paquet attend · `app/Booking/Roles.php` pour booking,
+`app/Analytics/Roles.php` pour analytics. Les deux lisent le rôle dans la colonne
+`role` des comptes · un rôle partagé. Le site ne garde qu'une règle à lui, son tableau
+de bord, au propriétaire (`app/Providers/GateServiceProvider.php`).
 
 | Rôle | Ce qu'il ouvre |
 |---|---|
 | **Propriétaire** | tout le back-office |
-| **Praticien** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil |
+| **Collaborateur** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil · rien de l'Audience ni du Marketing, qu'`app/Analytics/Roles.php` ne lui déclare pas |
 
-- **Un rôle neuf** · un cas dans l'énumération, et ses règles dans le fournisseur ;
-- **`practitioner_id` dit quelle fiche est ce compte** · c'est ce qui fait qu'un
-  rendez-vous est « le sien » ;
+- **Un rôle neuf** · un cas dans l'énumération, et sa déclaration dans chacun des deux
+  fichiers · un rôle qu'un fichier ne déclare pas n'ouvre rien de ce paquet ;
+- **« le sien » est l'affaire de booking** · la fiche d'un praticien garde le numéro
+  du compte que booking lui a donné, et c'est ce qui fait qu'un rendez-vous est le
+  sien · le site ne connaît aucun praticien ;
 - **un compte suspendu n'est plus personne** · `suspended_at`, que le fournisseur de
   comptes du garde `admin` écarte · la connexion, une session déjà ouverte, le site et
   les deux paquets se ferment d'un coup, au clic suivant · voir [L'espace Auth](auth.md) ;
-- **`php artisan booking:abilities --user=3`** dit ce que chaque capacité de booking
-  répond à ce compte · elle les pose **sans objet**, donc chaque règle du fournisseur
-  accepte de n'en recevoir aucun ;
+- **`php artisan booking:abilities --user=3`** et **`analytics:abilities --user=3`**
+  disent ce que chaque capacité répond à ce compte, « vos rôles » en face de celles
+  qui répondent par eux · `booking:check` et `analytics:check` nomment, au point
+  « Rôles », un compte dont le rôle n'est pas déclaré ;
 - **la barre ne montre que ce que le compte ouvre** · `app/Services/Admin/Navigation/OpenScreensService.php`
   tient la liste de ses écrans, section par section · chacun avec la capacité que sa
   route demande, son titre et ce qui allume son lien · la coquille la parcourt · une
@@ -92,10 +97,11 @@ ce fichier ne dit donc que ce qu'un praticien n'a pas.
   le nombre des envois en échec n'est lu qu'une fois, et seulement pour qui ouvre
   Envois · **un écran ajouté à la barre s'ajoute à cette liste, et à elle seule** ·
   un essai compare chaque capacité de la liste à celle que sa route demande ;
-- **le tableau de bord** renvoie un compte qui ne l'ouvre pas vers la page de son rôle ;
+- **le tableau de bord** renvoie un compte qui ne l'ouvre pas vers le premier écran de
+  sa barre · `OpenScreensService::homeOf()` · aucun rôle n'y est nommé ;
 - **un écran refusé se dit dans l'administration** · un refus 403 sous `/admin`, pour
-  un compte connecté, rend `admin/forbidden` avec la barre et le retour à sa page
-  (`bootstrap/app.php`) · ailleurs, et pour une demande de données, la réponse
+  un compte connecté, rend `admin/forbidden` avec la barre et « Revenir à l'écran … »,
+  le premier de sa barre (`bootstrap/app.php`) · ailleurs, et pour une demande de données, la réponse
   ordinaire du cadre reste · **un geste refusé sur un écran déjà ouvert** (le rôle a
   changé entre-temps) recharge la page, qui dit alors le refus de la même façon ·
   `resources/js/admin/refusals.js`, une fois · un second refus aussitôt garde la

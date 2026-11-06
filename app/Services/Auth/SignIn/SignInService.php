@@ -36,10 +36,10 @@ final readonly class SignInService
         $this->renewTheSession();
     }
 
-    /** The address an account arrives on once signed in. */
-    public function homeOf(Admin $account): string
+    /** The address an account arrives on once signed in · the dashboard, which leads an account it does not open to its first screen. */
+    public function home(): string
     {
-        return route($account->role->home());
+        return route('admin.dashboard');
     }
 
     private function renewTheSession(): void

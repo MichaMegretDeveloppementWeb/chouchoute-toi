@@ -6,7 +6,6 @@ namespace Tests\Feature\Auth\SignIn;
 
 use App\Livewire\Auth\SignIn\LoginForm;
 use App\Models\Admin;
-use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
@@ -35,18 +34,23 @@ final class LoginTest extends TestCase
             ->assertRedirect(route('admin.dashboard'));
     }
 
-    public function test_a_practitioner_lands_on_the_planning_wherever_the_sign_in_leads(): void
+    /** The dashboard is the arrival of every account, and it leads a collaborator to the planning, the first screen of the bar. */
+    public function test_a_collaborator_lands_on_the_planning_wherever_the_sign_in_leads(): void
     {
-        $member = Admin::factory()->practitioner(Practitioner::factory()->create()->id)->create(['email' => 'julie@example.test']);
+        $member = Admin::factory()->collaborator()->create(['email' => 'julie@example.test']);
 
         Livewire::test(LoginForm::class)
             ->set('email', 'julie@example.test')
             ->set('password', 'password')
             ->call('login')
-            ->assertRedirect(route('booking.admin.agenda'));
+            ->assertRedirect(route('admin.dashboard'));
 
         $this->actingAs($member, 'admin')
             ->get(route('auth.login'))
+            ->assertRedirect(route('admin.dashboard'));
+
+        $this->actingAs($member, 'admin')
+            ->get(route('admin.dashboard'))
             ->assertRedirect(route('booking.admin.agenda'));
     }
 
