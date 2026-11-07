@@ -169,7 +169,8 @@ final class TheTeamIsInvitedTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    public function test_saving_a_member_again_writes_the_name_and_sends_nothing(): void
+    /** The name of the practitioner is booking's, the name of the account the site's · a fiche saved again leaves the second alone. */
+    public function test_saving_a_member_again_keeps_the_account_s_name_and_sends_nothing(): void
     {
         $waiting = $this->aMemberWithAnAccount('Julie Martin', 'julie@exemple.fr', ['email_verified_at' => null, 'invited_at' => CarbonImmutable::now()]);
         $inService = $this->aMemberWithAnAccount('Camille Arnaud', 'camille@exemple.fr');
@@ -178,7 +179,25 @@ final class TheTeamIsInvitedTest extends TestCase
         $this->theFicheOf($inService)->call('savePractitioner')->assertReturned(true);
 
         Mail::assertNothingSent();
-        $this->assertSame('Julie Petit', $this->accountOf($waiting)->name);
+        $this->assertSame('Julie Petit', $waiting->fresh()?->getAttribute('name'));
+        $this->assertSame('Julie Martin', $this->accountOf($waiting)->name);
+    }
+
+    /** An account that existed before the fiche keeps the name it signs in under · only a new account takes the fiche's. */
+    public function test_an_account_taken_up_keeps_its_name(): void
+    {
+        Admin::factory()->create(['name' => 'Cam', 'email' => 'camille@exemple.fr']);
+
+        $this->aNewFiche()
+            ->set('name', 'Camille Arnaud')
+            ->set('email', 'camille@exemple.fr')
+            ->set('giveAnAccess', true)
+            ->set('accessRole', 'collaborator')
+            ->call('savePractitioner')
+            ->assertReturned(true);
+
+        $this->assertSame('Cam', Admin::query()->where('email', 'camille@exemple.fr')->sole()->name);
+        $this->assertSame('Camille Arnaud', Practitioner::query()->sole()->getAttribute('name'));
     }
 
     /** The account that signed in before any fiche named it keeps its password, and nothing leaves. */

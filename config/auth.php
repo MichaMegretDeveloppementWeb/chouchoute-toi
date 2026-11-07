@@ -146,10 +146,11 @@ return [
     | Password Link Timebox
     |--------------------------------------------------------------------------
     |
-    | How long, in microseconds, asking for a password link takes whatever the
-    | address · above what hashing a new link costs, so an address that opens
-    | an account answers no later than one that does not. The message leaves
-    | after the answer.
+    | How long, in microseconds, two answers take whatever the address · asking
+    | for a password link, above what hashing a new link costs, so an address
+    | that opens an account answers no later than one that does not, the
+    | message leaving after the answer · and a sign-in that fails, which the
+    | session guard holds to the same length.
     |
     */
 

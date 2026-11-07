@@ -31,7 +31,7 @@ assets, voir [Gestion des assets avec Vite](assets-vite.md).
 | les courriels | `app/Mail/Auth/`, une seule vue, `resources/views/mail/auth/message.blade.php` |
 | le démarrage | `app/Providers/AuthServiceProvider.php` |
 | les rôles | `app/Enums/Account/Role.php` · ce qu'ils ouvrent, `app/Booking/Roles.php` et `app/Analytics/Roles.php` |
-| ce que le site donne à booking | `app/Booking/Accounts.php` |
+| ce que le site donne à booking | `app/Booking/Accounts.php`, qui traduit ce que booking demande · les comptes eux-mêmes, `AccountWriteService` (les écrire, sous le verrou des propriétaires) et `AccountStandingService` (ce qu'on en dit, qui change un rôle, le dernier propriétaire) |
 
 **Un composant ne fait que valider et appeler un service.** La connexion vit dans
 `SignInService`, le choix d'un mot de passe dans `PasswordChoiceService`, le mot de
@@ -109,7 +109,9 @@ ligne**, ou les liens mèneront ailleurs.
 prend le même temps · une demi-seconde, `auth.timebox_duration` dans
 `config/auth.php`, au-dessus de ce que coûte le hachage d'un lien neuf · le courriel
 part **après** la réponse (`defer()`), si bien qu'un envoi lent ne trahit pas une
-adresse. Trois demandes par minute et par visiteur.
+adresse. Trois demandes par minute et par visiteur. **Le même réglage tient aussi
+chaque connexion ratée** · Laravel le lit pour les deux, le lien et le garde de
+connexion · le changer change les deux.
 
 Une fois le mot de passe choisi, le compte est connecté et arrive sur le tableau de
 bord, comme à la connexion.
@@ -141,10 +143,15 @@ phrases que la fiche et la liste montrent de chaque compte.
 passe qu'il range est tiré au hasard, jamais donné. Elle porte la rangée « Accès » ·
 « Donner un accès », puis le rôle, Propriétaire ou Collaborateur.
 
+**Le nom du compte est celui du site**, et le nom du praticien celui de booking ·
+un compte créé depuis la fiche prend le nom de la fiche, puis les deux vivent chacun
+de son côté · la personne change le sien depuis son Profil, et un enregistrement de
+la fiche n'y touche plus.
+
 | Geste dans l'équipe | Ce qui arrive au compte |
 |---|---|
 | créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, avec le rôle choisi, et l'invitation part une fois la fiche enregistrée |
-| donner un accès à l'adresse d'un compte qui existe déjà | ce compte est repris, avec son mot de passe, et rien ne part · c'est le cas du compte d'origine |
+| donner un accès à l'adresse d'un compte qui existe déjà | ce compte est repris, avec son nom, son mot de passe et le rôle choisi sur la fiche, et rien ne part · c'est le cas du compte d'origine |
 | changer le rôle | le compte prend le rôle choisi · le sien, et celui du dernier propriétaire, ne changent pas, et la fiche dit pourquoi |
 | corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
 | corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues · un message qui ne part pas se dit, avec l'adresse de connexion |

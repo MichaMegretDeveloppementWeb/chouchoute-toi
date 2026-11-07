@@ -34,7 +34,7 @@ final class TheEightLayersKeepTheirOrderTest extends TestCase
         'pkg-components', 'pkg-utilities', 'components', 'utilities',
     ];
 
-    public function test_both_entries_declare_the_eight_layers_in_the_agreed_order(): void
+    public function test_every_entry_declares_the_eight_layers_in_the_agreed_order(): void
     {
         foreach (['resources/css/admin.css', 'resources/css/web.css', 'resources/css/auth.css'] as $entry) {
             $this->assertSame(
