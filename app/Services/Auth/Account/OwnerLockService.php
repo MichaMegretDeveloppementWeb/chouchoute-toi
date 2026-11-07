@@ -14,12 +14,16 @@ use LogicException;
  * is not a row, so every write that could leave none takes the rows of the
  * owners first, one by one by ascending number, and decides on what it reads
  * under that lock.
+ *
+ * It runs inside the transaction of a package that has already read · every
+ * read here is a locking one, which sees what others committed meanwhile.
  */
 final readonly class OwnerLockService
 {
     /**
      * Holds the owners in service until the transaction ends, and says who they
-     * are now · an owner demoted or suspended while this waited is not among them.
+     * are now · an owner demoted or suspended while this waited is not among
+     * them, and one promoted meanwhile is.
      *
      * @return list<int>
      *
@@ -32,7 +36,7 @@ final readonly class OwnerLockService
         }
 
         $candidates = Admin::query()->where('role', Role::Owner)->where('suspended_at', null);
-        $candidates->getQuery()->orderBy('id');
+        $candidates->getQuery()->orderBy('id')->sharedLock();
 
         $held = [];
 

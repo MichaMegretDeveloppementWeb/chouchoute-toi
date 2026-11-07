@@ -76,10 +76,11 @@ de bord, au propriétaire (`app/Providers/GateServiceProvider.php`).
 | Rôle | Ce qu'il ouvre |
 |---|---|
 | **Propriétaire** | tout le back-office |
-| **Collaborateur** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil · rien de l'Audience ni du Marketing, qu'`app/Analytics/Roles.php` ne lui déclare pas |
+| **Collaborateur** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil · rien de l'Audience ni du Marketing · `app/Analytics/Roles.php` le déclare sans rien lui ouvrir |
 
 - **Un rôle neuf** · un cas dans l'énumération, et sa déclaration dans chacun des deux
-  fichiers · un rôle qu'un fichier ne déclare pas n'ouvre rien de ce paquet ;
+  fichiers · un paquet qu'il ne doit pas ouvrir le déclare sans rien, sinon son
+  diagnostic le nomme à chaque passage ;
 - **« le sien » est l'affaire de booking** · la fiche d'un praticien garde le numéro
   du compte que booking lui a donné, et c'est ce qui fait qu'un rendez-vous est le
   sien · le site ne connaît aucun praticien ;

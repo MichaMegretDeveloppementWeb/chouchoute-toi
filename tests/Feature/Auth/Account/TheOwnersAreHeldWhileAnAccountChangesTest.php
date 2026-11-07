@@ -10,6 +10,7 @@ use App\Models\Admin;
 use App\Services\Auth\Account\OwnerLockService;
 use Carbon\CarbonImmutable;
 use Falcon\Booking\Data\Account\AccountData;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\Artisan;
@@ -81,9 +82,9 @@ final class TheOwnersAreHeldWhileAnAccountChangesTest extends TestCase
             $query = $this->queryIn($waited);
 
             $this->assertNotNull($query, 'The write failed for another reason · '.$waited->getMessage());
-            $this->assertStringContainsString('for update', $query->getSql());
+            $this->assertTrue(self::locks($query->getSql()), 'The statement that waited is no locking read · '.$query->getSql());
             $this->assertStringContainsString('`admins`', $query->getSql());
-            $this->assertSame([$owner->id], $query->getBindings());
+            $this->assertSame([Role::Owner->value], $query->getBindings(), 'The statement that waited is not the read of the owners.');
         } finally {
             $other->rollBack();
             DB::statement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
@@ -92,6 +93,93 @@ final class TheOwnersAreHeldWhileAnAccountChangesTest extends TestCase
 
         $this->assertSame(Role::Collaborator, $collaborator->fresh()?->role);
         $this->assertNull($collaborator->fresh()->suspended_at);
+    }
+
+    /**
+     * Booking has read before the site writes, so an ordinary read here sees
+     * the base as it was then · each write reads under a lock first.
+     */
+    #[DataProvider('provideTheWrites')]
+    public function test_each_write_reads_under_a_lock_first(callable $write): void
+    {
+        $this->anAccount(Role::Owner, 'amandine@exemple.fr');
+        $collaborator = $this->anAccount(Role::Collaborator, 'julie@exemple.fr');
+        $seen = new class
+        {
+            /** @var list<string> */
+            public array $reads = [];
+        };
+
+        try {
+            DB::transaction(static function () use ($write, $collaborator, $seen): void {
+                DB::listen(static function (QueryExecuted $query) use ($seen): void {
+                    if (str_starts_with(strtolower(ltrim($query->sql)), 'select')) {
+                        $seen->reads[] = $query->sql;
+                    }
+                });
+
+                $write(app(Accounts::class), $collaborator->id);
+            });
+        } finally {
+            Admin::query()->where('email', 'louise@exemple.fr')->delete();
+        }
+
+        $this->assertNotSame([], $seen->reads, 'The write read nothing · nothing was proved.');
+
+        $beforeTheLock = [];
+
+        foreach ($seen->reads as $sql) {
+            if (self::locks($sql)) {
+                break;
+            }
+
+            $beforeTheLock[] = $sql;
+        }
+
+        $this->assertSame([], $beforeTheLock, 'These reads came before the first lock.');
+    }
+
+    /**
+     * Another process promotes a second owner and commits while the archiving
+     * of the first waits · once it has, the first is no longer the last, and is
+     * archived. The transaction has read before, as booking's does.
+     */
+    public function test_an_owner_promoted_while_the_write_waits_is_counted(): void
+    {
+        $amandine = $this->anAccount(Role::Owner, 'amandine@exemple.fr');
+        $camille = $this->anAccount(Role::Collaborator, 'camille@exemple.fr');
+        $witness = sys_get_temp_dir().'/chouchoute-owners-'.bin2hex(random_bytes(6));
+        $child = null;
+        $startedAt = 0.0;
+        $endedAt = 0.0;
+
+        try {
+            DB::transaction(function () use ($amandine, $camille, $witness, &$child, &$startedAt, &$endedAt): void {
+                Admin::query()->whereKey($camille->id)->value('role');
+
+                $child = $this->startTheChild($witness, $amandine->id, $camille->id);
+                $this->waitUntilItHolds($witness);
+
+                $startedAt = microtime(true);
+                app(Accounts::class)->suspended($amandine->id, true);
+                $endedAt = microtime(true);
+            });
+        } finally {
+            $exitCode = is_resource($child) ? proc_close($child) : null;
+        }
+
+        $said = is_file($witness.'.out') ? (string) file_get_contents($witness.'.out') : '';
+        $committing = is_file($witness.'.committing') ? (float) file_get_contents($witness.'.committing') : null;
+        $committed = is_file($witness.'.committed');
+
+        foreach (['.locked', '.committing', '.committed', '.out'] as $suffix) {
+            @unlink($witness.$suffix);
+        }
+
+        $this->assertTrue($committing !== null && $committed, "The second process did not commit (exit {$exitCode}): {$said}");
+        $this->assertTrue($committing > $startedAt && $committing < $endedAt, 'The archiving did not wait for the other process · nothing was proved.');
+        $this->assertSame(Role::Owner, $camille->fresh()?->role);
+        $this->assertNotNull($amandine->fresh()?->suspended_at, 'The owner promoted meanwhile was not counted · the first was kept as the last.');
     }
 
     /** Two owners when the fiche asked · one when it saves · the last one keeps the role. */
@@ -141,6 +229,58 @@ final class TheOwnersAreHeldWhileAnAccountChangesTest extends TestCase
         $this->laid[] = $account->id;
 
         return $account;
+    }
+
+    /** Whether this statement reads under a lock, exclusive or shared. */
+    private static function locks(string $sql): bool
+    {
+        return preg_match('/\s(for update|for share|lock in share mode)\s*$/i', $sql) === 1;
+    }
+
+    /**
+     * Starts the process that holds the first owner and promotes the second,
+     * on the same base, by plain PDO.
+     *
+     * @return resource
+     */
+    private function startTheChild(string $witness, int $heldOwner, int $promoted)
+    {
+        /** @var array{host: string, port: string, database: string, username: string, password: string} $connection */
+        $connection = config('database.connections.'.config('database.default'));
+
+        $child = proc_open(
+            [PHP_BINARY, dirname(__DIR__, 3).'/Fixtures/promote-an-owner-meanwhile.php', (string) $heldOwner, (string) $promoted, $witness],
+            [1 => ['file', $witness.'.out', 'w'], 2 => ['file', $witness.'.out', 'a']],
+            $pipes,
+            null,
+            [
+                ...getenv(),
+                'CHILD_DB_HOST' => $connection['host'],
+                'CHILD_DB_PORT' => $connection['port'],
+                'CHILD_DB_DATABASE' => $connection['database'],
+                'CHILD_DB_USERNAME' => $connection['username'],
+                'CHILD_DB_PASSWORD' => $connection['password'],
+            ],
+        );
+
+        if (! is_resource($child)) {
+            throw new RuntimeException('The second process did not start.');
+        }
+
+        return $child;
+    }
+
+    private function waitUntilItHolds(string $witness): void
+    {
+        $deadline = microtime(true) + 10;
+
+        while (! is_file($witness.'.locked')) {
+            if (microtime(true) > $deadline) {
+                throw new RuntimeException('The second process never held the owner: '.(is_file($witness.'.out') ? file_get_contents($witness.'.out') : ''));
+            }
+
+            usleep(20_000);
+        }
     }
 
     private function queryIn(Throwable $failure): ?QueryException
