@@ -683,7 +683,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "e559370a9a2e4d54f0c4b58cc3e39e6345f36224"
+                "reference": "56cda9900dff270ebebe5f971fd36f8a3a058330"
             },
             "require": {
                 "egulias/email-validator": "^4.0",
@@ -783,7 +783,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-ui-kit",
-                "reference": "374b27af3e8847b514af41bbb5cfe283fe7abb2b"
+                "reference": "1de72a501bba42ca518134ab5d67370535fba407"
             },
             "require": {
                 "laravel/framework": "^13.12",
