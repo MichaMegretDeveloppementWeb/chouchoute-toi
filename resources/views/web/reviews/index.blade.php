@@ -48,6 +48,6 @@
 @endsection
 
 @section('content')
-    @include('web.reviews.partials.temoignages', ['reviews' => null, 'rating' => null, 'total' => null])
+    @include('web.reviews.partials.temoignages', ['reviews' => null, 'rating' => null, 'total' => null, 'allReviews' => null, 'writeAReview' => null, 'expected' => $expectedReviews])
     @include('web.reviews.partials.confiance')
 @endsection

@@ -4,27 +4,22 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Web;
 
-use App\Services\GoogleReviewsService;
 use App\Services\SiteGraphService;
-use Illuminate\Cache\RateLimiter as Limiter;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Feature\Web\Concerns\FakesGoogleReviews;
 use Tests\TestCase;
 
 /**
- * The reviews page only says what real clients wrote · it is drawn at once
- * without asking Google, and its testimonials arrive on their own · Google's
- * answer, asked at the first load of a visit and kept for it, within a daily
- * limit, or the snapshot taken from it.
+ * The reviews page only says what real clients wrote, as Google asks them to be
+ * shown · it is drawn at once without asking Google, and its testimonials arrive
+ * on their own · Google's answer, or the snapshot taken from it.
  */
 final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
 {
+    use FakesGoogleReviews;
     use RefreshDatabase;
 
     private const string SECTION = 'Ce que disent mes clientes';
@@ -33,11 +28,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
     {
         parent::setUp();
 
-        config([
-            'services.google.api_key' => bin2hex(random_bytes(8)),
-            'services.google.place_id' => 'a-place',
-            'avis' => ['captured_on' => null, 'rating' => null, 'total' => null, 'reviews' => []],
-        ]);
+        $this->aPlaceGoogleKnows();
     }
 
     public function test_the_page_asks_google_nothing_and_waits_for_its_reviews(): void
@@ -66,11 +57,56 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
             ->assertSee('Inès Fauvel')
             ->assertSee('Un accueil très soigné.')
             ->assertSee('il y a 2 mois')
-            ->assertSee('4,9/5 sur Google')
-            ->assertSee('(31 avis)')
+            ->assertSee('4,9')
+            ->assertSee('31 avis sur Google')
             ->assertSee('data-accordion-item', false)
             ->assertDontSee('data-reviews-source', false)
             ->assertDontSee('Chargement des avis');
+    }
+
+    public function test_each_review_credits_its_author_and_leads_to_google(): void
+    {
+        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
+
+        $this->list()
+            ->assertSee('src="https://lh3.example.test/ines.png"', false)
+            ->assertSee('href="https://www.google.com/maps/contrib/ines"', false)
+            ->assertSee('Profil de Inès Fauvel')
+            ->assertSee('href="https://www.google.com/maps/reviews/ines"', false)
+            ->assertSee('Voir l’avis sur Google Maps')
+            ->assertSee('Visité en septembre 2026')
+            ->assertSee('Les plus pertinents selon Google Maps, sans tri ni filtre de notre part.');
+    }
+
+    public function test_the_summary_leads_to_every_review_and_to_writing_one(): void
+    {
+        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
+
+        $this->list()
+            ->assertSee('href="https://www.google.com/maps/place/a-place/reviews"', false)
+            ->assertSee('Voir tous les avis')
+            ->assertSee('href="https://www.google.com/maps/place/a-place/write"', false)
+            ->assertSee('Laisser un avis');
+    }
+
+    public function test_a_review_under_four_stars_is_shown_too(): void
+    {
+        $answer = $this->googleAnswer();
+        $answer['reviews'][] = ['rating' => 2, 'authorAttribution' => ['displayName' => 'Odile Marchal'], 'text' => ['text' => 'Pas convaincue.']];
+
+        Http::fake(['places.googleapis.com/*' => Http::response($answer)]);
+
+        $this->list()->assertSee('Inès Fauvel')->assertSee('Odile Marchal')->assertSee('Pas convaincue.');
+    }
+
+    public function test_the_waiting_rows_are_as_many_as_the_reviews_expected(): void
+    {
+        $this->aSnapshot();
+        config(['avis.total' => 3]);
+
+        $page = (string) $this->get(route('reviews'))->assertOk()->getContent();
+
+        $this->assertSame(3, substr_count($page, 'data-review-placeholder'));
     }
 
     public function test_the_section_comes_alone_neither_kept_nor_indexed(): void
@@ -85,71 +121,6 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         $this->assertNeitherKeptNorIndexed($sent);
     }
 
-    public function test_the_request_says_what_it_needs_and_does_not_wait_for_long(): void
-    {
-        $waits = null;
-
-        Http::fake(function (Request $request, array $options) use (&$waits) {
-            $waits = $options['timeout'] ?? null;
-
-            return Http::response($this->googleAnswer());
-        });
-
-        $this->list()->assertOk();
-
-        $this->assertSame(2, $waits);
-
-        Http::assertSent(fn (Request $request): bool => str_contains($request->url(), '/v1/places/a-place')
-            && $request->hasHeader('X-Goog-FieldMask', 'reviews,rating,userRatingCount'));
-    }
-
-    public function test_each_visit_asks_google_again(): void
-    {
-        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
-
-        $this->list()->assertSee('Inès Fauvel');
-        $this->flushSession();
-        $this->list()->assertSee('Inès Fauvel');
-
-        Http::assertSentCount(2);
-    }
-
-    public function test_a_second_load_of_the_same_visit_asks_google_nothing(): void
-    {
-        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
-
-        $this->list()->assertSee('Inès Fauvel');
-        $this->list()->assertSee('Inès Fauvel')->assertSee('4,9/5 sur Google');
-
-        Http::assertSentCount(1);
-    }
-
-    public function test_a_visit_shown_the_snapshot_asks_again_at_its_next_load(): void
-    {
-        $this->aSnapshot();
-        Http::fake(['places.googleapis.com/*' => Http::sequence()
-            ->push(['error' => ['status' => 'UNAVAILABLE']], 503)
-            ->push($this->googleAnswer())]);
-
-        $this->list()->assertSee('Léa Moreau');
-        $this->list()->assertSee('Inès Fauvel');
-
-        Http::assertSentCount(2);
-    }
-
-    public function test_counting_the_calls_keeps_no_address_of_the_visitor(): void
-    {
-        config(['cache.default' => 'database']);
-        $this->app->forgetInstance(Limiter::class);
-        RateLimiter::clearResolvedInstance(Limiter::class);
-        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
-
-        $this->list('203.0.113.7')->assertSee('Inès Fauvel');
-
-        $this->assertGreaterThan(0, DB::table('cache')->count(), 'The calls of the day are not counted in the store.');
-        $this->assertSame(0, DB::table('cache')->where('key', 'like', '%203.0.113.7%')->count());
-    }
-
     public function test_a_refusal_shows_the_snapshot_and_nothing_invented(): void
     {
         $this->aSnapshot();
@@ -160,7 +131,7 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
             ->assertSee('Léa Moreau')
             ->assertSee('Toujours aussi précise.')
             ->assertSee('octobre 2026')
-            ->assertSee('4,8/5 sur Google')
+            ->assertSee('4,8')->assertSee('27 avis sur Google')
             ->assertDontSee('Sophie M.')
             ->assertDontSee('exemple');
     }
@@ -202,28 +173,6 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_the_site_is_shown_the_snapshot_beyond_its_calls_of_the_day(): void
-    {
-        $this->aSnapshot();
-        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
-        $this->travelTo(now()->startOfDay()->addHours(9));
-
-        for ($visit = 0; $visit < GoogleReviewsService::CALLS_PER_DAY; $visit++) {
-            $this->flushSession();
-            $this->list()->assertSee('Inès Fauvel');
-        }
-
-        $this->flushSession();
-        $this->list()->assertSee('Léa Moreau')->assertDontSee('Inès Fauvel');
-        Http::assertSentCount(GoogleReviewsService::CALLS_PER_DAY);
-
-        $this->travelTo(now()->addDay()->startOfDay()->addMinute());
-
-        $this->flushSession();
-        $this->list()->assertSee('Inès Fauvel');
-        Http::assertSentCount(GoogleReviewsService::CALLS_PER_DAY + 1);
-    }
-
     public function test_the_structured_data_says_what_the_snapshot_holds(): void
     {
         $this->aSnapshot();
@@ -257,30 +206,15 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
             ->assertDontSee('"reviewBody"', false);
     }
 
-    public function test_a_review_read_from_google_says_when_it_was_published(): void
-    {
-        Http::fake(['places.googleapis.com/*' => Http::response($this->googleAnswer())]);
-
-        $this->assertSame('2026-09-14', app(GoogleReviewsService::class)->liveReviews(app(Session::class))['reviews'][0]['publie_le']);
-    }
-
-    public function test_a_review_without_a_known_date_says_none(): void
-    {
-        $answer = $this->googleAnswer();
-        unset($answer['reviews'][0]['publishTime']);
-
-        Http::fake(['places.googleapis.com/*' => Http::response($answer)]);
-
-        $this->assertNull(app(GoogleReviewsService::class)->liveReviews(app(Session::class))['reviews'][0]['publie_le']);
-    }
-
     public function test_the_snapshot_kept_is_made_of_real_answers(): void
     {
-        /** @var array{captured_on: string, rating: float, total: int, reviews: list<array{nom: string, note: int, texte: string, date: string, publie_le: string}>} $snapshot */
+        /** @var array{captured_on: string, rating: float, total: int, all_reviews: string, write_a_review: string, reviews: list<array{nom: string, note: int, texte: string, date: string, publie_le: string, photo: string, profil: string, lien: string, visite: string}>} $snapshot */
         $snapshot = require base_path('config/avis.php');
 
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $snapshot['captured_on']);
         $this->assertGreaterThan(0, $snapshot['total']);
+        $this->assertStringStartsWith('https://', $snapshot['all_reviews']);
+        $this->assertStringStartsWith('https://', $snapshot['write_a_review']);
         $this->assertNotEmpty($snapshot['reviews']);
 
         foreach ($snapshot['reviews'] as $review) {
@@ -288,8 +222,12 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
             $this->assertNotSame('', $review['texte']);
             $this->assertNotSame('', $review['date']);
             $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $review['publie_le']);
-            $this->assertGreaterThanOrEqual(4, $review['note']);
+            $this->assertGreaterThanOrEqual(1, $review['note']);
             $this->assertLessThanOrEqual(5, $review['note']);
+            $this->assertStringStartsWith('https://', $review['photo']);
+            $this->assertStringStartsWith('https://', $review['profil']);
+            $this->assertStringStartsWith('https://', $review['lien']);
+            $this->assertMatchesRegularExpression('/^\p{Ll}+ \d{4}$/u', $review['visite']);
         }
 
         $names = array_column($snapshot['reviews'], 'nom');
@@ -297,16 +235,6 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         foreach (['Sophie M.', 'Marie L.', 'Camille D.', 'Julie R.', 'Léa B.', 'Nathalie P.'] as $invented) {
             $this->assertNotContains($invented, $names);
         }
-    }
-
-    /**
-     * The section as the page's script asks for it, from one visitor's address.
-     *
-     * @return TestResponse<Response>
-     */
-    private function list(string $visitor = '127.0.0.1'): TestResponse
-    {
-        return $this->withServerVariables(['REMOTE_ADDR' => $visitor])->get(route('reviews.list'));
     }
 
     /**
@@ -337,39 +265,5 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         }
 
         $this->fail('No node of the graph carries the reviews.');
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function googleAnswer(): array
-    {
-        return [
-            'rating' => 4.9,
-            'userRatingCount' => 31,
-            'reviews' => [[
-                'rating' => 5,
-                'authorAttribution' => ['displayName' => 'Inès Fauvel'],
-                'text' => ['text' => 'Un accueil très soigné.'],
-                'relativePublishTimeDescription' => 'il y a 2 mois',
-                'publishTime' => '2026-09-14T09:30:00Z',
-            ]],
-        ];
-    }
-
-    private function aSnapshot(): void
-    {
-        config(['avis' => [
-            'captured_on' => '2026-11-03',
-            'rating' => 4.8,
-            'total' => 27,
-            'reviews' => [[
-                'nom' => 'Léa Moreau',
-                'note' => 5,
-                'texte' => 'Toujours aussi précise.',
-                'date' => 'octobre 2026',
-                'publie_le' => '2026-10-12',
-            ]],
-        ]]);
     }
 }

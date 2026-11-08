@@ -30,6 +30,9 @@ class ReviewsListController extends Controller
             'reviews' => $answer['reviews'],
             'rating' => $answer['rating'],
             'total' => $answer['total'],
+            'allReviews' => $answer['all_reviews'],
+            'writeAReview' => $answer['write_a_review'],
+            'expected' => count($answer['reviews']),
         ])->withHeaders(self::HEADERS);
     }
 }
