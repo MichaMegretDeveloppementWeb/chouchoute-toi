@@ -10,12 +10,7 @@
     ])
 @endsection
 
-{{-- What this page adds to the site's graph: the snapshot's rating and
-     reviews, attached to the business the layout declares · the reviews shown
-     arrive after the page, and an engine reads the page as it is served.
-
-     Nothing is written when there is nothing: a missing rating beats an
-     invented one, and Google refuses an `aggregateRating` without reviews. --}}
+{{-- Structured data · the snapshot, the server asking Google nothing for this page --}}
 @section('schema')
     @php
         $entreprise = ['@id' => \App\Services\SiteGraphService::id('business')];

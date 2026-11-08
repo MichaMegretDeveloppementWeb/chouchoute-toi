@@ -20,7 +20,7 @@ class ReviewsListController extends Controller
 
     public function __invoke(Request $request, GoogleReviewsService $reviewsService): Response
     {
-        $answer = $reviewsService->liveReviews((string) $request->ip());
+        $answer = $reviewsService->liveReviews($request->session());
 
         if ($answer['reviews'] === []) {
             return response()->noContent()->withHeaders(self::HEADERS);
