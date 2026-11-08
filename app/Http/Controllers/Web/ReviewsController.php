@@ -19,6 +19,7 @@ class ReviewsController extends Controller
             'snapshotReviews' => $snapshot['reviews'],
             'snapshotRating' => $snapshot['rating'],
             'snapshotTotal' => $snapshot['total'],
+            'expectedReviews' => $reviewsService->expectedReviews(),
         ]);
     }
 }
