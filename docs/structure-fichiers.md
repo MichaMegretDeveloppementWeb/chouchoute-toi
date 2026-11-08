@@ -192,6 +192,12 @@ Les partials sont des fragments de vue spécifiques à une page. Ils se trouvent
 
 Les partials ne sont **pas** des composants Blade (pas de classe PHP associée). Ce sont de simples fichiers Blade inclus pour segmenter une page volumineuse.
 
+### Une section servie à part
+
+Une section lente à remplir peut arriver après sa page · la page la rend en attente, puis son script demande la section entière à une route à part, qui rend **le même partial**, rempli. Un seul gabarit pour les deux états · rien n'est recopié dans le script.
+
+La page des avis le fait · `/avis` se dessine sans attendre Google, et `/avis/liste` (`ReviewsListController`, invocable comme les autres) rend `web.reviews.partials.temoignages` avec ses avis. La route de la section ne se met ni en cache (`Cache-Control: no-store`) ni dans un index de moteur (`X-Robots-Tag: noindex`), et répond `204` quand elle n'a rien à montrer · le script retire alors la section.
+
 ## Résumé des conventions
 
 | Élément | Emplacement | Inclusion |

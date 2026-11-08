@@ -10,8 +10,9 @@
     ])
 @endsection
 
-{{-- What this page adds to the site's graph: the rating and the reviews,
-     attached to the business the layout declares.
+{{-- What this page adds to the site's graph: the snapshot's rating and
+     reviews, attached to the business the layout declares · the reviews shown
+     arrive after the page, and an engine reads the page as it is served.
 
      Nothing is written when there is nothing: a missing rating beats an
      invented one, and Google refuses an `aggregateRating` without reviews. --}}
@@ -20,18 +21,18 @@
         $entreprise = ['@id' => \App\Services\SiteGraphService::id('business')];
         $evalue = \Illuminate\Support\Arr::only(\App\Services\SiteGraphService::business(), ['@type', '@id', 'name']);
 
-        if (! empty($googleRating) && ! empty($googleTotal)) {
+        if (! empty($snapshotRating) && ! empty($snapshotTotal)) {
             $entreprise['aggregateRating'] = [
                 '@type' => 'AggregateRating',
-                'ratingValue' => (string) $googleRating,
+                'ratingValue' => (string) $snapshotRating,
                 'bestRating' => '5',
                 'worstRating' => '1',
-                'ratingCount' => (string) $googleTotal,
+                'ratingCount' => (string) $snapshotTotal,
                 'itemReviewed' => $evalue,
             ];
         }
 
-        foreach ($googleReviews ?? [] as $avis) {
+        foreach ($snapshotReviews as $avis) {
             $entreprise['review'][] = [
                 '@type' => 'Review',
                 'author' => ['@type' => 'Person', 'name' => $avis['nom']],
@@ -52,10 +53,6 @@
 @endsection
 
 @section('content')
-    @include('web.reviews.partials.temoignages', [
-        'googleReviews' => $googleReviews ?? [],
-        'googleRating' => $googleRating ?? null,
-        'googleTotal' => $googleTotal ?? null,
-    ])
+    @include('web.reviews.partials.temoignages', ['reviews' => null, 'rating' => null, 'total' => null])
     @include('web.reviews.partials.confiance')
 @endsection
