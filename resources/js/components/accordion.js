@@ -10,6 +10,7 @@ function toggle(item) {
     const isOpen = content.classList.toggle('is-open');
     content.style.maxHeight = isOpen ? content.scrollHeight + 'px' : '0';
     if (icon) icon.classList.toggle('is-open', isOpen);
+    item.querySelector('[data-accordion-trigger]')?.setAttribute('aria-expanded', String(isOpen));
 }
 
 document.addEventListener('click', (event) => {

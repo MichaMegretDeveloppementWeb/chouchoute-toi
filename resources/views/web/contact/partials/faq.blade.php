@@ -41,7 +41,7 @@
         <div>
             @foreach ($questions as $faq)
                 <div class="border-t border-wine/10" data-accordion-item>
-                    <button class="flex w-full items-center gap-4 py-5 text-left" data-accordion-trigger>
+                    <button class="flex w-full items-center gap-4 py-5 text-left" aria-expanded="false" data-accordion-trigger>
                         <div class="accordion-icon text-charcoal" data-accordion-icon>
                             <span class="accordion-icon__h"></span>
                             <span class="accordion-icon__v"></span>

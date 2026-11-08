@@ -1,6 +1,6 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-BTIxGan3.css",
+    "file": "assets/admin-bTML0KBw.css",
     "src": "resources/css/admin.css",
     "isEntry": true,
     "name": "admin",
@@ -9,7 +9,7 @@
     ]
   },
   "resources/css/auth.css": {
-    "file": "assets/auth-Czks131Z.css",
+    "file": "assets/auth-Cj0WbDQJ.css",
     "src": "resources/css/auth.css",
     "isEntry": true,
     "name": "auth",
@@ -64,13 +64,13 @@
     "isEntry": true
   },
   "resources/js/web/contact/index.js": {
-    "file": "assets/index-D3O-RSOW.js",
+    "file": "assets/index-kYMubgVM.js",
     "name": "index",
     "src": "resources/js/web/contact/index.js",
     "isEntry": true
   },
   "resources/js/web/home/index.js": {
-    "file": "assets/index-BLahm_w_.js",
+    "file": "assets/index-m2H1YbZd.js",
     "name": "index",
     "src": "resources/js/web/home/index.js",
     "isEntry": true,
@@ -79,7 +79,7 @@
     ]
   },
   "resources/js/web/reviews/index.js": {
-    "file": "assets/index-C1dzXkdk.js",
+    "file": "assets/index-CR8RXGt8.js",
     "name": "index",
     "src": "resources/js/web/reviews/index.js",
     "isEntry": true,

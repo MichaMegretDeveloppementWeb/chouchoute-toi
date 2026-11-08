@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -15,23 +16,30 @@ use Illuminate\Support\Facades\RateLimiter;
  */
 class GoogleReviewsService
 {
-    /** Calls one visitor's address may make in an hour before the snapshot is shown instead. */
-    public const int CALLS_PER_VISITOR_PER_HOUR = 6;
-
     /** Calls the site makes in a day before the snapshot is shown instead. */
     public const int CALLS_PER_DAY = 30;
+
+    /** Where a visit keeps what Google answered it. */
+    private const string VISIT_KEY = 'google-reviews';
 
     private const int REQUEST_SECONDS = 2;
 
     /**
-     * The real reviews of the configured Place ID, asked of Google for this
-     * visitor · the snapshot when there is no key, when a limit is reached, or
-     * when Google gives nothing.
+     * The real reviews of the configured Place ID · Google's answer, asked once
+     * per visit and kept for it · the snapshot when there is no key, when the
+     * calls of the day are spent, or when Google gives nothing.
      *
      * @return Reviews
      */
-    public function liveReviews(string $visitor): array
+    public function liveReviews(Session $visit): array
     {
+        $kept = $visit->get(self::VISIT_KEY);
+
+        if (is_array($kept)) {
+            /** @var Reviews $kept */
+            return $kept;
+        }
+
         $apiKey = config('services.google.api_key');
         $placeId = config('services.google.place_id');
 
@@ -39,11 +47,19 @@ class GoogleReviewsService
             return $this->snapshot();
         }
 
-        if (! $this->mayAskGoogle($visitor)) {
+        if (! $this->spendACallOfTheDay()) {
             return $this->snapshot();
         }
 
-        return $this->askGoogle($apiKey, $placeId) ?? $this->snapshot();
+        $answer = $this->askGoogle($apiKey, $placeId);
+
+        if ($answer === null) {
+            return $this->snapshot();
+        }
+
+        $visit->put(self::VISIT_KEY, $answer);
+
+        return $answer;
     }
 
     /**
@@ -65,21 +81,10 @@ class GoogleReviewsService
         ];
     }
 
-    /** Counts one call against both limits, or says one of them is reached. */
-    private function mayAskGoogle(string $visitor): bool
+    /** Spends one call of the day, and says whether the day still allowed it. */
+    private function spendACallOfTheDay(): bool
     {
-        $today = 'google-reviews:day:'.now()->toDateString();
-        $visitorHour = 'google-reviews:visitor:'.$visitor;
-
-        if (RateLimiter::tooManyAttempts($today, self::CALLS_PER_DAY)
-            || RateLimiter::tooManyAttempts($visitorHour, self::CALLS_PER_VISITOR_PER_HOUR)) {
-            return false;
-        }
-
-        RateLimiter::hit($today, 86400);
-        RateLimiter::hit($visitorHour, 3600);
-
-        return true;
+        return RateLimiter::hit('google-reviews:day:'.now()->toDateString(), 86400) <= self::CALLS_PER_DAY;
     }
 
     /**

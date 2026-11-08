@@ -127,6 +127,34 @@ final class OneStylesheetPerPageTest extends TestCase
     }
 
     /**
+     * The back-office and sign-in sheets are built from their own views · the
+     * container width only the public pages write never reaches them.
+     */
+    public function test_the_office_sheets_carry_nothing_only_the_public_site_writes(): void
+    {
+        foreach (['resources/css/admin.css', 'resources/css/auth.css'] as $entry) {
+            $this->assertStringNotContainsString(
+                '1336px',
+                $this->compiledSheetFor($entry),
+                $entry.' reads the public views · the classes of the site end up in a sheet no public page loads.',
+            );
+        }
+    }
+
+    /** The file the build produced for an entry, as its manifest names it. */
+    private function compiledSheetFor(string $entry): string
+    {
+        $manifest = json_decode((string) file_get_contents(public_path('build/manifest.json')), true);
+        $this->assertIsArray($manifest, 'No build manifest · run `npm run build`.');
+        $this->assertIsArray($manifest[$entry] ?? null, $entry.' is not an entry of the build.');
+
+        $file = $manifest[$entry]['file'] ?? null;
+        $this->assertIsString($file);
+
+        return (string) file_get_contents(public_path('build/'.$file));
+    }
+
+    /**
      * @return array<string, string>
      */
     private function layouts(): array

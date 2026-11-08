@@ -35,7 +35,10 @@
 
 @import './app.css';
 
-@source '../views/**/*.blade.php';
+/* The back-office views only · the public pages have their own sheet. */
+@source '../views/admin/**/*.blade.php';
+@source '../views/livewire/admin/**/*.blade.php';
+@source '../views/components/layout/admin*.blade.php';
 
 /* `dark:` follows the theme the page carries, the class the server writes from
    the choice made with the moon button · left to Tailwind, it would follow the
