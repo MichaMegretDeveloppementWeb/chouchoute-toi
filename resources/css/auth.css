@@ -11,7 +11,10 @@
 
 @import './app.css';
 
-@source '../views/**/*.blade.php';
+/* The sign-in views only · the public pages have their own sheet. */
+@source '../views/auth/**/*.blade.php';
+@source '../views/livewire/auth/**/*.blade.php';
+@source '../views/components/layout/auth.blade.php';
 
 /* `dark:` follows the theme the page carries, as in the back-office. */
 @custom-variant dark (&:where(.dark, .dark *));
