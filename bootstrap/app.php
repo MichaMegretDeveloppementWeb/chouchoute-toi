@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\PrunesTheExpiredCache;
 use App\Models\Admin;
 use App\Services\Admin\Navigation\OpenScreensService;
 use Illuminate\Foundation\Application;
@@ -35,6 +36,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // the public site opens client accounts on the `web` guard.
         $middleware->redirectGuestsTo(fn (): string => route('auth.login'));
         $middleware->redirectUsersTo(fn (): string => route('admin.dashboard'));
+
+        $middleware->append(PrunesTheExpiredCache::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // A screen of the office refused to an account is said inside the office, with the way back.
