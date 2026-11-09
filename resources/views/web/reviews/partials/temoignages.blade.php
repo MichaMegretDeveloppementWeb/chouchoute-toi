@@ -25,21 +25,23 @@
                         <div class="h-4 w-64 rounded-full bg-sand max-md:w-56"></div>
                     </div>
                 </div>
-            @elseif ($rating)
+            @elseif ($rating || $allReviews || $writeAReview)
                 <div class="mt-8 flex flex-col items-center gap-5 max-md:mt-6 max-md:gap-4">
-                    <p class="flex items-center gap-[18px]">
-                        <span class="text-[64px] font-light leading-none text-wine tabular-nums max-md:text-[52px]">{{ number_format($rating, 1, ',', '') }}</span>
-                        <span class="grid justify-items-start gap-1.5 text-left">
-                            <span class="flex gap-0.5">
-                                @for ($i = 0; $i < round($rating); $i++)
-                                    <x-icon.star-filled class="text-wine" width="20" height="20" />
-                                @endfor
+                    @if ($rating)
+                        <p class="flex items-center gap-[18px]">
+                            <span class="text-[64px] font-light leading-none text-wine tabular-nums max-md:text-[52px]">{{ number_format($rating, 1, ',', '') }}</span>
+                            <span class="grid justify-items-start gap-1.5 text-left">
+                                <span class="flex gap-0.5">
+                                    @for ($i = 0; $i < round($rating); $i++)
+                                        <x-icon.star-filled class="text-wine" width="20" height="20" />
+                                    @endfor
+                                </span>
+                                @if ($total)
+                                    <span class="text-[15px] text-charcoal">{{ $total }} avis sur Google</span>
+                                @endif
                             </span>
-                            @if ($total)
-                                <span class="text-[15px] text-charcoal">{{ $total }} avis sur Google</span>
-                            @endif
-                        </span>
-                    </p>
+                        </p>
+                    @endif
 
                     @if ($allReviews || $writeAReview)
                         <p class="flex flex-wrap justify-center gap-x-7 max-md:gap-x-5">
@@ -121,9 +123,11 @@
                                     @endfor
                                 </div>
 
-                                <p class="mt-3 max-w-2xl text-base leading-[1.7] text-charcoal">
-                                    « {{ $review['texte'] }} »
-                                </p>
+                                @if ($review['texte'] !== '')
+                                    <p class="mt-3 max-w-2xl text-base leading-[1.7] text-charcoal">
+                                        « {{ $review['texte'] }} »
+                                    </p>
+                                @endif
 
                                 @if ($review['lien'] || $review['profil'])
                                     <p class="mt-3 flex flex-wrap gap-x-6">

@@ -99,6 +99,28 @@ final class TheReviewsPageShowsOnlyRealReviewsTest extends TestCase
         $this->list()->assertSee('Inès Fauvel')->assertSee('Odile Marchal')->assertSee('Pas convaincue.');
     }
 
+    public function test_a_review_given_without_words_shows_no_empty_quote(): void
+    {
+        $answer = $this->googleAnswer();
+        $answer['reviews'][] = ['rating' => 4, 'authorAttribution' => ['displayName' => 'Hugo Lenoir']];
+
+        Http::fake(['places.googleapis.com/*' => Http::response($answer)]);
+
+        $section = (string) $this->list()->assertSee('Hugo Lenoir')->getContent();
+
+        $this->assertSame(1, substr_count($section, '«'));
+    }
+
+    public function test_the_summary_leads_to_google_even_without_a_rating(): void
+    {
+        $answer = $this->googleAnswer();
+        unset($answer['rating']);
+
+        Http::fake(['places.googleapis.com/*' => Http::response($answer)]);
+
+        $this->list()->assertSee('Voir tous les avis')->assertSee('Laisser un avis');
+    }
+
     public function test_the_waiting_rows_are_as_many_as_the_reviews_expected(): void
     {
         $this->aSnapshot();
