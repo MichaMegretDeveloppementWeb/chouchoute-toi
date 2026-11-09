@@ -11,11 +11,7 @@ use Illuminate\Support\Lottery;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-/**
- * Some requests, drawn by lot as the framework draws its session sweeps, forget
- * the expired rows of the cache once their response has gone · the table is
- * written only by visits, and visits keep it from growing, with no scheduler.
- */
+/** Some requests, drawn by lot, forget the expired rows of the cache once their response has gone. */
 final class PrunesTheExpiredCache
 {
     /** The chances of a request to sweep, out of how many. */
