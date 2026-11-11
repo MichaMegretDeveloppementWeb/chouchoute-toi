@@ -30,6 +30,12 @@
         margin-inline-start: -5px;
     }
 
+    /* The account across the whole bar, as in the drawer · the row reaches the
+       edges, and its button keeps its content off them. */
+    .ui-sidebar li:has(.admin-account) {
+        margin-inline: -20px;
+    }
+
     .ui-sidebar-group {
         margin-inline: -20px;
     }
@@ -278,5 +284,80 @@
 
     .dark .ui-sidebar-link[aria-current='page'] {
         color: #fff;
+    }
+
+    /*
+     | Between lg and 1400 pixels the bar sits over the content · the content
+     | keeps the rail's width whatever the bar does, the bar is folded until the
+     | ☰ opens it (`admin/sidebar-over.js`), and open, a veil takes the click beside it.
+     |
+     | One case is folded here · the bar the kit would draw open, from the choice
+     | it remembers. The kit's own rules fold the others, and the script opens
+     | the bar through the kit's open state without writing its cookie.
+     */
+    @media (64rem <= width < 87.5rem) {
+        .ui-sidebar-frame .ui-sidebar-inset {
+            padding-left: var(--ui-sidebar-width-rail);
+        }
+
+        .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) {
+            --ui-rail: 1;
+            --ui-sidebar-w: var(--ui-sidebar-width-rail);
+            --ui-sidebar-label-opacity: 0;
+            --ui-sidebar-label-w: 0px;
+            --ui-sidebar-chevron-visibility: hidden;
+            --ui-sidebar-title-h: 0px;
+            --ui-sidebar-title-mb: 0px;
+            --ui-sidebar-row-w: 38px;
+            --ui-sidebar-gap: 0px;
+            --ui-sidebar-submenu: none;
+            --ui-sidebar-badge-bg: var(--ui-text-primary);
+            --ui-sidebar-badge-fg: var(--ui-bg-surface);
+            --ui-sidebar-count-display: none;
+            --ui-sidebar-compact-count-display: flex;
+        }
+
+        .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-chevron {
+            padding: 0;
+        }
+
+        .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-collapsible {
+            border-bottom-color: var(--ui-border-subtle);
+        }
+
+        .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-badge {
+            background: var(--admin-sidebar-action);
+            color: #fff;
+        }
+
+        .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-badge .ui-icon {
+            opacity: 1;
+        }
+
+        .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-inset::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 25;
+            background: rgb(17 24 39 / .5);
+        }
+
+        .dark .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-inset::before {
+            background: rgb(0 0 0 / .6);
+        }
+
+        /* The ☰ that folds it back slides into the top of the open bar, at the
+           end of its brand row · its icon 20 pixels from the bar's edge, as the
+           logo is from the other · 4.375rem are the header's 1.5rem of padding,
+           the button's 2rem and the 0.875rem left beside the icon. */
+        .ui-sidebar-frame .ui-sidebar-trigger {
+            transition: transform .3s ease-in-out;
+        }
+
+        .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-trigger {
+            position: relative;
+            z-index: 31;
+            transform: translateX(calc(var(--ui-sidebar-width-open) - var(--ui-sidebar-width-rail) - 4.375rem));
+        }
     }
 }

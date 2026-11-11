@@ -3,6 +3,7 @@
 
 import './app.js';
 import { reloadOnARefusal } from './admin/refusals.js';
+import { holdTheBarOverTheContent } from './admin/sidebar-over.js';
 
 // Livewire may already be there; otherwise it announces its start.
 if (window.Livewire) {
@@ -10,3 +11,5 @@ if (window.Livewire) {
 } else {
     document.addEventListener('livewire:init', () => reloadOnARefusal(window.Livewire), { once: true });
 }
+
+holdTheBarOverTheContent();
