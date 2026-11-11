@@ -30,6 +30,12 @@
         margin-inline-start: -5px;
     }
 
+    /* The account across the whole bar, as in the drawer · the row reaches the
+       edges, and its button keeps its content off them. */
+    .ui-sidebar li:has(.admin-account) {
+        margin-inline: -20px;
+    }
+
     .ui-sidebar-group {
         margin-inline: -20px;
     }
@@ -340,18 +346,18 @@
             background: rgb(0 0 0 / .6);
         }
 
-        /* The ☰ that folds it back stands beside the open bar, over the veil,
-           where it would be if the bar pushed the content. */
+        /* The ☰ that folds it back slides into the top of the open bar, at the
+           end of its brand row · its icon 20 pixels from the bar's edge, as the
+           logo is from the other · 4.375rem are the header's 1.5rem of padding,
+           the button's 2rem and the 0.875rem left beside the icon. */
         .ui-sidebar-frame .ui-sidebar-trigger {
             transition: transform .3s ease-in-out;
         }
 
         .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-trigger {
             position: relative;
-            z-index: 26;
-            transform: translateX(calc(var(--ui-sidebar-width-open) - var(--ui-sidebar-width-rail)));
-            background: var(--ui-bg-surface);
-            color: var(--ui-text-primary);
+            z-index: 31;
+            transform: translateX(calc(var(--ui-sidebar-width-open) - var(--ui-sidebar-width-rail) - 4.375rem));
         }
     }
 }

@@ -98,8 +98,8 @@ final class TheSidebarGoesOverTheContentTest extends TestCase
 
         $trigger = $this->declarationsOf($this->band(), '.ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-trigger');
 
-        $this->assertGreaterThan((int) $veil['z-index'], (int) $trigger['z-index'], 'Le ☰ resterait sous le voile, et ne refermerait plus la barre.');
-        $this->assertSame('translateX(calc(var(--ui-sidebar-width-open) - var(--ui-sidebar-width-rail)))', $trigger['transform'], 'Le ☰ resterait sous la barre ouverte.');
+        $this->assertGreaterThan(30, (int) $trigger['z-index'], 'Le ☰ resterait sous la barre ouverte, et ne la refermerait plus.');
+        $this->assertSame('translateX(calc(var(--ui-sidebar-width-open) - var(--ui-sidebar-width-rail) - 4.375rem))', $trigger['transform'], 'Le ☰ ne vient plus au bout de la ligne du nom, dans le haut de la barre ouverte.');
     }
 
     public function test_the_script_holds_the_same_band_and_the_back_office_runs_it(): void
