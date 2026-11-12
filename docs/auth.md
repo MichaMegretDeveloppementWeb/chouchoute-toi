@@ -151,13 +151,14 @@ la fiche n'y touche plus.
 | Geste dans l'équipe | Ce qui arrive au compte |
 |---|---|
 | créer une fiche avec un accès | un compte à l'adresse de la fiche, sans mot de passe connu, avec le rôle choisi, et l'invitation part une fois la fiche enregistrée |
-| donner un accès à l'adresse d'un compte qui existe déjà | ce compte est repris, avec son nom, son mot de passe et le rôle choisi sur la fiche, et rien ne part · c'est le cas du compte d'origine |
+| donner un accès à l'adresse d'un compte qui existe déjà | ce compte est repris, avec son nom, son mot de passe et le rôle choisi sur la fiche, et rien ne part · à l'adresse du compte connecté, c'est le geste de la ligne suivante |
+| « M’ajouter comme praticien », sur l'écran Praticiens | une fiche neuve est reliée au compte connecté · rien n'est créé, rien ne part, le rôle reste le sien, et l'adresse se verrouille dans le Profil · le bouton ne paraît que pour le Propriétaire, le Collaborateur n'ouvrant pas les réglages |
 | changer le rôle | le compte prend le rôle choisi · le sien, et celui du dernier propriétaire, ne changent pas, et la fiche dit pourquoi |
 | corriger l'adresse d'une invitation en attente | le lien part à la nouvelle adresse, l'ancien ne sert plus |
 | corriger l'adresse d'un compte en service | l'identifiant change, le mot de passe reste, et les deux adresses sont prévenues · un message qui ne part pas se dit, avec l'adresse de connexion |
 | « Renvoyer l'invitation » | un nouveau lien remplace le précédent · une minute entre deux envois, sauf si le précédent n'est pas parti |
-| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend |
-| supprimer | le compte et ses liens partent avec la fiche |
+| archiver, réactiver | le compte est suspendu, puis rendu tel qu'il était · un appareil resté connecté (« Rester connecté ») doit se reconnecter · une session ordinaire de moins de deux heures, elle, reprend · **sauf pour la fiche reliée par « M’ajouter comme praticien »**, qui ne touche jamais au compte |
+| supprimer | le compte et ses liens partent avec la fiche · sauf, de même, la fiche reliée par « M’ajouter comme praticien » · le lien part, le compte reste |
 
 **Le dernier propriétaire et le compte qui agit** ne sont jamais rétrogradés,
 suspendus ni supprimés depuis l'équipe · et deux propriétaires qui se retirent l'un

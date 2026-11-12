@@ -120,6 +120,7 @@ final class EachRoleOpensWhatItShouldTest extends TestCase
             'creating a block' => [BookingAbility::UnavailabilitiesEdit, true],
             'the settings' => [BookingAbility::Settings, false],
             'the sms account' => [BookingAbility::SmsAccount, false],
+            'joining the team from the own account' => [BookingAbility::PractitionersJoin, false],
         ];
     }
 
