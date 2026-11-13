@@ -43,7 +43,7 @@ final class TheOwnerJoinsTheTeamTest extends TestCase
 
         Livewire::test(PractitionerForm::class)
             ->call('joinTheTeam')
-            ->assertReturned(true)
+            ->assertReturned(PractitionerForm::FICHE)
             ->assertSee('Votre compte')
             ->assertSee('Vous ne pouvez pas changer votre propre accès.')
             ->call('savePractitioner')
@@ -62,6 +62,33 @@ final class TheOwnerJoinsTheTeamTest extends TestCase
         Livewire::test(PractitionerIndex::class)->assertDontSee('M’ajouter comme praticien');
     }
 
+    /** A fiche in service carried the owner's address already · the button asks, and « Relier » keeps the account to that fiche, both left as they were. */
+    public function test_a_fiche_at_the_owners_address_is_linked_and_the_account_is_left_as_it_was(): void
+    {
+        $member = Practitioner::factory()->create(['name' => 'Amandine D.', 'email' => 'amandine@exemple.fr', 'role' => 'Fondatrice']);
+        $before = $this->owner->fresh()?->getAttributes();
+
+        Livewire::test(PractitionerForm::class)
+            ->call('joinTheTeam')
+            ->assertReturned(PractitionerForm::LINK)
+            ->assertDispatched('fb-question', modal: PractitionerForm::LINK, name: 'Amandine D.')
+            ->call('linkTheFiche')
+            ->assertDispatched('ui-toast', type: 'success', title: 'Fiche reliée à votre compte');
+
+        $member->refresh();
+
+        $this->assertSame($this->owner->id, $member->getAttribute('account_id'));
+        $this->assertTrue($member->getAttribute('joined_an_account'));
+        $this->assertSame(['Amandine D.', 'Fondatrice'], [$member->getAttribute('name'), $member->getAttribute('role')]);
+        $this->assertSame(1, Practitioner::query()->count(), 'A second fiche was written.');
+        $this->assertSame(1, Admin::query()->count(), 'An account was created.');
+        $this->assertSame($before, $this->owner->fresh()?->getAttributes(), 'The account changed.');
+        $this->assertSame(Role::Owner, $this->owner->refresh()->role);
+        Mail::assertNothingSent();
+
+        Livewire::test(PractitionerIndex::class)->assertDontSee('M’ajouter comme praticien');
+    }
+
     /** Another owner archives, then removes, the fiche the first one joined · the first stays in service. */
     public function test_another_owner_leaving_it_never_shuts_the_account(): void
     {
@@ -75,9 +102,13 @@ final class TheOwnerJoinsTheTeamTest extends TestCase
             ->call('askToArchive', $member->id)
             ->assertReturned(null);
 
+        $this->assertTrue($member->refresh()->isArchived(), 'The fiche was not archived.');
         $this->assertNull($this->owner->refresh()->suspended_at);
 
         Livewire::test(PractitionerIndex::class)->call('restore', $member->id);
+
+        $this->assertFalse($member->refresh()->isArchived(), 'The fiche was not brought back.');
+
         Livewire::test(PractitionerIndex::class)->call('askToRemove', $member->id)->call('remove');
 
         $this->assertNull(Practitioner::query()->find($member->id));
