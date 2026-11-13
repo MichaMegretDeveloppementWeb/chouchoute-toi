@@ -683,7 +683,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-booking",
-                "reference": "40796a9b89756ae11f98a37093d81b4d95c5e73d"
+                "reference": "8506df1c13204bf45516809c98c875f1db8dc03e"
             },
             "require": {
                 "egulias/email-validator": "^4.0",
