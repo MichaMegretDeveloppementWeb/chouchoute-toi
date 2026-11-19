@@ -1,22 +1,23 @@
 /* Every rule here sits outside any `@layer`, so it beats Tailwind's utilities
    whatever their specificity and without `!important`. Wrapping them in a layer
-   silently gives the focus ring back to the kit. */
+   silently gives the focus ring back to the kit. A refused field is left out:
+   it keeps the kit's red under the cursor. */
 
 /* Checkboxes and radios take the colour only: their ring comes from the forms
    plugin, drawn outside and lined with white. Forcing `inset` would hide it
    under the tick. */
-input[type='checkbox']:focus,
-input[type='radio']:focus {
+input[type='checkbox']:not([aria-invalid='true']):focus,
+input[type='radio']:not([aria-invalid='true']):focus {
     --tw-ring-color: var(--fb-focus);
 }
 
 /* `:not([class*='ring-0'])`: a control asking for no ring gets none. Fields
    laid bare inside a framed box carry `focus:ring-0` so the frame draws it;
    forcing a width here drew a second green line inside the first. */
-input:not([type='checkbox']):not([type='radio']):not([class*='ring-0']):focus,
-select:not([class*='ring-0']):focus,
-textarea:not([class*='ring-0']):focus,
-[class*='focus-within:ring']:not([class*='focus-within:ring-0']):focus-within {
+input:not([type='checkbox']):not([type='radio']):not([class*='ring-0']):not([aria-invalid='true']):focus,
+select:not([class*='ring-0']):not([aria-invalid='true']):focus,
+textarea:not([class*='ring-0']):not([aria-invalid='true']):focus,
+[class*='focus-within:ring']:not([class*='focus-within:ring-0']):not(:has([aria-invalid='true'])):focus-within {
     --tw-ring-color: var(--fb-focus);
     --tw-ring-shadow: inset 0 0 0 1px var(--fb-focus);
 }
