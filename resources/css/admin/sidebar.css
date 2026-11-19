@@ -177,10 +177,22 @@
 
     /* A section inside a section · its row the height of the links beside it,
        its label on their column, and its own pages one step further in. One
-       rule closes the whole list, not one per level. */
+       rule closes the whole list · unrolled, the section has its own under its
+       name, from its label's column, so its pages read one level down. */
     .ui-sidebar-submenu .ui-sidebar-collapsible {
+        position: relative;
         min-height: 40px;
         border-bottom: 0;
+    }
+
+    .ui-sidebar-submenu .ui-sidebar-collapsible:has(.ui-sidebar-chevron[aria-expanded='true'])::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 52px;
+        height: 1px;
+        background: var(--ui-border-subtle);
     }
 
     .ui-sidebar-submenu .ui-sidebar-collapsible > .ui-sidebar-gap {
@@ -334,16 +346,13 @@
             opacity: 1;
         }
 
+        /* An invisible veil beside the open bar · it takes the click, which
+           only folds the bar back. */
         .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-inset::before {
             content: '';
             position: fixed;
             inset: 0;
             z-index: 25;
-            background: rgb(17 24 39 / .5);
-        }
-
-        .dark .ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-inset::before {
-            background: rgb(0 0 0 / .6);
         }
 
         /* The ☰ that folds it back slides into the top of the open bar, at the
