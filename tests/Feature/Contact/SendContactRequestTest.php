@@ -83,6 +83,19 @@ final class SendContactRequestTest extends TestCase
         Mail::assertNothingSent();
     }
 
+    /** A message longer than the form takes is refused, and the page says why under it · the field has no length of its own. */
+    public function test_a_message_too_long_is_refused_and_said_under_it(): void
+    {
+        $this->fillForm()
+            ->set('message', str_repeat('a', 2001))
+            ->call('send')
+            ->assertHasErrors('message')
+            ->assertSet('sent', false)
+            ->assertSee('Le message ne doit pas dépasser 2000 caractères.');
+
+        Mail::assertNothingSent();
+    }
+
     public function test_the_volume_from_the_pricing_link_preselects_the_offer(): void
     {
         Livewire::withQueryParams(['volume' => 'volume-mixte'])
