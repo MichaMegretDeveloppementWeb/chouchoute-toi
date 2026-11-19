@@ -9,7 +9,8 @@ use Tests\TestCase;
 /**
  * Entre 1 024 et 1 400 px, la barre latérale passe par-dessus le contenu · le
  * contenu garde la largeur de la colonne d'icônes, la barre est repliée tant que
- * le ☰ ne l'ouvre pas, et ouverte, un voile prend le clic à côté.
+ * le ☰ ne l'ouvre pas, et ouverte, un voile invisible prend le clic à côté, qui
+ * ne fait que la refermer.
  *
  * La feuille vit dans `resources/css/admin/sidebar.css`, le geste dans
  * `resources/js/admin/sidebar-over.js` · le geste lui-même (ouvrir, les quatre
@@ -88,13 +89,15 @@ final class TheSidebarGoesOverTheContentTest extends TestCase
         }
     }
 
-    public function test_open_over_the_content_a_veil_takes_the_click_beside_it(): void
+    public function test_open_over_the_content_an_invisible_veil_takes_the_click_beside_it(): void
     {
         $veil = $this->declarationsOf($this->band(), '.ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-inset::before');
 
         $this->assertSame('fixed', $veil['position']);
         $this->assertSame('0', $veil['inset']);
         $this->assertLessThan(30, (int) $veil['z-index'], 'Le voile passerait devant la barre, posée à 30 par le kit.');
+        $this->assertSame([], preg_grep('/^background/', array_keys($veil)), 'Le voile grise la page à côté de la barre ouverte.');
+        $this->assertSame(1, substr_count($this->band(), '[data-admin-sidebar-over] .ui-sidebar-inset::before'), 'Une autre règle peint le voile, en sombre ou ailleurs.');
 
         $trigger = $this->declarationsOf($this->band(), '.ui-sidebar-frame[data-admin-sidebar-over] .ui-sidebar-trigger');
 

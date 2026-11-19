@@ -42,4 +42,28 @@ final class TheSidebarIsDrawnByItsRowsTest extends TestCase
         $this->assertMatchesRegularExpression('/\.ui-sidebar-link \{[^}]*min-height: 48px;[^}]*border-radius: 0;[^}]*border-bottom: 1px solid var\(--ui-border-subtle\);/s', $sheet);
         $this->assertMatchesRegularExpression('/\.ui-sidebar-submenu \.ui-sidebar-link \{[^}]*min-height: 40px;[^}]*padding: 10px 22px 10px 52px;/s', $sheet, 'Les pages d’une section ne sont plus alignées sur son libellé.');
     }
+
+    public function test_an_unrolled_section_inside_a_section_has_a_rule_under_its_name(): void
+    {
+        $sheet = $this->sheet('admin/sidebar.css');
+        $rule = $this->blockOf($sheet, ".ui-sidebar-submenu .ui-sidebar-collapsible:has(.ui-sidebar-chevron[aria-expanded='true'])::after");
+
+        foreach (["content: ''", 'position: absolute', 'bottom: 0', 'right: 0', 'left: 52px', 'height: 1px', 'background: var(--ui-border-subtle)'] as $declaration) {
+            $this->assertStringContainsString($declaration.';', $rule, "Le trait sous une section dans une section a perdu « {$declaration} » · il part de la colonne de son libellé, du gris des traits.");
+        }
+
+        $this->assertStringContainsString('position: relative;', $this->blockOf($sheet, '.ui-sidebar-submenu .ui-sidebar-collapsible'), 'Le trait ne se pose plus sur la ligne de la section.');
+    }
+
+    /** The body of the first block a selector opens in a sheet. */
+    private function blockOf(string $sheet, string $selector): string
+    {
+        $start = strpos($sheet, $selector.' {');
+
+        $this->assertNotFalse($start, "Aucun bloc pour {$selector}.");
+
+        $body = substr($sheet, $start + strlen($selector) + 2);
+
+        return substr($body, 0, (int) strpos($body, '}'));
+    }
 }
