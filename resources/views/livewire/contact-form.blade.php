@@ -133,6 +133,7 @@
                         <div>
                             <label for="message" class="mb-1.5 block text-xs font-medium uppercase tracking-[1.5px] text-charcoal/60">Message (optionnel)</label>
                             <textarea wire:model="message" id="message" rows="4" class="w-full resize-none rounded-[10px] border border-black/10 bg-white px-4 py-3 text-sm text-dark outline-none transition-all focus:border-wine/30 focus:ring-1 focus:ring-wine/10"></textarea>
+                            @error('message') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <button type="submit" class="inline-flex items-center gap-2 rounded-[10px] bg-black px-[22px] py-3 text-sm text-white transition-colors duration-300 hover:bg-dark disabled:opacity-50" wire:loading.attr="disabled">
