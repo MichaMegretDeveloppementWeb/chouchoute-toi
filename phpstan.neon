@@ -85,3 +85,12 @@ parameters:
             message: '#Livewire\\Features\\SupportTesting\\Testable does not specify its types: TComponent$#'
             paths:
                 - tests
+
+services:
+    # The migrations enter what the result cache is compared against: larastan
+    # reads the schema in them, and an unchanged file that reads a column would
+    # otherwise keep the verdict it had before the migration changed.
+    -
+        class: Tests\Support\MigrationsFingerprint
+        arguments: [%databaseMigrationsPath%, %currentWorkingDirectory%]
+        tags: [phpstan.resultCacheMetaExtension]
