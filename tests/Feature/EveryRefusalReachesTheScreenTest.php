@@ -19,11 +19,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
+use PhpToken;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use ReflectionMethod;
+use Tests\Fixtures\Livewire\AFormRefusingByHand;
 use Tests\TestCase;
 
 use function Livewire\on;
@@ -89,11 +91,16 @@ final class EveryRefusalReachesTheScreenTest extends TestCase
         $this->assertSame([], array_values(array_diff($declaring, $checked)), 'These forms declare rules nobody checks.');
     }
 
-    /** The scan of the refusals raised by hand reads what a form raises · sounded on a form known to raise one. */
+    /**
+     * The scan of the refusals raised by hand reads what a form raises · sounded
+     * on forms known to raise one, and on a form whose trait raises one and whose
+     * comment only quotes another.
+     */
     public function test_the_refusals_raised_by_hand_are_read(): void
     {
         $this->assertSame(['email'], $this->keysRaisedByHand(LoginForm::class));
         $this->assertSame(['password'], $this->keysRaisedByHand(ChoosePasswordForm::class));
+        $this->assertEqualsCanonicalizing(['raisedHere', 'raisedByTheTrait'], $this->keysRaisedByHand(AFormRefusingByHand::class));
     }
 
     /**
@@ -145,26 +152,73 @@ final class EveryRefusalReachesTheScreenTest extends TestCase
     }
 
     /**
-     * The fields a form refuses by hand, as its code writes them.
+     * The fields a form refuses by hand, as its code writes them · in the class,
+     * its parents and every trait they use, the site's own files only, read
+     * without their comments.
      *
      * @param  class-string<Component>  $component
      * @return list<string>
      */
     private function keysRaisedByHand(string $component): array
     {
-        $code = (string) file_get_contents((string) (new ReflectionClass($component))->getFileName());
         $keys = [];
 
-        preg_match_all('/withMessages\(\[(.*?)\]\)/s', $code, $raised);
+        foreach ($this->ownFilesOf($component) as $file) {
+            $code = $this->codeOf($file);
 
-        foreach ($raised[1] as $messages) {
-            preg_match_all("/'([^']+)'\s*=>/", $messages, $named);
-            array_push($keys, ...$named[1]);
+            preg_match_all('/withMessages\(\[(.*?)\]\)/s', $code, $raised);
+
+            foreach ($raised[1] as $messages) {
+                preg_match_all("/'([^']+)'\s*=>/", $messages, $named);
+                array_push($keys, ...$named[1]);
+            }
+
+            preg_match_all("/addError\(\s*'([^']+)'/", $code, $added);
+            array_push($keys, ...$added[1]);
         }
 
-        preg_match_all("/addError\(\s*'([^']+)'/", $code, $added);
+        return array_values(array_unique($keys));
+    }
 
-        return array_values(array_unique([...$keys, ...$added[1]]));
+    /**
+     * The files of a component the site writes · the class, its parents and the
+     * traits they use, a trait's own traits included.
+     *
+     * @param  class-string  $class
+     * @return list<string>
+     */
+    private function ownFilesOf(string $class): array
+    {
+        $files = [];
+        $pending = [new ReflectionClass($class)];
+
+        while (($reflection = array_shift($pending)) !== null) {
+            $files[] = (string) realpath((string) $reflection->getFileName());
+            $pending = [...$pending, ...array_values($reflection->getTraits())];
+
+            if ($reflection->getParentClass() !== false) {
+                $pending[] = $reflection->getParentClass();
+            }
+        }
+
+        $own = [(string) realpath(app_path()), (string) realpath(base_path('tests'))];
+
+        return array_values(array_filter(
+            array_unique($files),
+            static fn (string $file): bool => str_starts_with($file, $own[0]) || str_starts_with($file, $own[1]),
+        ));
+    }
+
+    /** A file's code without its comments · a comment that quotes a refusal raises none. */
+    private function codeOf(string $file): string
+    {
+        $code = '';
+
+        foreach (PhpToken::tokenize((string) file_get_contents($file)) as $token) {
+            $code .= $token->is([T_COMMENT, T_DOC_COMMENT]) ? '' : $token->text;
+        }
+
+        return $code;
     }
 
     /**
