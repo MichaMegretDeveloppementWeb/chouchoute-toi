@@ -12,7 +12,6 @@ use App\Models\Admin;
 use App\Services\Auth\Password\PasswordLinksService;
 use Carbon\CarbonImmutable;
 use Falcon\Booking\Livewire\Admin\Settings\PractitionerForm;
-use Falcon\Booking\Livewire\Admin\Settings\PractitionerIndex;
 use Falcon\Booking\Models\Practitioner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
@@ -127,7 +126,7 @@ final class TheTeamIsInvitedTest extends TestCase
         ]);
         $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr', 'account_id' => $account->id]);
 
-        Livewire::test(PractitionerIndex::class)
+        Livewire::test(PractitionerForm::class)
             ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'success', title: 'L’invitation est repartie à julie@exemple.fr.');
 
@@ -141,7 +140,7 @@ final class TheTeamIsInvitedTest extends TestCase
         $member = Practitioner::query()->sole();
         $first = $this->linkSentTo('julie@exemple.fr');
 
-        Livewire::test(PractitionerIndex::class)
+        Livewire::test(PractitionerForm::class)
             ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'info', title: 'Une invitation vient de partir. Réessayez dans une minute.');
 
@@ -149,7 +148,7 @@ final class TheTeamIsInvitedTest extends TestCase
 
         $this->travel(61)->seconds();
 
-        Livewire::test(PractitionerIndex::class)
+        Livewire::test(PractitionerForm::class)
             ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'success', title: 'L’invitation est repartie à julie@exemple.fr.');
 
@@ -162,7 +161,7 @@ final class TheTeamIsInvitedTest extends TestCase
         $account = Admin::factory()->collaborator()->create(['email' => 'julie@exemple.fr']);
         $member = Practitioner::factory()->create(['email' => 'julie@exemple.fr', 'account_id' => $account->id]);
 
-        Livewire::test(PractitionerIndex::class)
+        Livewire::test(PractitionerForm::class)
             ->call('sendTheAccessAgain', $member->id)
             ->assertDispatched('ui-toast', type: 'info', title: 'Ce compte n’attend aucune invitation.');
 

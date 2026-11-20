@@ -98,18 +98,18 @@ final class TheOwnerJoinsTheTeamTest extends TestCase
 
         $this->actingAs(Admin::factory()->create(), 'admin');
 
-        Livewire::test(PractitionerIndex::class)
+        Livewire::test(PractitionerForm::class)
             ->call('askToArchive', $member->id)
-            ->assertReturned(null);
+            ->assertReturned(static fn (mixed $answer): bool => $answer === true);
 
         $this->assertTrue($member->refresh()->isArchived(), 'The fiche was not archived.');
         $this->assertNull($this->owner->refresh()->suspended_at);
 
-        Livewire::test(PractitionerIndex::class)->call('restore', $member->id);
+        Livewire::test(PractitionerForm::class)->call('restore', $member->id);
 
         $this->assertFalse($member->refresh()->isArchived(), 'The fiche was not brought back.');
 
-        Livewire::test(PractitionerIndex::class)->call('askToRemove', $member->id)->call('remove');
+        Livewire::test(PractitionerForm::class)->call('askToRemove', $member->id)->call('remove');
 
         $this->assertNull(Practitioner::query()->find($member->id));
         $this->assertSame(Role::Owner, $this->owner->refresh()->role);
