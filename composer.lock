@@ -589,7 +589,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/falcon-analytics",
-                "reference": "35b2ca06d1c8bb57979d1ce2facc97fbfee08a13"
+                "reference": "8cc4ce8c60c0a53dca47e3f0164a237192824745"
             },
             "require": {
                 "ext-intl": "*",
