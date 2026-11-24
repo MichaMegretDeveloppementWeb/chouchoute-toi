@@ -26,7 +26,7 @@ final class Roles implements DeclaresRoles
                 Ability::UnavailabilitiesEdit->value => Reach::Theirs,
                 Ability::ClientsErase->value => Reach::None,
             ]),
-            new RoleData(Role::Owner->value, Role::Owner->label(), 'Tout le back-office, réglages, audience et marketing compris.', [
+            new RoleData(Role::Owner->value, Role::Owner->label(), 'Tout le back-office, réglages, '.config()->string('analytics.admin.label').' et marketing compris.', [
                 Ability::Booking->value => Reach::All,
             ]),
         ];

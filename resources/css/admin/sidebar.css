@@ -1,7 +1,8 @@
 /*
  | The back office's sidebar, drawn by its rows · the kit's bar, reached by its
- | hook classes, with rows across its whole width, a fine rule between them,
- | and the current page filled with the action colour.
+ | hook classes, with rows across its whole width, a rule between them in the
+ | grey of the bar's own edge, and the current page filled with the action
+ | colour.
  |
  | In `components`, after the kit's utilities and before ours · the kit's own
  | classes give way without `!important`, and a utility written in our markup
@@ -10,7 +11,8 @@
 
 @layer components {
     /* The establishment's colour, where booking is on the page, and its value
-       where it is not · the dashboard and Audience load nothing of booking. */
+       where it is not · the dashboard and the analytics screens load nothing
+       of booking. */
     :root {
         --admin-sidebar-action: var(--fb-primary, #178079);
         --admin-sidebar-ink: var(--fb-primary-ink, #176f6a);
@@ -36,6 +38,23 @@
         margin-inline: -20px;
     }
 
+    /* The rules the kit draws itself, in the grey of the rows · under the
+       brand and above the account, in the bar and in the drawer, and above a
+       section nested in the panel the rail opens. */
+    .ui-sidebar-canvas > .ui-sidebar-gap,
+    .ui-sidebar-drawer > div > div:first-child {
+        border-bottom-color: var(--ui-border);
+    }
+
+    .ui-sidebar li:has(.admin-account),
+    .ui-sidebar-drawer li:has(.admin-account) {
+        border-top-color: var(--ui-border);
+    }
+
+    .ui-sidebar-panel .ui-sidebar-section {
+        border-top-color: var(--ui-border);
+    }
+
     .ui-sidebar-group {
         margin-inline: -20px;
     }
@@ -53,7 +72,7 @@
         min-height: 48px;
         padding: 13px 22px;
         border-radius: 0;
-        border-bottom: 1px solid var(--ui-border-subtle);
+        border-bottom: 1px solid var(--ui-border);
         color: var(--ui-text-secondary);
     }
 
@@ -109,7 +128,7 @@
         padding: 0;
         column-gap: 0;
         border-radius: 0;
-        border-bottom: 1px solid var(--ui-border-subtle);
+        border-bottom: 1px solid var(--ui-border);
         color: var(--ui-text-secondary);
         font-weight: 400;
     }
@@ -162,7 +181,7 @@
         margin: 0;
         padding: 0;
         border: 0;
-        border-bottom: 1px solid var(--ui-border-subtle);
+        border-bottom: 1px solid var(--ui-border);
     }
 
     .ui-sidebar-submenu > li {
@@ -192,7 +211,7 @@
         bottom: 0;
         left: 52px;
         height: 1px;
-        background: var(--ui-border-subtle);
+        background: var(--ui-border);
     }
 
     .ui-sidebar-submenu .ui-sidebar-collapsible > .ui-sidebar-gap {
@@ -215,7 +234,7 @@
         }
 
         .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-collapsible {
-            border-bottom-color: var(--ui-border-subtle);
+            border-bottom-color: var(--ui-border);
         }
 
         .ui-sidebar-frame:not([data-ui-sidebar]) .ui-sidebar .ui-sidebar-badge {
@@ -233,7 +252,7 @@
     }
 
     .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-collapsible {
-        border-bottom-color: var(--ui-border-subtle);
+        border-bottom-color: var(--ui-border);
     }
 
     .ui-sidebar-frame[data-ui-sidebar='collapsed'] .ui-sidebar .ui-sidebar-badge {
@@ -257,7 +276,7 @@
     .ui-sidebar-panel-title {
         margin-bottom: 4px;
         padding: 4px 12px 10px;
-        border-bottom: 1px solid var(--ui-border-subtle);
+        border-bottom: 1px solid var(--ui-border);
         font-size: 14px;
         color: var(--ui-text-primary);
         text-transform: none;
@@ -334,7 +353,7 @@
         }
 
         .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-collapsible {
-            border-bottom-color: var(--ui-border-subtle);
+            border-bottom-color: var(--ui-border);
         }
 
         .ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over]) .ui-sidebar .ui-sidebar-badge {

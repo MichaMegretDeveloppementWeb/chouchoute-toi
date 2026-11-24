@@ -9,7 +9,7 @@
 
         <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <x-ui::card>
-                <x-ui::icon-text icon="chart-pie" class="mb-2 text-secondary">Audience</x-ui::icon-text>
+                <x-ui::icon-text icon="chart-pie" class="mb-2 text-secondary">{{ config()->string('analytics.admin.label') }}</x-ui::icon-text>
                 <p class="text-[13px] text-secondary">
                     Fréquentation du site, provenance des visiteurs, pages consultées et parcours complets.
                 </p>
@@ -18,7 +18,7 @@
                     variant="secondary"
                     size="compact"
                     class="mt-4">
-                    Ouvrir l'audience
+                    Ouvrir {{ config()->string('analytics.admin.label') }}
                 </x-ui::button>
             </x-ui::card>
 

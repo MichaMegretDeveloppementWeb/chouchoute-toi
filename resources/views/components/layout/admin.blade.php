@@ -87,9 +87,9 @@
                     </x-ui::sidebar.collapsible>
                 @endif
 
-                {{-- Audience --}}
+                {{-- Analytics --}}
                 @if ($bar['audience'] !== [])
-                    <x-ui::sidebar.collapsible name="audience" label="Audience" icon="chart-pie"
+                    <x-ui::sidebar.collapsible name="audience" :label="config()->string('analytics.admin.label')" icon="chart-pie"
                         :href="route($bar['audience'][0]['route'])"
                         :active="request()->routeIs('analytics.admin.*') && ! request()->routeIs('analytics.admin.marketing.*')">
                         @foreach ($bar['audience'] as $screen)
