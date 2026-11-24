@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Web;
 
 use PHPUnit\Framework\TestCase;
+use Tests\Support\ReadsTheSheet;
 
 /**
  * The hero takes the height of what it holds, so a low screen cuts neither its
@@ -13,6 +14,8 @@ use PHPUnit\Framework\TestCase;
  */
 final class TheHeroGrowsWithItsContentTest extends TestCase
 {
+    use ReadsTheSheet;
+
     public function test_the_content_of_the_hero_stays_in_the_flow(): void
     {
         $container = $this->ruleOf('.hero__container');
@@ -32,10 +35,6 @@ final class TheHeroGrowsWithItsContentTest extends TestCase
     /** The first rule written for this selector. */
     private function ruleOf(string $selector): string
     {
-        $sheet = (string) file_get_contents(__DIR__.'/../../../resources/css/web/home/hero.css');
-
-        $this->assertSame(1, preg_match('/^'.preg_quote($selector, '/').' \{(.*?)^\}/ms', $sheet, $rule), "No rule for {$selector}.");
-
-        return $rule[1];
+        return $this->blockOf((string) file_get_contents(resource_path('css/web/home/hero.css')), $selector);
     }
 }

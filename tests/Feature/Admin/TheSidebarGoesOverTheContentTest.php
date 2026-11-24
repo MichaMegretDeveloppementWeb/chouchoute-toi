@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
+use Tests\Support\ReadsTheSheet;
 use Tests\TestCase;
 
 /**
@@ -19,6 +20,8 @@ use Tests\TestCase;
  */
 final class TheSidebarGoesOverTheContentTest extends TestCase
 {
+    use ReadsTheSheet;
+
     private const string BAND = '@media (64rem <= width < 87.5rem)';
 
     private const string FOLDED_BY_US = ".ui-sidebar-frame[data-ui-sidebar='expanded']:not([data-admin-sidebar-over])";
@@ -33,29 +36,6 @@ final class TheSidebarGoesOverTheContentTest extends TestCase
         return substr($sheet, $start);
     }
 
-    /**
-     * The declarations of the first block a selector opens in a sheet.
-     *
-     * @return array<string, string>
-     */
-    private function declarationsOf(string $sheet, string $selector): array
-    {
-        $start = strpos($sheet, $selector.' {');
-
-        $this->assertNotFalse($start, "Aucun bloc pour {$selector}.");
-
-        $body = substr($sheet, $start + strlen($selector) + 2);
-        $body = substr($body, 0, (int) strpos($body, '}'));
-        $declarations = [];
-
-        foreach (array_filter(array_map('trim', explode(';', $body)), static fn (string $line): bool => $line !== '') as $line) {
-            [$property, $value] = array_map('trim', explode(':', $line, 2));
-            $declarations[$property] = $value;
-        }
-
-        return $declarations;
-    }
-
     public function test_the_content_keeps_the_rails_width_in_the_band(): void
     {
         $this->assertSame(
@@ -67,7 +47,7 @@ final class TheSidebarGoesOverTheContentTest extends TestCase
     /** The bar the kit would draw open is folded the way the kit folds it, word for word. */
     public function test_the_bar_is_folded_as_the_kit_folds_it(): void
     {
-        $kit = (string) file_get_contents(base_path('vendor/falcon/ui-kit/resources/css/ui.css'));
+        $kit = (string) file_get_contents(base_path('vendor/falcon/ui-kit/resources/css/components/sidebar.css'));
 
         $this->assertSame(
             $this->declarationsOf($kit, ".ui-sidebar-frame[data-ui-sidebar='collapsed']"),
