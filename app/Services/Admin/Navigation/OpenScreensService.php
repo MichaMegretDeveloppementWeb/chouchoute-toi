@@ -41,8 +41,7 @@ final readonly class OpenScreensService
         'settings' => [
             ['route' => 'booking.admin.settings', 'ability' => BookingAbility::Business, 'title' => 'Établissement', 'lights' => ['booking.admin.settings']],
             ['route' => 'booking.admin.schedule', 'ability' => BookingAbility::Schedule, 'title' => 'Horaires', 'lights' => ['booking.admin.schedule']],
-            ['route' => 'booking.admin.settings.slots', 'ability' => BookingAbility::Slots, 'title' => 'Créneaux', 'lights' => ['booking.admin.settings.slots']],
-            ['route' => 'booking.admin.settings.booking-window', 'ability' => BookingAbility::BookingWindow, 'title' => 'Réservation', 'lights' => ['booking.admin.settings.booking-window']],
+            ['route' => 'booking.admin.settings.appointment-taking', 'ability' => BookingAbility::AppointmentTaking, 'title' => 'Prise de rendez-vous', 'lights' => ['booking.admin.settings.appointment-taking']],
             ['route' => 'booking.admin.settings.notifications', 'ability' => BookingAbility::Notifications, 'title' => 'Notifications', 'lights' => ['booking.admin.settings.notifications']],
         ],
         'audience' => [

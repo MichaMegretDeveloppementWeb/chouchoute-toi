@@ -32,8 +32,12 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Les adresses du paquet qui ne sont pas des écrans de menu. */
-    private const NOT_IN_THE_MENU = ['booking.admin.attachment', 'booking.admin.missing'];
+    /**
+     * Les adresses du paquet qui ne sont pas des écrans de menu · une pièce
+     * jointe, la page introuvable, et les deux adresses de Créneaux et de
+     * Réservation, qui mènent à Prise de rendez-vous.
+     */
+    private const NOT_IN_THE_MENU = ['booking.admin.attachment', 'booking.admin.missing', 'booking.admin.settings.slots', 'booking.admin.settings.booking-window'];
 
     /** The bar shows only what the account opens · an owner opens everything. */
     protected function setUp(): void
@@ -66,7 +70,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
         $order = array_map(
             fn (string $name): int|false => strpos($page, 'href="'.route('booking.admin.'.$name).'"'),
-            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'settings.locations', 'messages', 'journal', 'settings', 'schedule', 'settings.slots', 'settings.booking-window', 'settings.notifications'],
+            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'settings.locations', 'messages', 'journal', 'settings', 'schedule', 'settings.appointment-taking', 'settings.notifications'],
         );
 
         $this->assertNotContains(false, $order, 'Un écran manque à la barre.');
