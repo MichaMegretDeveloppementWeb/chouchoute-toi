@@ -56,8 +56,9 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     }
 
     /**
-     * L'Agenda · Planning, Clients, Prestations, Catégories, Praticiens, puis
-     * Journal et Envois · et les Réglages à la fin, sans les Praticiens.
+     * L'Agenda · Planning, Clients, Prestations, Catégories, Praticiens, Lieux,
+     * puis Envois et Journal · et les Réglages à la fin, sans les Praticiens ni
+     * les Lieux.
      */
     public function test_the_agenda_holds_the_practitioners_and_the_settings_follow_it(): void
     {
@@ -65,7 +66,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
         $order = array_map(
             fn (string $name): int|false => strpos($page, 'href="'.route('booking.admin.'.$name).'"'),
-            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'journal', 'messages', 'settings', 'schedule', 'settings.slots', 'settings.booking-window', 'settings.notifications'],
+            ['agenda', 'clients', 'catalogue', 'categories', 'settings.practitioners', 'settings.locations', 'messages', 'journal', 'settings', 'schedule', 'settings.slots', 'settings.booking-window', 'settings.notifications'],
         );
 
         $this->assertNotContains(false, $order, 'Un écran manque à la barre.');
@@ -73,8 +74,9 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
         $sorted = $order;
         sort($sorted);
 
-        $this->assertSame($sorted, $order, 'L’Agenda range Praticiens après Catégories et avant Journal, et les Réglages, d’Établissement à Notifications, viennent après lui.');
+        $this->assertSame($sorted, $order, 'L’Agenda range Praticiens puis Lieux après Catégories, Envois avant Journal, et les Réglages, d’Établissement à Notifications, viennent après lui.');
         $this->assertLessThan(strpos($page, '>Réglages<'), strpos($page, 'href="'.route('booking.admin.settings.practitioners').'"'), 'Praticiens est encore rangé dans les Réglages.');
+        $this->assertLessThan(strpos($page, '>Réglages<'), strpos($page, 'href="'.route('booking.admin.settings.locations').'"'), 'Lieux est rangé dans les Réglages.');
     }
 
     /**
@@ -132,8 +134,9 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
     }
 
     /**
-     * La page des Praticiens allume l'Agenda, bien que son adresse soit sous
-     * `settings` · celle des Horaires allume l'Agenda et, dedans, les Réglages.
+     * Les pages des Praticiens et des Lieux allument l'Agenda, bien que leur
+     * adresse soit sous `settings` · celle des Horaires allume l'Agenda et,
+     * dedans, les Réglages.
      */
     public function test_each_page_lights_its_own_section(): void
     {
@@ -141,6 +144,11 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
         $this->assertTrue($this->lights($practitioners, 'Agenda'), 'Sur la page des Praticiens, la section Agenda n’est pas allumée.');
         $this->assertFalse($this->lights($practitioners, 'Réglages'), 'Sur la page des Praticiens, la section Réglages s’allume encore.');
+
+        $places = $this->pageAt('booking.admin.settings.locations');
+
+        $this->assertTrue($this->lights($places, 'Agenda'), 'Sur la page des Lieux, la section Agenda n’est pas allumée.');
+        $this->assertFalse($this->lights($places, 'Réglages'), 'Sur la page des Lieux, la section Réglages s’allume.');
 
         $hours = $this->pageAt('booking.admin.schedule');
 

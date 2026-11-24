@@ -34,8 +34,9 @@ final readonly class OpenScreensService
             ['route' => 'booking.admin.catalogue', 'ability' => BookingAbility::Catalogue, 'title' => 'Prestations', 'lights' => ['booking.admin.catalogue']],
             ['route' => 'booking.admin.categories', 'ability' => BookingAbility::Catalogue, 'title' => 'Catégories', 'lights' => ['booking.admin.categories']],
             ['route' => 'booking.admin.settings.practitioners', 'ability' => BookingAbility::Practitioners, 'title' => 'Praticiens', 'lights' => ['booking.admin.settings.practitioners']],
-            ['route' => 'booking.admin.journal', 'ability' => BookingAbility::Journal, 'title' => 'Journal', 'lights' => ['booking.admin.journal']],
+            ['route' => 'booking.admin.settings.locations', 'ability' => BookingAbility::Locations, 'title' => 'Lieux', 'lights' => ['booking.admin.settings.locations']],
             ['route' => 'booking.admin.messages', 'ability' => BookingAbility::Messages, 'title' => 'Envois', 'lights' => ['booking.admin.messages']],
+            ['route' => 'booking.admin.journal', 'ability' => BookingAbility::Journal, 'title' => 'Journal', 'lights' => ['booking.admin.journal']],
         ],
         'settings' => [
             ['route' => 'booking.admin.settings', 'ability' => BookingAbility::Business, 'title' => 'Établissement', 'lights' => ['booking.admin.settings']],
