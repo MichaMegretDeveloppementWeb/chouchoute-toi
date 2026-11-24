@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
+use Tests\Support\ReadsTheSheet;
 use Tests\TestCase;
 
 /**
@@ -16,6 +17,8 @@ use Tests\TestCase;
  */
 final class TheSidebarIsDrawnByItsRowsTest extends TestCase
 {
+    use ReadsTheSheet;
+
     private function sheet(string $path): string
     {
         return (string) file_get_contents(resource_path('css/'.$path));
@@ -53,17 +56,5 @@ final class TheSidebarIsDrawnByItsRowsTest extends TestCase
         }
 
         $this->assertStringContainsString('position: relative;', $this->blockOf($sheet, '.ui-sidebar-submenu .ui-sidebar-collapsible'), 'Le trait ne se pose plus sur la ligne de la section.');
-    }
-
-    /** The body of the first block a selector opens in a sheet. */
-    private function blockOf(string $sheet, string $selector): string
-    {
-        $start = strpos($sheet, $selector.' {');
-
-        $this->assertNotFalse($start, "Aucun bloc pour {$selector}.");
-
-        $body = substr($sheet, $start + strlen($selector) + 2);
-
-        return substr($body, 0, (int) strpos($body, '}'));
     }
 }
