@@ -28,11 +28,16 @@ composant n'apporte que ce qui est à nous ·
 - la marque et l'arborescence des écrans, dans la barre · Tableau de bord,
   puis quatre sections · **Agenda** (Planning, Clients, Prestations,
   Catégories, Praticiens, Lieux, Envois, Journal), **Réglages** (Établissement,
-  Horaires, Prise de rendez-vous, Notifications), **Audience** et **Marketing** ;
+  Horaires, Prise de rendez-vous, Notifications), **Analytics** et **Marketing** ·
+  « Analytics » est le nom que `config/analytics.php` donne aux écrans de
+  mesure (`admin.label`), que la barre, la carte du tableau de bord et les
+  titres d'onglet lisent · la section « Audience » de la vue d'ensemble garde
+  le sien ;
 - le dessin de la barre, `resources/css/admin/sidebar.css` · des lignes sur
-  toute sa largeur, un filet entre elles, la page courante pleine de la couleur
-  d'action de booking · il vise les classes crochets du kit, dont il ne copie
-  aucune vue ;
+  toute sa largeur, un filet entre elles du gris du bord de la barre, comme
+  ceux que le kit pose sous la marque et au-dessus du compte, la page courante
+  pleine de la couleur d'action de booking · il vise les classes crochets du
+  kit, dont il ne copie aucune vue ;
 - le menu du compte, `<x-layout.admin-user-menu>` ;
 - notre feuille et notre script, **après** ceux du kit et des paquets, donc
   ce sont les nôtres qui gagnent ·
@@ -76,7 +81,7 @@ de bord, au propriétaire (`app/Providers/GateServiceProvider.php`).
 | Rôle | Ce qu'il ouvre |
 |---|---|
 | **Propriétaire** | tout le back-office |
-| **Collaborateur** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil · rien de l'Audience ni du Marketing · `app/Analytics/Roles.php` le déclare sans rien lui ouvrir |
+| **Collaborateur** | le Planning, où il voit tout · il n'y nomme que lui-même, ne change que les rendez-vous où il réalise une prestation et les indisponibilités qui ne nomment que lui, sans lieu · les Clients, sans effacer ni télécharger les données · son Profil · rien d'Analytics ni du Marketing · `app/Analytics/Roles.php` le déclare sans rien lui ouvrir |
 
 - **Un rôle neuf** · un cas dans l'énumération, et sa déclaration dans chacun des deux
   fichiers · un paquet qu'il ne doit pas ouvrir le déclare sans rien, sinon son

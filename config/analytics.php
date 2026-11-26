@@ -148,6 +148,11 @@ return [
     */
 
     'admin' => [
+        // What these screens go by: the title of each tab (« Vue d'ensemble ·
+        // Audience »), the package's own shell and its page for what is not
+        // there. Null keeps « Audience ». Marketing keeps its own name.
+        'label' => 'Analytics',
+
         // What appears in the URL for every analytics page (e.g. /admin/analytics).
         'route_prefix' => 'admin/analytics',
 

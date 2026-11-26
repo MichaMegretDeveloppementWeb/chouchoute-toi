@@ -85,7 +85,7 @@ final class TheSidebarLeadsToEveryBookingScreenTest extends TestCase
 
     /**
      * Les Réglages sont un sous-menu de l'Agenda · ils ne règlent que lui, et au
-     * niveau d'Audience et de Marketing ils laissaient croire qu'ils les règlent
+     * niveau d'Analytics et de Marketing ils laissaient croire qu'ils les règlent
      * aussi.
      */
     public function test_the_settings_are_a_submenu_of_the_agenda(): void

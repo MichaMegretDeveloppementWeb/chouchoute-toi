@@ -42,7 +42,7 @@ final class TheSidebarIsDrawnByItsRowsTest extends TestCase
         $sheet = $this->sheet('admin/sidebar.css');
 
         $this->assertMatchesRegularExpression('/\.ui-sidebar-group \{\s*margin-inline: -20px;/', $sheet);
-        $this->assertMatchesRegularExpression('/\.ui-sidebar-link \{[^}]*min-height: 48px;[^}]*border-radius: 0;[^}]*border-bottom: 1px solid var\(--ui-border-subtle\);/s', $sheet);
+        $this->assertMatchesRegularExpression('/\.ui-sidebar-link \{[^}]*min-height: 48px;[^}]*border-radius: 0;[^}]*border-bottom: 1px solid var\(--ui-border\);/s', $sheet);
         $this->assertMatchesRegularExpression('/\.ui-sidebar-submenu \.ui-sidebar-link \{[^}]*min-height: 40px;[^}]*padding: 10px 22px 10px 52px;/s', $sheet, 'Les pages d’une section ne sont plus alignées sur son libellé.');
     }
 
@@ -51,10 +51,26 @@ final class TheSidebarIsDrawnByItsRowsTest extends TestCase
         $sheet = $this->sheet('admin/sidebar.css');
         $rule = $this->blockOf($sheet, ".ui-sidebar-submenu .ui-sidebar-collapsible:has(.ui-sidebar-chevron[aria-expanded='true'])::after");
 
-        foreach (["content: ''", 'position: absolute', 'bottom: 0', 'right: 0', 'left: 52px', 'height: 1px', 'background: var(--ui-border-subtle)'] as $declaration) {
+        foreach (["content: ''", 'position: absolute', 'bottom: 0', 'right: 0', 'left: 52px', 'height: 1px', 'background: var(--ui-border)'] as $declaration) {
             $this->assertStringContainsString($declaration.';', $rule, "Le trait sous une section dans une section a perdu « {$declaration} » · il part de la colonne de son libellé, du gris des traits.");
         }
 
         $this->assertStringContainsString('position: relative;', $this->blockOf($sheet, '.ui-sidebar-submenu .ui-sidebar-collapsible'), 'Le trait ne se pose plus sur la ligne de la section.');
+    }
+
+    /**
+     * Chaque trait de la barre est du gris de son bord · ceux que la feuille pose,
+     * et les trois que le kit dessine lui-même, sous la marque, au-dessus du compte
+     * et au-dessus d'une section imbriquée dans le panneau du rail.
+     */
+    public function test_every_rule_of_the_bar_is_in_the_grey_of_its_edge(): void
+    {
+        $sheet = $this->sheet('admin/sidebar.css');
+
+        $this->assertStringNotContainsString('--ui-border-subtle', $sheet, 'Un trait de la barre est resté au gris le plus pâle.');
+
+        $this->assertMatchesRegularExpression('/\.ui-sidebar-canvas > \.ui-sidebar-gap,\s*\.ui-sidebar-drawer > div > div:first-child \{\s*border-bottom-color: var\(--ui-border\);\s*\}/', $sheet, 'Le trait sous la marque reste celui du kit, dans la barre ou dans le tiroir.');
+        $this->assertMatchesRegularExpression('/\.ui-sidebar li:has\(\.admin-account\),\s*\.ui-sidebar-drawer li:has\(\.admin-account\) \{\s*border-top-color: var\(--ui-border\);\s*\}/', $sheet, 'Le trait au-dessus du compte reste celui du kit, dans la barre ou dans le tiroir.');
+        $this->assertSame(['border-top-color' => 'var(--ui-border)'], $this->declarationsOf($sheet, '.ui-sidebar-panel .ui-sidebar-section'), 'Le trait au-dessus d’une section du panneau reste celui du kit.');
     }
 }

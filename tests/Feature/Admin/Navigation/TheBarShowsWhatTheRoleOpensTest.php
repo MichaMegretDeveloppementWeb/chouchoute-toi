@@ -68,7 +68,7 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
         $this->actingAs($this->aCollaborator(), 'admin');
 
         $this->assertSame($this->linksTo(['booking.admin.agenda', 'booking.admin.clients']), $this->theLinksOfTheBar());
-        $this->assertSame([], array_intersect(['Réglages', 'Audience', 'Marketing'], array_keys($this->theSectionsOfTheBar())));
+        $this->assertSame([], array_intersect(['Réglages', 'Analytics', 'Marketing'], array_keys($this->theSectionsOfTheBar())));
     }
 
     /**
@@ -126,7 +126,7 @@ final class TheBarShowsWhatTheRoleOpensTest extends TestCase
 
         $this->assertSame($this->linksTo(array_values(array_diff(array_keys(self::SCREENS), $closed))), $this->theLinksOfTheBar());
         $this->assertSame(route('booking.admin.schedule'), $sections['Réglages'] ?? null);
-        $this->assertSame(route('analytics.admin.realtime'), $sections['Audience'] ?? null);
+        $this->assertSame(route('analytics.admin.realtime'), $sections['Analytics'] ?? null);
     }
 
     /** What Envois counts is read once for whoever opens Envois, and never for anybody else. */
