@@ -11,19 +11,39 @@ use Dom\HTMLDocument;
 use Falcon\Analytics\Livewire\Admin\Figures\OverviewFigures;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
  * The measure goes by the name the site gives it, `analytics.admin.label` ·
  * « Analytics » · in the bar, on the dashboard, under the owner's role, in the
  * title of each of its tabs and on its page for what is not there. The bar,
- * the dashboard and the role read the setting, never a name of their own. The
- * « Audience » section of the overview names what it shows, not the space, and
- * keeps its name.
+ * the dashboard and the role read the name analytics gives,
+ * `Analytics::spaceName()`, never a name of their own nor the bare setting ·
+ * left empty, it is « Audience » to them as to analytics. The « Audience »
+ * section of the overview names what it shows, not the space, and keeps its
+ * name.
  */
 final class TheMeasureGoesByTheSitesNameTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * The labels of the sections of the bar, as the dashboard draws them.
+     *
+     * @return list<string>
+     */
+    private function sectionsOf(string $page): array
+    {
+        $document = HTMLDocument::createFromString($page, LIBXML_NOERROR);
+        $sections = [];
+
+        foreach ($document->querySelectorAll('.ui-sidebar-collapsible > a .ui-sidebar-label') as $label) {
+            $sections[] = trim((string) $label->textContent);
+        }
+
+        return $sections;
+    }
 
     public function test_the_site_calls_the_measure_analytics(): void
     {
@@ -36,16 +56,36 @@ final class TheMeasureGoesByTheSitesNameTest extends TestCase
         $this->actingAs(Admin::factory()->create(), 'admin');
 
         $page = $this->get(route('admin.dashboard'))->assertOk();
-        $document = HTMLDocument::createFromString((string) $page->getContent(), LIBXML_NOERROR);
-        $sections = [];
 
-        foreach ($document->querySelectorAll('.ui-sidebar-collapsible > a .ui-sidebar-label') as $label) {
-            $sections[] = trim((string) $label->textContent);
-        }
-
-        $this->assertContains('Fréquentation', $sections, 'La section de la barre ne lit pas le nom que donne le réglage.');
+        $this->assertContains('Fréquentation', $this->sectionsOf((string) $page->getContent()), 'La section de la barre ne lit pas le nom que donne le réglage.');
         $page->assertSee('Ouvrir Fréquentation');
         $page->assertDontSee('Audience');
+    }
+
+    /** @return array<string, array{string|null}> */
+    public static function noName(): array
+    {
+        return [
+            'nothing set' => [null],
+            'an empty name' => [''],
+        ];
+    }
+
+    #[DataProvider('noName')]
+    public function test_without_a_name_the_site_says_audience_as_analytics_does(?string $label): void
+    {
+        config()->set('analytics.admin.label', $label);
+        $this->actingAs(Admin::factory()->create(), 'admin');
+
+        $page = $this->get(route('admin.dashboard'))->assertOk();
+
+        $this->assertContains('Audience', $this->sectionsOf((string) $page->getContent()), 'Sans nom, la section de la barre ne dit pas « Audience ».');
+        $page->assertSee('Ouvrir Audience');
+
+        $owner = collect(app(Roles::class)->roles())->firstWhere('value', Role::Owner->value);
+
+        $this->assertNotNull($owner);
+        $this->assertSame('Tout le back-office, réglages, Audience et marketing compris.', $owner->opens);
     }
 
     public function test_the_owners_role_says_it_opens_the_measure_by_its_name(): void

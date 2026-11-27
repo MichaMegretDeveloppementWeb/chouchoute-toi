@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Booking;
 
 use App\Enums\Account\Role;
+use Falcon\Analytics\Facades\Analytics;
 use Falcon\Booking\Contracts\Authorization\DeclaresRoles;
 use Falcon\Booking\Data\Authorization\RoleData;
 use Falcon\Booking\Enums\Authorization\Ability;
@@ -26,7 +27,7 @@ final class Roles implements DeclaresRoles
                 Ability::UnavailabilitiesEdit->value => Reach::Theirs,
                 Ability::ClientsErase->value => Reach::None,
             ]),
-            new RoleData(Role::Owner->value, Role::Owner->label(), 'Tout le back-office, réglages, '.config()->string('analytics.admin.label').' et marketing compris.', [
+            new RoleData(Role::Owner->value, Role::Owner->label(), 'Tout le back-office, réglages, '.Analytics::spaceName().' et marketing compris.', [
                 Ability::Booking->value => Reach::All,
             ]),
         ];

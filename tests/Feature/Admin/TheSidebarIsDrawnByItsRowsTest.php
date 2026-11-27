@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Admin;
+use Dom\HTMLDocument;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
 use Tests\Support\ReadsTheSheet;
 use Tests\TestCase;
 
@@ -18,6 +22,7 @@ use Tests\TestCase;
 final class TheSidebarIsDrawnByItsRowsTest extends TestCase
 {
     use ReadsTheSheet;
+    use RefreshDatabase;
 
     private function sheet(string $path): string
     {
@@ -72,5 +77,50 @@ final class TheSidebarIsDrawnByItsRowsTest extends TestCase
         $this->assertMatchesRegularExpression('/\.ui-sidebar-canvas > \.ui-sidebar-gap,\s*\.ui-sidebar-drawer > div > div:first-child \{\s*border-bottom-color: var\(--ui-border\);\s*\}/', $sheet, 'Le trait sous la marque reste celui du kit, dans la barre ou dans le tiroir.');
         $this->assertMatchesRegularExpression('/\.ui-sidebar li:has\(\.admin-account\),\s*\.ui-sidebar-drawer li:has\(\.admin-account\) \{\s*border-top-color: var\(--ui-border\);\s*\}/', $sheet, 'Le trait au-dessus du compte reste celui du kit, dans la barre ou dans le tiroir.');
         $this->assertSame(['border-top-color' => 'var(--ui-border)'], $this->declarationsOf($sheet, '.ui-sidebar-panel .ui-sidebar-section'), 'Le trait au-dessus d’une section du panneau reste celui du kit.');
+    }
+
+    /**
+     * Les trois traits du kit se reprennent par sa structure autant que par ses
+     * classes · chaque sélecteur de la feuille atteint, sur la barre rendue,
+     * l'élément même qui porte le trait du kit · une vue du kit qui change de
+     * forme laisserait sinon un trait pâle, sans rien qui le dise.
+     */
+    public function test_each_rule_the_sheet_takes_over_reaches_the_kits_rule_on_the_bar(): void
+    {
+        $this->actingAs(Admin::factory()->create(), 'admin');
+
+        $bar = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.Blade::render('<x-layout.admin></x-layout.admin>').'</body></html>', LIBXML_NOERROR);
+
+        $rules = [
+            '.ui-sidebar-canvas > .ui-sidebar-gap' => 'ui:border-b',
+            '.ui-sidebar-drawer > div > div:first-child' => 'ui:border-b',
+            '.ui-sidebar li:has(.admin-account)' => 'ui:border-t',
+            '.ui-sidebar-drawer li:has(.admin-account)' => 'ui:border-t',
+        ];
+
+        foreach ($rules as $selector => $side) {
+            $reached = $bar->querySelectorAll($selector);
+
+            $this->assertSame(1, $reached->length, "La règle « {$selector} » n’atteint pas un seul élément de la barre.");
+
+            $classes = explode(' ', (string) $reached->item(0)?->getAttribute('class'));
+
+            $this->assertContains($side, $classes, "La règle « {$selector} » n’atteint plus l’élément qui porte le trait du kit.");
+            $this->assertContains('ui:border-subtle', $classes, "La règle « {$selector} » n’atteint plus l’élément qui porte le trait du kit.");
+        }
+
+        // The rail's panel is teleported, so drawn inside a template, whose content the parser keeps apart.
+        $nested = 0;
+
+        foreach ($bar->querySelectorAll('template') as $template) {
+            $panel = HTMLDocument::createFromString('<!DOCTYPE html><html><body>'.$template->innerHTML.'</body></html>', LIBXML_NOERROR);
+            $nested += $panel->querySelectorAll('.ui-sidebar-panel .ui-sidebar-section')->length;
+        }
+
+        $this->assertGreaterThan(0, $nested, 'Aucune section n’est rangée dans le panneau d’une autre · la règle du panneau ne vise plus rien.');
+
+        $kit = (string) file_get_contents(base_path('vendor/falcon/ui-kit/resources/css/components/sidebar.css'));
+
+        $this->assertSame('1px solid var(--ui-border-subtle)', $this->declarationsOf($kit, '.ui-sidebar-panel .ui-sidebar-section')['border-top'] ?? null, 'Le kit ne trace plus le trait du panneau sur ce sélecteur · la feuille reprend un trait qui n’existe plus.');
     }
 }
