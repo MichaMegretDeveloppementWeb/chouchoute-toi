@@ -30,14 +30,16 @@ composant n'apporte que ce qui est à nous ·
   Catégories, Praticiens, Lieux, Envois, Journal), **Réglages** (Établissement,
   Horaires, Prise de rendez-vous, Notifications), **Analytics** et **Marketing** ·
   « Analytics » est le nom que `config/analytics.php` donne aux écrans de
-  mesure (`admin.label`), que la barre, la carte du tableau de bord et les
-  titres d'onglet lisent · la section « Audience » de la vue d'ensemble garde
-  le sien ;
+  mesure (`admin.label`) · la barre et la carte du tableau de bord le lisent
+  par `Analytics::spaceName()`, comme analytics ses titres d'onglet, si bien
+  qu'un réglage vidé dit « Audience » partout · la section « Audience » de la
+  vue d'ensemble garde le sien ;
 - le dessin de la barre, `resources/css/admin/sidebar.css` · des lignes sur
   toute sa largeur, un filet entre elles du gris du bord de la barre, comme
   ceux que le kit pose sous la marque et au-dessus du compte, la page courante
   pleine de la couleur d'action de booking · il vise les classes crochets du
-  kit, dont il ne copie aucune vue ;
+  kit, et la structure de son tiroir pour deux traits, dont il ne copie aucune
+  vue ;
 - le menu du compte, `<x-layout.admin-user-menu>` ;
 - notre feuille et notre script, **après** ceux du kit et des paquets, donc
   ce sont les nôtres qui gagnent ·
